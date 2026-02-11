@@ -12,5 +12,5 @@ Welcome to your-bank!!
 
 ## Contributors
 
-     Boyd Scott
+    Boyd Scott
 
