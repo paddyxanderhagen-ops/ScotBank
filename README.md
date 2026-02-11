@@ -11,6 +11,5 @@ Welcome to your-bank!!
     ./mvnw.cmd clean package
 
 ## Contributors
-
-    Boyd Scott
+- Boyd Scott
 
