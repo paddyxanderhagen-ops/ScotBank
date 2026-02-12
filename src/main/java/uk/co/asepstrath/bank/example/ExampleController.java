@@ -1,21 +1,25 @@
 package uk.co.asepstrath.bank.example;
 
+import com.google.gson.Gson;
 import io.jooby.ModelAndView;
 import io.jooby.StatusCode;
 import io.jooby.annotation.*;
 import io.jooby.exception.StatusCodeException;
-import kong.unirest.core.ContentType;
+import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.Account;
+import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 
 import javax.sql.DataSource;
+import java.io.Reader;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /*
     Example Controller is a Controller from the MVC paradigm.
@@ -53,6 +57,19 @@ public class ExampleController {
     @GET("/joke")
     public String joke() {
         return Unirest.get("https://icanhazdadjoke.com/").accept("text/plain").asString().getBody();
+    }
+
+    @GET("/balance")
+    public String balance() {
+        Gson gson = new Gson();
+        String response =  Unirest.get("https://api.asep-strath.co.uk/api/investors").accept("application/json").asString().getBody();
+
+        // DTO -> Class InvestorResponse(List<Investor> investors)
+        InvestorDTO investorResponse = gson.fromJson(response, InvestorDTO.class);
+
+        List<Investor> cleanedResponse = investorResponse.getInvestors();
+
+        return "Hello " + cleanedResponse.getFirst().getName();
     }
 
     /*

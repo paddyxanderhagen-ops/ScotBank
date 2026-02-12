@@ -1,14 +1,16 @@
 package uk.co.asepstrath.bank;
 
-public class Account {
+import uk.co.asepstrath.bank.model.Investor;
 
+import java.math.BigDecimal;
 
+public class Account extends Investor {
     public void deposit(int amount) {
-
+        setCashBalance(getCashBalance().add(BigDecimal.valueOf(amount)));
     }
 
-    public int getBalance() {
-        return 0;
+    public BigDecimal getBalance() {
+        return getCashBalance();
     }
 
 }
