@@ -43,7 +43,7 @@ public class App extends Jooby {
         DataSource ds = require(DataSource.class);
         Logger log = getLog();
 
-        //mvc(new ExampleController_(ds,log));
+        mvc(new ExampleController_(ds,log));
         mvc(new InvestorController_());
 
         /*
