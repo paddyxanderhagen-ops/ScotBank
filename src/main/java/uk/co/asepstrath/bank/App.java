@@ -5,6 +5,7 @@ import io.jooby.ServerOptions;
 import io.jooby.SessionStore;
 import io.jooby.netty.NettyServer;
 import uk.co.asepstrath.bank.controller.InvestorController_;
+import uk.co.asepstrath.bank.controller.SignInController_;
 import uk.co.asepstrath.bank.example.ExampleController;
 import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
@@ -45,6 +46,7 @@ public class App extends Jooby {
 
         mvc(new ExampleController_(ds,log));
         mvc(new InvestorController_());
+        mvc(new SignInController_());
 
         /*
         Finally we register our application lifecycle methods
