@@ -6,8 +6,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class CashAccount implements uk.co.scotbank.CashAccount {
-    private Investor investor;
     final int ROUND = 2;
+    private Investor investor;
+
+    public CashAccount () {
+    }
 
     public CashAccount (Investor investor) {
         this.investor = investor;
