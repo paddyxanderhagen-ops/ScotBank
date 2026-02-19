@@ -21,13 +21,15 @@ public class InvestorController {
         investorService.getAll(); // probably best option for now until we can query the
         Investor investor = investorService.getInvestor(id);
 
-        CashAccount account = new CashAccount(investor);
+        CashAccount account = new CashAccount();
 
         Map<String, Object> map = new HashMap<>();
         map.put("name", investor.getName());
         map.put("balance", account.getBalance());
 
-        account.deposit(123.456);
+        account.deposit((double) 200.0F);
+        account.withdraw((double) 50.0F);
+        account.getBalance();
 
 
 

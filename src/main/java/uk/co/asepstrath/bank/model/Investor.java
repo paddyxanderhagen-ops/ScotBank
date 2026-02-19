@@ -16,7 +16,7 @@ public class Investor {
     public Investor() {
         id = "0";
         name = "";
-        cashBalance = BigDecimal.valueOf(0);
+        cashBalance = BigDecimal.valueOf(0.0);
     }
 
     public String getId() {
