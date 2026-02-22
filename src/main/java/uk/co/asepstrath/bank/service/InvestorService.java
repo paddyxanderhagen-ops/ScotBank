@@ -5,8 +5,6 @@ import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 
 public class InvestorService {

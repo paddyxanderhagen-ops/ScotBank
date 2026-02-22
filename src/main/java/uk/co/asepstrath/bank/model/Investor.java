@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 public class Investor {
     private String id;
     private String name;
-    private BigDecimal cashBalance;
+    private double cashBalance;
 
-    public Investor(String id, String name, BigDecimal cashBalance) {
+    public Investor(String id, String name, double cashBalance) {
         this.id = id;
         this.name = name;
         this.cashBalance = cashBalance;
@@ -16,7 +16,7 @@ public class Investor {
     public Investor() {
         id = "0";
         name = "";
-        cashBalance = BigDecimal.valueOf(0.0);
+        cashBalance = 0.0;
     }
 
     public String getId() {
@@ -35,11 +35,11 @@ public class Investor {
         this.name = name;
     }
 
-    public BigDecimal getCashBalance() {
+    public double getCashBalance() {
         return cashBalance;
     }
 
-    public void setCashBalance(BigDecimal cashBalance) {
+    public void setCashBalance(double cashBalance) {
         this.cashBalance = cashBalance;
     }
 }
