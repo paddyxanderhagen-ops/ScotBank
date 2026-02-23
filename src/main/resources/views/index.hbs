@@ -4,13 +4,45 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Scotbank - Home</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="/assets/styles.css">
     </head>
-    <body>
-        <h1>Hello, {{name}}</h1>
-        <p>Balance: £{{balance}}</p>
-        <p>p&l: xxx% / £xxx</p>
-        <input type="button" value="start trading">
-        <input type="button" value="p&l analysis">
-        <input type="button" value="manage account">
+    <body class="container">
+        <header>
+            <h1>Scotbank</h1>
+        </header>
+
+        <main>
+            <h2 id="greeting">Hello, {{name}}</h2>
+            <div id="balance">
+                <h3>Balance: £{{balance}}</h3>
+            </div>
+
+            <button onclick="openForm()" id="button-transaction">Deposit/Withdraw</button>
+<!--            <button onclick="withdraw()">Withdraw</button>-->
+
+            <h2 id="transaction-list">Transaction List</h2>
+
+
+            <form id="transactionForm">
+                <div id="formHeader">
+                    <button onclick="closeForm()" id="button-exit">Close X</button>
+                </div>
+                <div id="formContent">
+                    <label for="amount">Amount:</label>
+                    <input type="text" name="amount" inputmode="numeric" id="amount" step="0.01">
+                    <label for="transaction-type">Transaction type:</label>
+                    <select name="transactionType" id="transaction-type">
+                        <option value="deposit">Deposit</option>
+                        <option value="withdraw">Withdraw</option>
+                    </select>
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+        </main>
+
+        <footer>
+        </footer>
+        <script src="/assets/CashAccount.js"></script>
     </body>
 </html>

@@ -1,16 +1,19 @@
 package uk.co.asepstrath.bank;
 
-import io.jooby.Cookie;
-import io.jooby.ServerOptions;
-import io.jooby.SessionStore;
+import com.google.gson.Gson;
+import io.jooby.*;
+import io.jooby.handler.Cors;
+import io.jooby.handler.CorsHandler;
 import io.jooby.netty.NettyServer;
-import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
 import uk.co.asepstrath.bank.example.ExampleController_;
+import uk.co.asepstrath.bank.implementation.CashAccount;
+import uk.co.asepstrath.bank.service.InvestorService;
 
 
 import javax.sql.DataSource;
@@ -34,17 +37,23 @@ public class App extends Jooby {
         This will host any files in src/main/resources/assets on <host>/assets
         For example in the dice template (dice.hbs) it references "assets/dice.png" which is in resources/assets folder
          */
-        assets("/assets/*", "/assets");
+        assets("/assets/**", "/assets");
         assets("/service_worker.js","/service_worker.js");
 
-        /*
-        Now we set up our controllers and their dependencies
-         */
         DataSource ds = require(DataSource.class);
         Logger log = getLog();
+        InvestorService investorService = new InvestorService();
+
+        error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
+            ctx.setResponseType("application/json");
+            ctx.setResponseCode(StatusCode.BAD_REQUEST);
+            Gson gson = new Gson();
+            ctx.render(gson.toJson(cause.getMessage()));
+        });
 
         mvc(new ExampleController_(ds,log));
-        mvc(new HomeController_());
+        mvc(new HomeController_(investorService));
+        mvc(new CashAccountController_(investorService));
         /*
         Finally we register our application lifecycle methods
          */
