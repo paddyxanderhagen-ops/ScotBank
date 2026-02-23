@@ -19,36 +19,38 @@ public class CashAccount implements uk.co.scotbank.CashAccount {
 
     @Override
     public double getBalance() {
-        return investor.getCashBalance();
+        BigDecimal balance = BigDecimal.valueOf(investor.getCashBalance());
+        return balance.doubleValue();
     }
 
     @Override
-    public void deposit(double amount) {
-        double balance = investor.getCashBalance();
+    public void deposit(double v) {
+        BigDecimal amount = new BigDecimal(String.valueOf(v));
 
-        BigDecimal bigDecimalBal = BigDecimal.valueOf(balance);
-        BigDecimal bigDecimalAmount = BigDecimal.valueOf(amount);
-        bigDecimalAmount = bigDecimalAmount.setScale(SCALE, RoundingMode.FLOOR);
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal newBalance = BigDecimal.valueOf(getBalance()).add(amount.setScale(SCALE, RoundingMode.FLOOR));
 
-        if (bigDecimalAmount.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal newBalance = bigDecimalBal.add(bigDecimalAmount);
+            System.out.println("Deposit: " + newBalance);
+
             investor.setCashBalance(newBalance.doubleValue());
         }
     }
 
+
+
     @Override
-    public void withdraw(double amount) {
-        double balance = investor.getCashBalance();
+    public void withdraw(double v) {
+        BigDecimal amount = new BigDecimal(String.valueOf(v));
+        BigDecimal currentBalance = new BigDecimal(String.valueOf(getBalance()));
 
-        BigDecimal bigDecimalBal = BigDecimal.valueOf(balance);
-        BigDecimal bigDecimalAmount = BigDecimal.valueOf(amount);
-        bigDecimalAmount = bigDecimalAmount.setScale(SCALE, RoundingMode.FLOOR);
-
-        if (bigDecimalAmount.compareTo(BigDecimal.ZERO) >= 0  && bigDecimalAmount.compareTo(bigDecimalBal) <= 0) {
-            BigDecimal newBalance = bigDecimalBal.subtract(bigDecimalAmount);
-            investor.setCashBalance(newBalance.doubleValue());
-        } else if (bigDecimalAmount.compareTo(bigDecimalBal) > 0 || (bigDecimalAmount.compareTo(BigDecimal.ZERO) < 0)){
-            throw new IllegalArgumentException ("Error: Cannot withdraw more than current balance");
+        if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException ("Error: Withdraw amount cannot be less than 0");
+        } else if (amount.compareTo(currentBalance) > 0) {
+            throw new IllegalArgumentException("Error: Withdraw amount cannot be greater than balance");
         }
+
+        BigDecimal newBalance = currentBalance.subtract(amount.setScale(SCALE, RoundingMode.FLOOR));
+
+        investor.setCashBalance(newBalance.doubleValue());
     }
 }
