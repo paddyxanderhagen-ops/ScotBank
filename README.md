@@ -14,4 +14,5 @@ Welcome to your-bank!!
 - Boyd Scott
 - Mykhailo Shalavin
 - Patrick Hagen
+- Jack Burnett
 
