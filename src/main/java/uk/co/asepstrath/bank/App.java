@@ -4,13 +4,14 @@ import io.jooby.Cookie;
 import io.jooby.ServerOptions;
 import io.jooby.SessionStore;
 import io.jooby.netty.NettyServer;
-import uk.co.asepstrath.bank.example.ExampleController;
 import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.controller.HomeController_;
 import uk.co.asepstrath.bank.example.ExampleController_;
+
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -43,7 +44,7 @@ public class App extends Jooby {
         Logger log = getLog();
 
         mvc(new ExampleController_(ds,log));
-
+        mvc(new HomeController_());
         /*
         Finally we register our application lifecycle methods
          */
