@@ -2,15 +2,17 @@ package uk.co.asepstrath.bank;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import uk.co.asepstrath.bank.implementation.CashAccount;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AccountTests {
 
+    private static CashAccount a = new CashAccount();
+
     @Test
     public void createAccount(){
-        Account a = new Account();
         Assertions.assertTrue(a != null);
     }
 
@@ -21,6 +23,7 @@ public class AccountTests {
 
     @Test
     void deposit_IncreasesBalance(){
+
         a.deposit(100);
         assertEquals(100,a.getBalance(),"Depositing 100 should increase balance from 0 to 100.");
     }
@@ -42,7 +45,7 @@ public class AccountTests {
     void withdraw_MultipleTimes(){
         a.withdraw(50);
         a.withdraw(75);
-        assertEquals(75,a.getBalance(),"Withdrawals of 50 and 75 decreases balance from 200 to 75.")
+        assertEquals(75,a.getBalance(),"Withdrawals of 50 and 75 decreases balance from 200 to 75.");
     }
 
     @Test
@@ -59,12 +62,12 @@ public class AccountTests {
 
     @Test
     void deposit_NegativeAmount(){
-        assertThrows(IllegalArgumentException.class, () -> {a.deposit(-100);},"Depositing a negative amount should throw an error.")
+        assertThrows(IllegalArgumentException.class, () -> {a.deposit(-100);},"Depositing a negative amount should throw an error.");
     }
 
     @Test
     void withdraw_NegativeAmount(){
-        assertThrows(IllegalArgumentException.class, () -> {a.withdraw(-100);},"Withdrawing a negative amount should throw an error.")
+        assertThrows(IllegalArgumentException.class, () -> {a.withdraw(-100);},"Withdrawing a negative amount should throw an error.");
     }
 
 
