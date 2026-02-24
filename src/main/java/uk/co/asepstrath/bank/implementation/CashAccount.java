@@ -30,8 +30,6 @@ public class CashAccount implements uk.co.scotbank.CashAccount {
         if (amount.compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal newBalance = BigDecimal.valueOf(getBalance()).add(amount.setScale(SCALE, RoundingMode.FLOOR));
 
-            System.out.println("Deposit: " + newBalance);
-
             investor.setCashBalance(newBalance.doubleValue());
         }
     }
