@@ -2,12 +2,12 @@ package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
 import io.jooby.StatusCode;
-import io.jooby.annotation.*;
-import uk.co.asepstrath.bank.implementation.CashAccount;
+import io.jooby.annotation.FormParam;
+import io.jooby.annotation.POST;
+import io.jooby.annotation.PathParam;
+import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
-
-import java.util.Map;
 
 public class CashAccountController {
     private final InvestorService investorService;
@@ -25,7 +25,7 @@ public class CashAccountController {
 
         Investor investor = investorService.getInvestor(id);
 
-        CashAccount account = new CashAccount(investor);
+        CashAccountImplementation account = new CashAccountImplementation(investor);
 
         account.deposit(amount);
     }
@@ -38,7 +38,7 @@ public class CashAccountController {
 
         Investor investor = investorService.getInvestor(id);
 
-        CashAccount account = new CashAccount(investor);
+        CashAccountImplementation account = new CashAccountImplementation(investor);
 
         account.withdraw(amount);
     }

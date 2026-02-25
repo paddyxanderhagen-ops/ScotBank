@@ -2,8 +2,6 @@ package uk.co.asepstrath.bank;
 
 import com.google.gson.Gson;
 import io.jooby.*;
-import io.jooby.handler.Cors;
-import io.jooby.handler.CorsHandler;
 import io.jooby.netty.NettyServer;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
@@ -12,7 +10,6 @@ import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
 import uk.co.asepstrath.bank.example.ExampleController_;
-import uk.co.asepstrath.bank.implementation.CashAccount;
 import uk.co.asepstrath.bank.service.InvestorService;
 
 

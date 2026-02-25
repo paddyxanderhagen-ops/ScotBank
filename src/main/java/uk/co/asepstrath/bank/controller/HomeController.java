@@ -6,12 +6,10 @@ import io.jooby.StatusCode;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.PathParam;
-import io.jooby.annotation.QueryParam;
-import uk.co.asepstrath.bank.implementation.CashAccount;
+import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
 
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +39,7 @@ public class HomeController {
             return new ModelAndView<>("unauthorised.hbs", new HashMap<>());
         }
 
-        CashAccount account = new CashAccount(investor);
+        CashAccountImplementation account = new CashAccountImplementation(investor);
 
         Map<String, Object> map = new HashMap<>();
         map.put("name", investor.getName());
