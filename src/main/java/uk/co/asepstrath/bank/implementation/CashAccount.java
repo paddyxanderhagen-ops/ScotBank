@@ -26,9 +26,21 @@ public class CashAccount implements uk.co.scotbank.CashAccount {
     @Override
     public void deposit(double v) {
         BigDecimal amount = new BigDecimal(String.valueOf(v));
+        BigDecimal currentBalance = new BigDecimal(String.valueOf(getBalance()));
+
+        String stringV = Double.toString(Math.abs(v));
+        int integerPlaces = stringV.indexOf('.');
+        int decimalPlaces = stringV.length() - integerPlaces - 1;
+
+        if (decimalPlaces > 2) {
+            throw new IllegalArgumentException("Error: Cannot accept more than 2 decimal places");
+        }
 
         if (amount.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal newBalance = BigDecimal.valueOf(getBalance()).add(amount.setScale(SCALE, RoundingMode.FLOOR));
+            BigDecimal newBalance = currentBalance.add(amount.setScale(SCALE, RoundingMode.FLOOR));
+
+
+            newBalance = newBalance.setScale(SCALE, RoundingMode.FLOOR);
 
             investor.setCashBalance(newBalance.doubleValue());
         }
@@ -40,6 +52,14 @@ public class CashAccount implements uk.co.scotbank.CashAccount {
     public void withdraw(double v) {
         BigDecimal amount = new BigDecimal(String.valueOf(v));
         BigDecimal currentBalance = new BigDecimal(String.valueOf(getBalance()));
+
+        String stringV = Double.toString(Math.abs(v));
+        int integerPlaces = stringV.indexOf('.');
+        int decimalPlaces = stringV.length() - integerPlaces - 1;
+
+        if (decimalPlaces > 2) {
+            throw new IllegalArgumentException("Error: Cannot accept more than 2 decimal places");
+        }
 
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             System.out.println(amount);
