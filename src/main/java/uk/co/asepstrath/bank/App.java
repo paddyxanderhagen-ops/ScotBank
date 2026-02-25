@@ -11,12 +11,6 @@ import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
 import uk.co.asepstrath.bank.service.InvestorService;
 
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 public class App extends Jooby {
 
     {
@@ -36,8 +30,6 @@ public class App extends Jooby {
         assets("/assets/**", "/assets");
         assets("/service_worker.js","/service_worker.js");
 
-        DataSource ds = require(DataSource.class);
-        Logger log = getLog();
         InvestorService investorService = new InvestorService();
 
         error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
@@ -47,7 +39,6 @@ public class App extends Jooby {
             ctx.render(gson.toJson(cause.getMessage()));
         });
 
-//        mvc(new ExampleController_(ds,log));
         mvc(new HomeController_(investorService));
         mvc(new CashAccountController_(investorService));
         /*
@@ -68,18 +59,6 @@ public class App extends Jooby {
     public void onStart() {
         Logger log = getLog();
         log.info("Starting Up...");
-
-        // Fetch DB Source
-        DataSource ds = require(DataSource.class);
-        // Open Connection to DB
-        try (Connection connection = ds.getConnection()) {
-            //
-            Statement stmt = connection.createStatement();
-            stmt.executeUpdate("CREATE TABLE `Example` (`Key` varchar(255),`Value` varchar(255))");
-            stmt.executeUpdate("INSERT INTO Example " + "VALUES ('WelcomeMessage', 'Welcome to A Bank')");
-        } catch (SQLException e) {
-            log.error("Database Creation Error",e);
-        }
     }
 
     /*
