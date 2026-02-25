@@ -41,7 +41,8 @@ public class CashAccount implements uk.co.scotbank.CashAccount {
         BigDecimal amount = new BigDecimal(String.valueOf(v));
         BigDecimal currentBalance = new BigDecimal(String.valueOf(getBalance()));
 
-        if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            System.out.println(amount);
             throw new IllegalArgumentException ("Error: Withdraw amount cannot be less than 0");
         } else if (amount.compareTo(currentBalance) > 0) {
             throw new IllegalArgumentException("Error: Withdraw amount cannot be greater than balance");
