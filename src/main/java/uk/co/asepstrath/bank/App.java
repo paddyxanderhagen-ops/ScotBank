@@ -47,7 +47,7 @@ public class App extends Jooby {
             ctx.render(gson.toJson(cause.getMessage()));
         });
 
-        mvc(new ExampleController_(ds,log));
+//        mvc(new ExampleController_(ds,log));
         mvc(new HomeController_(investorService));
         mvc(new CashAccountController_(investorService));
         /*
