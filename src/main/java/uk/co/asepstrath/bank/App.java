@@ -9,7 +9,6 @@ import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
-import uk.co.asepstrath.bank.example.ExampleController_;
 import uk.co.asepstrath.bank.service.InvestorService;
 
 
