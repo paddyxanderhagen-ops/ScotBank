@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    $('#transactionForm').hide();
     $('#transactionForm').on('submit',function (e) {
        e.preventDefault();
         var type = $('#transaction-type').val();
@@ -46,11 +45,6 @@ function withdraw () {
     );
 }
 
-function openForm () {
-    $('#transactionForm').show();
-}
-
-function closeForm () {
-    $('#amount').val("");
-    $('#transactionForm').hide();
+function openCloseForm () {
+    $('#transactionForm').toggleClass("d-none");
 }
