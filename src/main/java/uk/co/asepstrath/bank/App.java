@@ -4,10 +4,7 @@ import io.jooby.Cookie;
 import io.jooby.ServerOptions;
 import io.jooby.SessionStore;
 import io.jooby.netty.NettyServer;
-import uk.co.asepstrath.bank.controller.InvestorController_;
-import uk.co.asepstrath.bank.controller.SignInController_;
-import uk.co.asepstrath.bank.controller.TransactionController;
-import uk.co.asepstrath.bank.controller.TransactionController_;
+import uk.co.asepstrath.bank.controller.*;
 import uk.co.asepstrath.bank.example.ExampleController;
 import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
@@ -50,6 +47,9 @@ public class App extends Jooby {
         mvc(new InvestorController_());
         mvc(new SignInController_());
         mvc(new TransactionController_());
+        mvc(new EtfController_());
+        mvc(new EquitiesController_());
+        mvc(new PricesController_());
 
         /*
         Finally we register our application lifecycle methods
