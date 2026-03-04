@@ -16,7 +16,7 @@ public class APIService {
     }
 
     public InvestorDTO getAllInvestor () {
-        url.append("/investors");
+        url.append("investors");
         String response =  Unirest.get(url.toString()).accept("application/json").asString().getBody();
 
         InvestorDTO investorDTO = gson.fromJson(response, InvestorDTO.class);
