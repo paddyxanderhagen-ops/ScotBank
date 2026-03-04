@@ -9,6 +9,7 @@ import io.jooby.annotation.PathParam;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
+import uk.co.asepstrath.bank.service.TransactionService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,10 +18,11 @@ import java.util.Map;
 public class HomeController {
 
     private final InvestorService investorService;
+    private final TransactionService transactionService;
 
-    public HomeController (InvestorService investorService) {
+    public HomeController (InvestorService investorService, TransactionService transactionService) {
         this.investorService = investorService;
-        this.investorService.getAll();
+        this.transactionService = transactionService;
     }
 
     @GET("/")

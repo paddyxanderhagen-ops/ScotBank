@@ -8,13 +8,15 @@ import io.jooby.annotation.PathParam;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
+import uk.co.asepstrath.bank.service.TransactionService;
 
 public class CashAccountController {
     private final InvestorService investorService;
+    private final TransactionService transactionService;
 
-    public CashAccountController (InvestorService investorService) {
+    public CashAccountController (InvestorService investorService, TransactionService transactionService) {
         this.investorService = investorService;
-        this.investorService.getAll();
+        this.transactionService = transactionService;
     }
 
     @POST("/{id}/deposit")
