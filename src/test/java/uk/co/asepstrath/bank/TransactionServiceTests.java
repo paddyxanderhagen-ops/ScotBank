@@ -48,21 +48,21 @@ public class TransactionServiceTests {
         assertTrue(result.contains("type: Deposit"));
         assertTrue(result.contains("investorId: JB123"));
         assertTrue(result.contains("ticker: BNNA"));
-        assertTrue(result.contains("totalCashAmount: 1000.0"));
+        assertTrue(result.contains("totalCashAmount: "+t1.getTotalCashAmount()));
     }
 
     @Test
     void testGetById_notFound() {
         String result = ts.getById("CD245", transList);
 
-        assertEquals("Transaction:999 not found", result);
+        assertEquals("Transaction:CD245 not found", result);
     }
 
     @Test
     void testGetById_emptyList() {
         String result = ts.getById("blahblah", new ArrayList<>());
 
-        assertEquals("Transaction:123 not found", result);
+        assertEquals("Transaction:blahblah not found", result);
     }
 
 
