@@ -30,7 +30,7 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
 
         checkDecimals(value);
 
-        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+        if (amount.compareTo(BigDecimal.ZERO) >= 0) {
             BigDecimal newBalance = currentBalance.add(amount.setScale(SCALE, RoundingMode.FLOOR));
 
 
