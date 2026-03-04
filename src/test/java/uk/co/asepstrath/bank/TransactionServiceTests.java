@@ -41,14 +41,14 @@ public class TransactionServiceTests {
 
     @Test
     void GetByID_CorrectDetails(){
-        String result = ts.getById("JB123",transList);
+        String result = ts.getById("123",transList);
 
         assertTrue(result.contains("id: 123"));
         assertTrue(result.contains("timestamp: 12:00"));
         assertTrue(result.contains("type: Deposit"));
         assertTrue(result.contains("investorId: JB123"));
         assertTrue(result.contains("ticker: BNNA"));
-        assertTrue(result.contains("totalCashAmount: "+t1.getTotalCashAmount()));
+        assertTrue(result.contains("totalCashAmount: 1000.0"));
     }
 
     @Test
