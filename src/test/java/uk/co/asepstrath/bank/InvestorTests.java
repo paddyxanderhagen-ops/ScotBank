@@ -52,7 +52,7 @@ public class InvestorTests {
     void Investor_setID(){
         Investor i = new Investor();
         i.setId("ZYXV4321");
-        assertEquals(i.getId(),"ZXYV4321","setID should correctly set the ID to the provided value.");
+        assertEquals(i.getId(),"ZYXV4321","setID should correctly set the ID to the provided value.");
     }
 
     @Test
