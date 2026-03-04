@@ -6,6 +6,7 @@ public class Investor {
     private double cashBalance;
 
     public Investor(String id, String name, double cashBalance) {
+
         this.id = id;
         this.name = name;
         this.cashBalance = cashBalance;
@@ -32,7 +33,7 @@ public class Investor {
     public void setName(String name) {
         this.name = name;
     }
-
+    
     public double getCashBalance() {
         return cashBalance;
     }
@@ -41,4 +42,3 @@ public class Investor {
         this.cashBalance = cashBalance;
     }
 }
-

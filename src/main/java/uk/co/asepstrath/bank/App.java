@@ -3,6 +3,7 @@ package uk.co.asepstrath.bank;
 import com.google.gson.Gson;
 import io.jooby.*;
 import io.jooby.netty.NettyServer;
+import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
@@ -31,7 +32,7 @@ public class App extends Jooby {
         assets("/service_worker.js","/service_worker.js");
 
         InvestorService investorService = new InvestorService();
-
+        
         error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
             ctx.setResponseType("application/json");
             ctx.setResponseCode(StatusCode.BAD_REQUEST);
