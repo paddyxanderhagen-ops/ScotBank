@@ -93,14 +93,20 @@ main {
     width: 90%;
     height: 75%;
     transform: translate(-50%, -50%);
+    border-radius: 5px;
 
-    #formHeader {
+    #form-header {
         display: grid;
         grid-template: "heading exit";
         grid-template-columns: 70% 30%;
         height: 10%;
         background-color: hsl(0, 0%, 80%);
-        margin: 0 0 10px 0;
+
+        h2 {
+            grid-area: heading;
+            margin: 0 0 0 5px;
+            place-self: center left;
+        }
 
         #button-exit {
             grid-area: exit;
@@ -111,13 +117,48 @@ main {
             height: 80%;
             place-self: center right;
             margin: 0 5px 0 0;
+            transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
+        }
 
+        #button-exit:hover {
+            border: 1px solid hsl(0, 0%, 85%);
+            background-color: hsl(0, 0%, 85%);
+            transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
+        }
+
+        #button-exit:active {
+            border: 1px solid hsl(0, 0%, 80%);
+            background-color: hsl(0, 0%, 80%);
+            transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
         }
     }
 
     #formContent {
-        margin: 10px 0 0 0;
-        padding: 0 5px 0 5px;
+        height: 90%;
+        padding: 5px;
+        display: grid;
+        grid-template: "amount" "transaction-type" "submit";
+        grid-template-rows: 33.33% 33.33% 33.33%;
+
+        #amount, #amount-header {
+            grid-area: amount;
+        }
+
+        #amount {
+            height: 30%;
+            font-size: 2rem;
+            place-self: baseline center;
+            width: 100%;
+            padding: 5px;
+        }
+
+        #transaction-type, #transaction-type-header {
+            grid-area: transaction-type;
+        }
+
+        #submit {
+            grid-area: submit;
+        }
     }
 }
 

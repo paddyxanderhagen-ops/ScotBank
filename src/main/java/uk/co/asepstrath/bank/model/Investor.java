@@ -1,7 +1,5 @@
 package uk.co.asepstrath.bank.model;
 
-import java.math.BigDecimal;
-
 public class Investor {
     private String id;
     private String name;

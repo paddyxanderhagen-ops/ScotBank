@@ -1,11 +1,13 @@
 $(document).ready(function () {
+    $('#transactionForm').hide();
     $('#transactionForm').on('submit',function (e) {
        e.preventDefault();
         var type = $('#transaction-type').val();
+        var amount = $('#amount').val();
 
-        if (type === "deposit") {
+        if (type === "deposit" && amount !== "") {
             deposit();
-        } else if (type === "withdraw") {
+        } else if (type === "withdraw" && amount !== "") {
             withdraw();
         }
     });
@@ -49,5 +51,6 @@ function openForm () {
 }
 
 function closeForm () {
+    $('#amount').val("");
     $('#transactionForm').hide();
 }
