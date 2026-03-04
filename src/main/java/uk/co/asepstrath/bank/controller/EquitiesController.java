@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank.controller;
 
 
 import com.google.gson.Gson;
+import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.QueryParam;
 import kong.unirest.core.Unirest;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Path("/equities")
 public class EquitiesController {
+    @GET
     String Equity(@QueryParam String ticker) {
         Gson gson = new Gson();
         String response = Unirest.get("https://api.asep-strath.co.uk/api/equities").accept("application/json").asString().getBody();
