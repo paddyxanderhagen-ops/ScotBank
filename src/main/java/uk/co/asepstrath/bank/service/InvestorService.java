@@ -20,13 +20,13 @@ public class InvestorService {
         return null;
     }
 
-    public void getAll () {
+    public List<Investor> getAll () {
         Gson gson = new Gson();
         String response =  Unirest.get("https://api.asep-strath.co.uk/api/investors").accept("application/json").asString().getBody();
 
         InvestorDTO investorResponse = gson.fromJson(response, InvestorDTO.class);
 
-        investors = investorResponse.getInvestors();
+        return investorResponse.getInvestors();
     }
 }
 

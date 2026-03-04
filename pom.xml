@@ -23,6 +23,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+
+
     <dependencies>
         <dependency>
             <groupId>io.jooby</groupId>
@@ -60,6 +62,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>io.jooby</groupId>
             <artifactId>jooby-hikari</artifactId>
         </dependency>
@@ -67,7 +75,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.4.240</version>
+            <version>2.2.224</version>
         </dependency>
 
         <!-- Tests -->
