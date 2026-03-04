@@ -9,6 +9,9 @@ import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import java.util.List;
 
 public class TransactionService {
+
+    private List<Transaction> transactionList;
+
     public String getById (String id, List<Transaction> transactionList ) {
         for (Transaction transaction : transactionList) {
             if (transaction.getId().equals(id)) {
