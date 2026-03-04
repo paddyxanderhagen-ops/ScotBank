@@ -1,24 +1,18 @@
 package uk.co.asepstrath.bank.service;
 
+import com.google.gson.Gson;
+import kong.unirest.core.Unirest;
+import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionService {
 
-    private List<Transaction> transactionList = new ArrayList<>();
-    private TransactionDTO transactionDTO;
+    private List<Transaction> transactionList;
 
-    public TransactionService () {}
-
-    public  TransactionService (TransactionDTO transactionDTO) {
-        this.transactionDTO = transactionDTO;
-    }
-
-    public String getById (String id) {
+    public String getById (String id, List<Transaction> transactionList ) {
         for (Transaction transaction : transactionList) {
             if (transaction.getId().equals(id)) {
                 return "id: " + transaction.getId() + "\ntimestamp: " + transaction.getTimestamp() + "\ntype: "  + transaction.getType() + "\ninvestorId: " + transaction.getInvestorId() + "\nticker: " + transaction.getTicker() + "\ntotalCashAmount: " + transaction.getTotalCashAmount() + "\n\n";
@@ -28,19 +22,13 @@ public class TransactionService {
     }
 
     public List<Transaction> getAll(){
-        transactionList = transactionDTO.getTransactions();
+        Gson gson = new Gson();
+        String response = Unirest.get("https://api.asep-strath.co.uk/api/transactions").accept("application/json").asString().getBody();
+
+        TransactionDTO transactionResponse = gson.fromJson(response, TransactionDTO.class);
+
+        List<Transaction> transactionList = transactionResponse.getTransactions();
+
         return transactionList;
-    }
-
-    public void createTransaction (String transactionId, String timestamp, String type, String investorId, String ticker, double amount) {
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        transaction.setTimestamp(timestamp);
-        transaction.setType(type);
-        transaction.setInvestorId(investorId);
-        transaction.setTicker(ticker);
-        transaction.setTotalCashAmount(BigDecimal.valueOf(amount));
-
-        transactionList.add(transaction);
     }
 }
