@@ -1,13 +1,12 @@
 package uk.co.asepstrath.bank;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CashAccountANDInvestor_Integration {
+public class IntegrationTesting {
 
     @Test
     void MakeCashAccountFromInvestor_Empty(){
