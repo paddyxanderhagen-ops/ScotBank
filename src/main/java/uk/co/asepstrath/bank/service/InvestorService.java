@@ -25,7 +25,8 @@ public class InvestorService {
         return null;
     }
 
-    public void getAll () {
+    public List<Investor> getAll () {
         investors = investorDTO.getInvestors();
+        return investors;
     }
 }
