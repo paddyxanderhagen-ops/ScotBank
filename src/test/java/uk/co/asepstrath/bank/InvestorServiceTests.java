@@ -20,10 +20,10 @@ public class InvestorServiceTests{
 
     @BeforeEach
     public void setup() throws Exception{
-        InvestorService s = new InvestorService();
+        s = new InvestorService();
 
-        Investor i1 = new Investor("JB123","John Biggins",400.0);
-        Investor i2 = new Investor("GP456","Gloria Prestwick",500.0);
+        i1 = new Investor("JB123","John Biggins",400.0);
+        i2 = new Investor("GP456","Gloria Prestwick",500.0);
 
         List<Investor> iList = Arrays.asList(i1,i2);
 
