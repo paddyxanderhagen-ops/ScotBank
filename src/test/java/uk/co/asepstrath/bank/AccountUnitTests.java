@@ -9,8 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AccountUnitTests {
 
-    private static CashAccountImplementation a = new CashAccountImplementation();
-
     @Test
     public void createAccount(){
         CashAccountImplementation a = new CashAccountImplementation();
