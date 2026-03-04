@@ -1,8 +1,5 @@
 package uk.co.asepstrath.bank.service;
 
-import com.google.gson.Gson;
-import kong.unirest.core.Unirest;
-import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
@@ -37,12 +34,12 @@ public class TransactionService {
 
     public void createTransaction (String transactionId, String timestamp, String type, String investorId, String ticker, double amount) {
         Transaction transaction = new Transaction();
-        transaction.setId("123");
-        transaction.setTimestamp("12:00");
-        transaction.setType("Deposit");
-        transaction.setInvestorId("JB123");
-        transaction.setTicker("BNNA");
-        transaction.setTotalCashAmount(BigDecimal.valueOf(1000.0));
+        transaction.setId(transactionId);
+        transaction.setTimestamp(timestamp);
+        transaction.setType(type);
+        transaction.setInvestorId(investorId);
+        transaction.setTicker(ticker);
+        transaction.setTotalCashAmount(BigDecimal.valueOf(amount));
 
         transactionList.add(transaction);
     }
