@@ -82,5 +82,12 @@ public class AccountUnitTests {
         assertThrows(IllegalArgumentException.class, () -> {a.withdraw(-100);},"Withdrawing a negative amount should throw an error.");
     }
 
+    @Test
+    void checkDecimals(){
+        CashAccountImplementation a = new CashAccountImplementation();
+        assertThrows(IllegalArgumentException.class,() -> {a.deposit(50.123);});
+    }
+
+
 
 }
