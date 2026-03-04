@@ -6,7 +6,6 @@ import io.jooby.SessionStore;
 import io.jooby.netty.NettyServer;
 import uk.co.asepstrath.bank.controller.InvestorController_;
 import uk.co.asepstrath.bank.controller.SignInController_;
-import uk.co.asepstrath.bank.controller.TransactionController;
 import uk.co.asepstrath.bank.controller.TransactionController_;
 import uk.co.asepstrath.bank.example.ExampleController;
 import io.jooby.Jooby;
