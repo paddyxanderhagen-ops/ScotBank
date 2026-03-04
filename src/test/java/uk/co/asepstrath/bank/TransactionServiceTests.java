@@ -1,13 +1,9 @@
 package uk.co.asepstrath.bank;
 
-import org.apiguardian.api.API;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.model.dto.TransactionDTO;
-import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
 import java.lang.reflect.Field;
@@ -23,19 +19,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TransactionServiceTests {
 
-    private static  TransactionService ts;
+    private TransactionService ts;
     private List<Transaction> transList;
     private Transaction t1;
 
-    @BeforeAll
-    public static void setup() {
+    @BeforeEach
+    public void setup() throws Exception{
         ts = new TransactionService();
-        ts.createTransaction("123", "12:00", "Deposit", "JB123", "BNNA", 1000.0);
+
+        t1 = new Transaction();
+        t1.setId("123");
+        t1.setTimestamp("12:00");
+        t1.setType("Deposit");
+        t1.setInvestorId("JB123");
+        t1.setTicker("BNNA");
+        t1.setTotalCashAmount(BigDecimal.valueOf(1000.0));
+
+        transList = new ArrayList<>();
+        transList.add(t1);
     }
 
     @Test
     void GetByID_CorrectDetails(){
-        String result = ts.getById("123");
+        String result = ts.getById("123",transList);
 
         assertTrue(result.contains("id: 123"));
         assertTrue(result.contains("timestamp: 12:00"));
@@ -47,8 +53,18 @@ public class TransactionServiceTests {
 
     @Test
     void testGetById_notFound() {
-        String result = ts.getById("CD245");
+        String result = ts.getById("CD245", transList);
 
         assertEquals("Transaction:CD245 not found", result);
     }
+
+    @Test
+    void testGetById_emptyList() {
+        String result = ts.getById("blahblah", new ArrayList<>());
+
+        assertEquals("Transaction:blahblah not found", result);
+    }
+
+
+
 }
