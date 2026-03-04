@@ -6,12 +6,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class PriceService {
-    public BigDecimal getByTimestamp(String timestamp, List<Price> priceList) {
+    public Price getByTimestamp(String timestamp, List<Price> priceList) {
         for (Price price : priceList) {
             if (price.getTimeStamp().equals(timestamp)) {
-                return price.getPrice();
+                return price;
             }
         }
-        return BigDecimal.valueOf(0);
+        return null;
     }
 }

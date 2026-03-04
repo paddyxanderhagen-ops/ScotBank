@@ -5,12 +5,12 @@ import uk.co.asepstrath.bank.model.Etf;
 import java.util.List;
 
 public class EtfService {
-    public String getByTicker(String ticker, List<Etf> Etfs){
+    public Etf getByTicker(String ticker, List<Etf> Etfs){
         for (Etf etf : Etfs) {
             if (etf.getTicker().equals(ticker)) {
-                return "Name: " + etf.getTicker() + " Description: " + etf.getDescription();
+                return etf;
             }
         }
-        return "Etf:" + ticker + " not found";
+        return null;
     }
 }

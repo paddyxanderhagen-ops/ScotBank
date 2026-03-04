@@ -12,12 +12,12 @@ import uk.co.asepstrath.bank.service.PriceService;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Path("prices")
+@Path("/prices")
 public class PricesController {
-    @GET
-    BigDecimal Prices(@QueryParam String ticker, @QueryParam String timeStamp) {
+    @GET("/price")
+    Price Price(@QueryParam String ticker, @QueryParam String timeStamp) {
         Gson gson = new Gson();
-        String response = Unirest.get("https://api.asep-strath.co.uk/api/prices/"+ticker).asString().getBody();
+        String response = Unirest.get("https://api.asep-strath.co.uk/api/prices/".concat(ticker)).asString().getBody();
 
         PriceDTO priceResponse = gson.fromJson(response, PriceDTO.class);
 
@@ -25,6 +25,17 @@ public class PricesController {
 
         PriceService priceService = new PriceService();
 
-        return priceService.getByTimestamp(timeStamp, priceList);
+        return (priceService.getByTimestamp(timeStamp, priceList));
+    }
+
+    @GET
+    List<Price> Prices(@QueryParam String ticker){
+        Gson gson = new Gson();
+        String response = Unirest.get("https://api.asep-strath.co.uk/api/prices/"+ticker).asString().getBody();
+        System.out.println(response);
+
+        PriceDTO priceResponse = gson.fromJson(response, PriceDTO.class);
+
+        return priceResponse.getPriceList();
     }
 }

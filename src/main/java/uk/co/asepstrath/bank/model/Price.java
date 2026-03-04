@@ -3,25 +3,25 @@ package uk.co.asepstrath.bank.model;
 import java.math.BigDecimal;
 
 public class Price {
-    private String timeStamp;
+    private String timestamp;
     private BigDecimal price;
 
-    public Price(String timeStamp, BigDecimal price) {
-        this.timeStamp = timeStamp;
+    public Price(String timestamp, BigDecimal price) {
+        this.timestamp = timestamp;
         this.price = price;
     }
 
     public Price() {
-        this.timeStamp = "";
+        this.timestamp = "";
         this.price = BigDecimal.valueOf(0);
     }
 
     public String getTimeStamp() {
-        return timeStamp;
+        return timestamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimeStamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     public BigDecimal getPrice() {

@@ -18,7 +18,7 @@ import java.util.List;
 @Path("/equities")
 public class EquitiesController {
     @GET
-    String Equity(@QueryParam String ticker) {
+    Equity Equity(@QueryParam String ticker) {
         Gson gson = new Gson();
         String response = Unirest.get("https://api.asep-strath.co.uk/api/equities").accept("application/json").asString().getBody();
 
@@ -29,5 +29,15 @@ public class EquitiesController {
         EquityService equityService = new EquityService();
 
         return equityService.getByTicker(ticker, equityList);
+    }
+
+    @GET
+    List<Equity> Equities() {
+        Gson gson = new Gson();
+        String response = Unirest.get("https://api.asep-strath.co.uk/api/equities").accept("application/json").asString().getBody();
+
+        EquitiesDTO equityResponse = gson.fromJson(response, EquitiesDTO.class);
+
+        return  equityResponse.getEquities();
     }
 }
