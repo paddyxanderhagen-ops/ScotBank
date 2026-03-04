@@ -10,12 +10,7 @@ import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
-import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
-import uk.co.asepstrath.bank.model.Investor;
-import uk.co.asepstrath.bank.model.dto.InvestorDTO;
-import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.InvestorService;
-import uk.co.asepstrath.bank.service.TransactionService;
 
 public class App extends Jooby {
 
@@ -31,19 +26,22 @@ public class App extends Jooby {
 
         /*
         This will host any files in src/main/resources/assets on <host>/assets
+        For example in the dice template (dice.hbs) it references "assets/dice.png" which is in resources/assets folder
          */
         assets("/assets/**", "/assets");
         assets("/service_worker.js","/service_worker.js");
 
-        APIService api = new APIService();
+        InvestorService investorService = new InvestorService();
+        
+        error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
+            ctx.setResponseType("application/json");
+            ctx.setResponseCode(StatusCode.BAD_REQUEST);
+            Gson gson = new Gson();
+            ctx.render(gson.toJson(cause.getMessage()));
+        });
 
-        InvestorService investorService = new InvestorService(api.getAllInvestor());
-        TransactionService transactionService = new TransactionService(api.getAllTransaction());
-        investorService.getAll();
-        transactionService.getAll();
-
-        mvc(new HomeController_(investorService, transactionService));
-        mvc(new CashAccountController_(investorService, transactionService));
+        mvc(new HomeController_(investorService));
+        mvc(new CashAccountController_(investorService));
         /*
         Finally we register our application lifecycle methods
          */
