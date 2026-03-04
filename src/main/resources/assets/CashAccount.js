@@ -1,9 +1,12 @@
 $(document).ready(function () {
-    $('#transactionForm').hide();
-    $('#transactionForm').on('submit',function (e) {
+    let type = $('#transaction-type').val();
+    let amount = $('#amount').val();
+    let form = $('#transactionForm');
+
+    form.on('submit',function (e) {
        e.preventDefault();
-        var type = $('#transaction-type').val();
-        var amount = $('#amount').val();
+        type = $('#transaction-type').val();
+        amount = $('#amount').val();
 
         if (type === "deposit" && amount !== "") {
             deposit();
@@ -15,42 +18,36 @@ $(document).ready(function () {
 
 function deposit() {
     let id = window.location.pathname;
-    $.post(`${id}/deposit`,
+    let posting = $.post(`${id}/deposit`,
         {
             amount: $("#amount").val()
         }, function (data, response) {
             if (response === "success") {
                 window.location.href=`${id}`;
-            } else {
-                alert("Submission Failed");
             }
         }
     );
+
+    posting.fail(function(xhr) {
+        $('#amount-error').html(xhr.responseJSON).show();
+    });
 }
 
 function withdraw () {
     let id = window.location.pathname;
-    var posting = $.post(`${id}/withdraw`,
+    let posting = $.post(`${id}/withdraw`,
         {
             amount: $("#amount").val()
         }, function (data, status) {
-            console.log(status);
             window.location.href=`${id}`;
         }
-    )
-
-    posting.fail(
-        function (xhr) {
-            alert(JSON.parse(xhr.responseText));
-        }
     );
+
+    posting.fail(function(xhr) {
+        $('#amount-error').html(xhr.responseJSON).show();
+    });
 }
 
-function openForm () {
-    $('#transactionForm').show();
-}
-
-function closeForm () {
-    $('#amount').val("");
-    $('#transactionForm').hide();
+function openCloseForm () {
+    $('#transactionForm').toggleClass("d-none");
 }
