@@ -30,7 +30,6 @@ public class TransactionServiceTests {
     @BeforeAll
     public static void setup() {
         ts = new TransactionService();
-
         ts.createTransaction("123", "12:00", "Deposit", "JB123", "BNNA", 1000.0);
     }
 

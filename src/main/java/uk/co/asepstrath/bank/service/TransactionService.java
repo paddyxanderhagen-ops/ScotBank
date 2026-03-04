@@ -7,11 +7,12 @@ import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionService {
 
-    private List<Transaction> transactionList = null;
+    private List<Transaction> transactionList = new ArrayList<>();
     private TransactionDTO transactionDTO;
 
     public TransactionService () {}
