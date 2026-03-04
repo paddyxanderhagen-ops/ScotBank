@@ -14,7 +14,7 @@ import uk.co.asepstrath.bank.service.TransactionService;
 
 import java.util.List;
 
-@Path("/Etfs")
+@Path("/etfs")
 public class EtfController {
     @GET
     String Etf(@QueryParam String ticker) {
