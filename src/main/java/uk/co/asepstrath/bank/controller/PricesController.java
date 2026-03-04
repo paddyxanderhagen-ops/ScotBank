@@ -25,6 +25,6 @@ public class PricesController {
 
         PriceService priceService = new PriceService();
 
-        priceService.getByTimestamp(timeStamp, priceList);
+        return priceService.getByTimestamp(timeStamp, priceList);
     }
 }
