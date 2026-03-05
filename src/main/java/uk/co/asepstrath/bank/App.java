@@ -89,7 +89,7 @@ public class App extends Jooby {
                 var list = new java.util.ArrayList<String>();
 
                 while (rs.next()) {
-                    list.add(rs.getString("id") + " - " + rs.getString("name"));
+                    list.add(rs.getString("id") + " - " + rs.getString("name") + " - " + rs.getDouble("cash_balance"));
                 }
 
                 return list;
@@ -117,15 +117,16 @@ public class App extends Jooby {
         try (var conn = ds.getConnection();
              var stmt = conn.createStatement()) {
 
-            //overwrirting old investors table as its pulled from api every time
-            //will change it later
-            stmt.execute("DROP TABLE IF EXISTS investor");
+            //stmt.execute("DROP TABLE IF EXISTS investor");
 
             stmt.execute("""
             CREATE TABLE IF NOT EXISTS investor (
             id VARCHAR(36) PRIMARY KEY,
-            name VARCHAR(255) NOT NULL
+            name VARCHAR(255) NOT NULL,
+            cash_balance DECIMAL(15,2) NOT NULL
             )""");
+
+
 
         } catch (Exception e) {
             throw new RuntimeException(e);
