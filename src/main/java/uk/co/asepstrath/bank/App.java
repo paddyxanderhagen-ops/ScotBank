@@ -10,6 +10,7 @@ import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
+import uk.co.asepstrath.bank.controller.LoginController_;
 import uk.co.asepstrath.bank.service.InvestorService;
 
 public class App extends Jooby {
@@ -42,6 +43,7 @@ public class App extends Jooby {
 
         mvc(new HomeController_(investorService));
         mvc(new CashAccountController_(investorService));
+        mvc(new LoginController_());
         /*
         Finally we register our application lifecycle methods
          */

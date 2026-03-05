@@ -1,0 +1,28 @@
+package uk.co.asepstrath.bank.controller;
+
+import io.jooby.Context;
+import io.jooby.ModelAndView;
+import io.jooby.Session;
+import io.jooby.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+@Path("/login")
+public class LoginController {
+
+    @GET("")
+    public ModelAndView<Map<String, Object>> loginPage () {
+        return new ModelAndView<>("login.hbs", new HashMap<>());
+    }
+
+    @POST("")
+    public void postLogin (@FormParam String id, Context ctx) {
+        id = "00000000-0000-0000-aa61-6abe17610c9a";
+        Session session = ctx.session();
+        session.put("id", id);
+        ctx.sendRedirect("/dashboard");
+    }
+
+}
