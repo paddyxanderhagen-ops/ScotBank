@@ -32,21 +32,6 @@ public class App extends Jooby {
 
 
         DataSource ds = require(DataSource.class);
-        CashAccountRepository repo = new CashAccountRepository(ds);
-
-        post("/account", ctx -> {
-            long id = ctx.query("id").longValue();
-            String name = ctx.query("name").value();
-            var balance = new java.math.BigDecimal(ctx.query("balance").value());
-
-            repo.createAccount(id, name, balance);
-            return "Created";
-        });
-
-        get("/account/{id}", ctx -> {
-            long id = ctx.path("id").longValue();
-            return repo.getBalance(id);
-        });
         /*
         This will host any files in src/main/resources/assets on <host>/assets
         For example in the dice template (dice.hbs) it references "assets/dice.png" which is in resources/assets folder
