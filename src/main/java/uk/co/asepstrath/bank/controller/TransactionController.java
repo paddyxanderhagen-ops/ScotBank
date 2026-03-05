@@ -11,6 +11,7 @@ import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.service.TransactionService;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class TransactionController {
     }
 
     @GET("/Shares")
-    public HashMap<String, Integer> investor(@QueryParam String investorId){
+    public HashMap<String, BigDecimal> investor(@QueryParam String investorId){
         Gson gson = new Gson();
         String response = Unirest.get("https://api.asep-strath.co.uk/api/transactions").accept("application/json").asString().getBody();
 
@@ -42,6 +43,6 @@ public class TransactionController {
 
         TransactionService transactionService = new TransactionService();
 
-        return transactionService.getNumberOfShares(investorId, transactionList);
+        return (transactionService.getNumberOfShares(investorId, transactionList));
     }
 }

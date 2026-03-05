@@ -1,8 +1,11 @@
 package uk.co.asepstrath.bank.service;
 
+import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,17 +19,23 @@ public class TransactionService {
         return "Transaction:" + id + " not found";
     }
 
-    public HashMap<String, Integer> getNumberOfShares(String InvestorId, List<Transaction> transactionList) {
-        HashMap<String, Integer> shares = new HashMap<>();
-        int c;
+    public HashMap<String, BigDecimal> getNumberOfShares(String InvestorId, List<Transaction> transactionList) {
+        HashMap<String, BigDecimal> shares = new HashMap<>();
+        BigDecimal c;
+        BigDecimal d;
         for (Transaction transaction : transactionList) {
             if (transaction.getType().equals("BUY")) {
                 if (transaction.getInvestorId().equals(InvestorId)) {
-                    c = shares.getOrDefault(transaction.getTicker(), 0);
-                    if (c == 0) {
-                        shares.put(transaction.getTicker(), 1);
+                    c = shares.getOrDefault(transaction.getTicker(), BigDecimal.ZERO);
+                    if (c.equals(0)) {
+                        PricesController pricesController = new PricesController();
+                        d = transaction.getTotalCashAmount().divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
+                        shares.put(transaction.getTicker(), d);
                     } else {
-                        shares.put(transaction.getTicker(), c + 1);
+                        PricesController pricesController = new PricesController();
+                        d = transaction.getTotalCashAmount().divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
+                        c = c.add(d);
+                        shares.put(transaction.getTicker(), c);
                     }
                 }
             }
