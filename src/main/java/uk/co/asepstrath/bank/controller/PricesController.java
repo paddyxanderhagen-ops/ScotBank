@@ -15,7 +15,7 @@ import java.util.List;
 @Path("/prices")
 public class PricesController {
     @GET("/price")
-    Price Price(@QueryParam String ticker, @QueryParam String timeStamp) {
+    BigDecimal Price(@QueryParam String ticker, @QueryParam String timeStamp) {
         Gson gson = new Gson();
         String response = Unirest.get("https://api.asep-strath.co.uk/api/prices/".concat(ticker)).asString().getBody();
 
@@ -25,7 +25,7 @@ public class PricesController {
 
         PriceService priceService = new PriceService();
 
-        return (priceService.getByTimestamp(timeStamp, priceList));
+        return priceService.getByTimestamp(timeStamp,priceList).getPrice();
     }
 
     @GET

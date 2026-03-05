@@ -2,23 +2,21 @@ package uk.co.asepstrath.bank.controller;
 
 
 import com.google.gson.Gson;
-import io.jooby.annotation.GET;
-import io.jooby.annotation.Path;
-import io.jooby.annotation.QueryParam;
+import io.jooby.annotation.*;
 import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.model.Equity;
-import uk.co.asepstrath.bank.model.Etf;
+import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.dto.EquitiesDTO;
-import uk.co.asepstrath.bank.model.dto.EtfDTO;
+import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import uk.co.asepstrath.bank.service.EquityService;
-import uk.co.asepstrath.bank.service.EtfService;
+import uk.co.asepstrath.bank.service.InvestorService;
 
 import java.util.List;
 
 @Path("/equities")
 public class EquitiesController {
-    @GET
-    Equity Equity(@QueryParam String ticker) {
+    @GET("/equity")
+    public Equity Equity(@QueryParam String ticker) {
         Gson gson = new Gson();
         String response = Unirest.get("https://api.asep-strath.co.uk/api/equities").accept("application/json").asString().getBody();
 
@@ -32,12 +30,14 @@ public class EquitiesController {
     }
 
     @GET
-    List<Equity> Equities() {
+    public List<Equity> home (@QueryParam String id) {
         Gson gson = new Gson();
-        String response = Unirest.get("https://api.asep-strath.co.uk/api/equities").accept("application/json").asString().getBody();
+        String response =  Unirest.get("https://api.asep-strath.co.uk/api/equities").accept("application/json").asString().getBody();
 
         EquitiesDTO equityResponse = gson.fromJson(response, EquitiesDTO.class);
 
-        return  equityResponse.getEquities();
+        List<Equity> equityList = equityResponse.getEquities();
+
+        return equityList;
     }
 }

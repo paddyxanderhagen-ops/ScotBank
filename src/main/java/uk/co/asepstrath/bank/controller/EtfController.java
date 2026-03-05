@@ -16,7 +16,7 @@ import java.util.List;
 
 @Path("/etfs")
 public class EtfController {
-    @GET
+    @GET("/etf")
     Etf Etf(@QueryParam String ticker) {
         Gson gson = new Gson();
         String response = Unirest.get("https://api.asep-strath.co.uk/api/etfs").accept("application/json").asString().getBody();
@@ -35,8 +35,10 @@ public class EtfController {
         Gson gson = new Gson();
         String response = Unirest.get("https://api.asep-strath.co.uk/api/etfs").accept("application/json").asString().getBody();
 
-        EtfDTO transactionResponse = gson.fromJson(response, EtfDTO.class);
+        EtfDTO etfResponse = gson.fromJson(response, EtfDTO.class);
 
-        return transactionResponse.getEtfs();
+        System.out.println(etfResponse.getEtfs());
+
+        return etfResponse.getEtfs();
     }
 }
