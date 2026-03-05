@@ -19,7 +19,6 @@ public class LoginController {
 
     @POST("")
     public void postLogin (@FormParam String id, Context ctx) {
-        id = "00000000-0000-0000-aa61-6abe17610c9a";
         Session session = ctx.session();
         session.put("id", id);
         ctx.sendRedirect("/dashboard");

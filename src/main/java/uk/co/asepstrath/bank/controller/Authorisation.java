@@ -10,10 +10,10 @@ public class Authorisation {
     }
 
     public boolean isAuthorised () {
-        if (investor != null) {
-            return true;
+        if (investor == null) {
+            return false;
         }
 
-        return false;
+        return true;
     }
 }

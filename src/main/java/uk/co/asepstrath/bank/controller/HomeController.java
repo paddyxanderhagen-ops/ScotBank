@@ -26,17 +26,16 @@ public class HomeController {
     }
 
     @GET("/")
-    public ModelAndView<Map<String, Object>> homePage (@PathParam String id) {
+    public ModelAndView<Map<String, Object>> landingPage (@PathParam String id) {
         if (id == null) {
-            return new ModelAndView<>("unauthorised.hbs", new HashMap<>());
+            return new ModelAndView<>("landingPage.hbs", new HashMap<>());
         }
         return null;
     }
 
     @GET("/dashboard")
-    public ModelAndView<Map<String, Object>> dashboardView (Context ctx) {
+    public ModelAndView<Map<String, Object>> dashboardPage (Context ctx) {
         Session session = ctx.session();
-
         String id = null;
         if (!session.get("id").isMissing()) {
             id = session.get("id").value();
