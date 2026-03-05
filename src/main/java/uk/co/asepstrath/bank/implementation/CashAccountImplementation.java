@@ -30,13 +30,15 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
 
         checkDecimals(value);
 
-        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+        if (amount.compareTo(BigDecimal.ZERO) >= 0) {
             BigDecimal newBalance = currentBalance.add(amount.setScale(SCALE, RoundingMode.FLOOR));
 
 
             newBalance = newBalance.setScale(SCALE, RoundingMode.FLOOR);
 
             investor.setCashBalance(newBalance.doubleValue());
+        } else {
+            throw new IllegalArgumentException ("Deposit amount cannot be less than 0");
         }
     }
 
@@ -50,9 +52,9 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
         checkDecimals(value);
 
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException ("Error: Withdraw amount cannot be less than 0");
+            throw new IllegalArgumentException ("Withdraw amount cannot be less than 0");
         } else if (amount.compareTo(currentBalance) > 0) {
-            throw new IllegalArgumentException("Error: Withdraw amount cannot be greater than balance");
+            throw new IllegalArgumentException("Withdraw amount cannot be greater than balance");
         }
 
         BigDecimal newBalance = currentBalance.subtract(amount.setScale(SCALE, RoundingMode.FLOOR));
@@ -66,7 +68,7 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
         int decimalPlaces = stringV.length() - integerPlaces - 1;
 
         if (decimalPlaces > 2) {
-            throw new IllegalArgumentException("Error: Cannot accept more than 2 decimal places");
+            throw new IllegalArgumentException("Cannot accept more than 2 decimal places");
         }
 
     }

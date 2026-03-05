@@ -1,6 +1,9 @@
 package uk.co.asepstrath.bank;
+
 import com.google.gson.Gson;
 import io.jooby.*;
+import io.jooby.netty.NettyServer;
+import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
@@ -98,8 +101,7 @@ public class App extends Jooby {
     }
 
     public static void main(final String[] args) {
-        //runApp(args, new NettyServer(new ServerOptions()), App::new);
-        runApp(args, App::new);
+        runApp(args, new NettyServer(new ServerOptions()), App::new);
     }
 
     /*

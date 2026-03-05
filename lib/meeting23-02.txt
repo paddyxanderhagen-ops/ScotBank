@@ -1,0 +1,68 @@
+Retrospective Meeting 23/2
+
+We discussed points and organised them in to the "Start, Stop, Continue" format.
+
+1: Progress Review
+
+- We all discussed the progress we have made.
+- Boyd demonstrated the work he had done adding "withdraw" and "deposit" tabs.
+- Reviewed week 6 demonstration document against current progress.
+- Confirmed the work was being completed ahead of 25/2.
+
+2: Testing
+
+- Reviewed AccountTests class written by Jack
+- Team identified test cases to be added:
+	- Cannot withdraw more than current balance.
+	- Cannot withdraw more than £10K at one time.
+- Mykhailo corrected syntax errors in class.
+- Identified issue with locality of test variable, eventually fixed.
+- Discussed QA test suite.
+- Corrected CashAccount to throw IllegalArgumentException for negative inputs to methods.
+
+3: Merge Conflicts
+
+- Discussed how to handle merge conflicts and agreed branch practises.
+- Reviewed ways to resolve failing tests.
+
+4: Feature & User Story Expansion
+
+- Discussed adding of user stories for capital gains tax requirements.
+
+5: Planning Ahead
+
+- Discussed things that can be done going into week 7. Mainly improving presentation of webpages.
+
+
+
+Below is an action list based on the discussion points
+
+Stop:
+
+Things we have fixed/need to fix.
+
+- Merging branches causing conflicts.
+- Failing tests.
+- Tests with syntax issues.
+
+Start:
+
+Things we need to implement or begin.
+
+- Add test preventing withdrawing of more than balance from CashAccount
+- Add test preventing withdrawal of more than £10K.
+- Write more unit tests in general to improve line coverage.
+- Write integration tests.
+- Add user stories for capital gains tax.
+- Work on HTML for existing pages.
+- Review progress before demonstration.
+- Test exception handling for CashAccount.
+
+Continue:
+
+Things we want to keep doing.
+
+- Regular progress reviews.
+- Reviewing tests as a group.
+- Reflecting on improvements for next weeks.
+
