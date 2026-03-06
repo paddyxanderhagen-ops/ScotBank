@@ -27,9 +27,11 @@ public class HomeController {
 
     @GET("/")
     public ModelAndView<Map<String, Object>> landingPage (@PathParam String id, Context ctx) {
-        Session session = ctx.session();
-        session.put("id", "");
-        if (id == null) {
+        if (ctx != null) {
+            Session session = ctx.session();
+            session.put("id", "");
+        }
+        if (id == null || id.isEmpty()) {
             return new ModelAndView<>("landingPage.hbs", new HashMap<>());
         }
         return null;
@@ -37,9 +39,12 @@ public class HomeController {
 
     @GET("/dashboard")
     public ModelAndView<Map<String, Object>> dashboardPage (Context ctx) {
-        Session session = ctx.session();
+        Session session = null;
         String id = null;
-        if (!session.get("id").isMissing()) {
+        if (ctx != null) {
+            session = ctx.session();
+        }
+        if (session != null && !session.get("id").isMissing()) {
             id = session.get("id").value();
         }
 

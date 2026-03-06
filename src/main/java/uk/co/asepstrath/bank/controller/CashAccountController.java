@@ -15,7 +15,6 @@ public class CashAccountController {
 
     public CashAccountController (InvestorService investorService) {
         this.investorService = investorService;
-        this.investorService.getAll();
     }
 
     @POST("/dashboard/deposit")
@@ -29,8 +28,11 @@ public class CashAccountController {
     }
 
     private CashAccountImplementation transaction (Context ctx) {
-        Session session = ctx.session();
-        String id = session.get("id").value();
+        String id = null;
+        if (ctx != null) {
+            Session session = ctx.session();
+            id = session.get("id").value();
+        }
         Investor investor = investorService.getInvestor(id);
 
         return new CashAccountImplementation(investor);

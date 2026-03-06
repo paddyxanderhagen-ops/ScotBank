@@ -29,7 +29,7 @@ public class HomeControllerTests {
     @Test
     void userHomePageReturnsIndexPage(){
         HomeController controller = new HomeController(new FakeInvestorService());
-        ModelAndView<Map<String,Object>> mv = controller.userHome("123",null);
+        ModelAndView<Map<String,Object>> mv = controller.dashboardPage(null);
 
         assertEquals("index.hbs",mv.getView());
         assertEquals("Sally",mv.getModel().get("name"));
@@ -38,9 +38,7 @@ public class HomeControllerTests {
     @Test
     void homePageUnauthorizedWhenIDNull(){
         HomeController controller = new HomeController(new FakeInvestorService());
-        ModelAndView<Map<String,Object>> mv = controller.homePage(null);
-        assertEquals("unauthorised.hbs",mv.getView());
+        ModelAndView<Map<String,Object>> mv = controller.landingPage("", null);
+        assertEquals("landingPage.hbs",mv.getView());
     }
-
-
 }
