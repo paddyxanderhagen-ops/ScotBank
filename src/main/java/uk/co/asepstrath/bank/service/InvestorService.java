@@ -1,7 +1,5 @@
 package uk.co.asepstrath.bank.service;
 
-import com.google.gson.Gson;
-import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 
@@ -30,12 +28,6 @@ public class InvestorService {
     }
 
     public List<Investor> getAll () {
-        Gson gson = new Gson();
-        String response =  Unirest.get("https://api.asep-strath.co.uk/api/investors").accept("application/json").asString().getBody();
-
-        InvestorDTO investorResponse = gson.fromJson(response, InvestorDTO.class);
-
-        return investorResponse.getInvestors();
+        return investors;
     }
 }
-

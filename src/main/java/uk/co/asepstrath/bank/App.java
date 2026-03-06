@@ -13,6 +13,7 @@ import uk.co.asepstrath.bank.controller.HomeController_;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.repository.CashAccountRepository;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
+import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.InvestorService;
 import javax.sql.DataSource;
 import java.util.List;
@@ -119,11 +120,11 @@ public class App extends Jooby {
             throw new RuntimeException(e);
         }
 
-        InvestorService service = new InvestorService();
+        APIService api = new APIService();
         InvestorRepository repo = new InvestorRepository(ds);
 
         try {
-            List <Investor> investors = service.getAll();
+            List <Investor> investors = api.getAllInvestor().getInvestors();
             repo.saveAll(investors);
         } catch (Exception e) {
             log.warn("Failed to load investors from API", e);
