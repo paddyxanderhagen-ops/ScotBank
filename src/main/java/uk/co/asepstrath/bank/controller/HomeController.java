@@ -26,7 +26,9 @@ public class HomeController {
     }
 
     @GET("/")
-    public ModelAndView<Map<String, Object>> landingPage (@PathParam String id) {
+    public ModelAndView<Map<String, Object>> landingPage (@PathParam String id, Context ctx) {
+        Session session = ctx.session();
+        session.put("id", "");
         if (id == null) {
             return new ModelAndView<>("landingPage.hbs", new HashMap<>());
         }
@@ -45,7 +47,7 @@ public class HomeController {
         authorisation = new Authorisation(investor);
 
         if (!authorisation.isAuthorised()) {
-            ctx.sendRedirect("/");
+            ctx.sendRedirect("/login");
         }
 
         CashAccountImplementation account = new CashAccountImplementation(investor);
