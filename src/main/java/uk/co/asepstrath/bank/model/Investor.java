@@ -6,7 +6,6 @@ public class Investor {
     private double cashBalance;
 
     public Investor(String id, String name, double cashBalance) {
-
         this.id = id;
         this.name = name;
         this.cashBalance = cashBalance;

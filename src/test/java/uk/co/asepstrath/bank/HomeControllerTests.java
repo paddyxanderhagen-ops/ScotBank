@@ -6,6 +6,8 @@ import uk.co.asepstrath.bank.controller.HomeController;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +21,9 @@ public class HomeControllerTests {
             return i;
         }
         @Override
-        public void getAll(){}
+        public List<Investor> getAll(){
+            return new ArrayList<>();
+        }
     }
 
     @Test

@@ -19,7 +19,8 @@ public class CashAccountControllerTests {
             return new Investor("123","Johnny B Good",300);
         }
 
-        @Override public List<Investor> getAll(){
+
+        public List<Investor> getAll(){
             return new ArrayList<>();
         }
     }
