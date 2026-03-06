@@ -17,13 +17,12 @@ $(document).ready(function () {
 });
 
 function deposit() {
-    let id = window.location.pathname;
-    let posting = $.post(`${id}/deposit`,
+    let posting = $.post(`dashboard/deposit`,
         {
             amount: $("#amount").val()
         }, function (data, response) {
             if (response === "success") {
-                window.location.href=`${id}`;
+                window.location.href=`/dashboard`;
             }
         }
     );
@@ -34,12 +33,11 @@ function deposit() {
 }
 
 function withdraw () {
-    let id = window.location.pathname;
-    let posting = $.post(`${id}/withdraw`,
+    let posting = $.post(`dashboard/withdraw`,
         {
             amount: $("#amount").val()
         }, function (data, status) {
-            window.location.href=`${id}`;
+            window.location.href=`dashboard`;
         }
     );
 

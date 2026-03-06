@@ -30,7 +30,7 @@ public class CashAccountControllerTests {
         InvestorService s = new FakeInvestorService();
         CashAccountController c = new CashAccountController(s);
 
-        assertDoesNotThrow(() -> c.deposit("123",100.0,null));
+        assertDoesNotThrow(() -> c.deposit(100.0,null));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class CashAccountControllerTests {
         InvestorService s = new FakeInvestorService();
         CashAccountController c = new CashAccountController(s);
 
-        assertDoesNotThrow(() -> c.withdraw("123",100.0,null));
+        assertDoesNotThrow(() -> c.withdraw(100.0,null));
     }
 
 }

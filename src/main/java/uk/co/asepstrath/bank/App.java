@@ -10,8 +10,8 @@ import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
+import uk.co.asepstrath.bank.controller.LoginController_;
 import uk.co.asepstrath.bank.model.Investor;
-import uk.co.asepstrath.bank.repository.CashAccountRepository;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.InvestorService;
@@ -51,6 +51,7 @@ public class App extends Jooby {
 
         mvc(new HomeController_(investorService));
         mvc(new CashAccountController_(investorService));
+        mvc(new LoginController_());
         /*
         Finally we register our application lifecycle methods
          */
@@ -98,14 +99,10 @@ public class App extends Jooby {
         Logger log = getLog();
         log.info("Starting Up...");
 
-
-
         DataSource ds = require(DataSource.class);
 
         try (var conn = ds.getConnection();
              var stmt = conn.createStatement()) {
-
-            //stmt.execute("DROP TABLE IF EXISTS investor");
 
             stmt.execute("""
             CREATE TABLE IF NOT EXISTS investor (

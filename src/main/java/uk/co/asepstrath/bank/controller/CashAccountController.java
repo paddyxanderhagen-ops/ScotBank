@@ -1,6 +1,7 @@
 package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
+import io.jooby.Session;
 import io.jooby.StatusCode;
 import io.jooby.annotation.FormParam;
 import io.jooby.annotation.POST;
@@ -14,33 +15,27 @@ public class CashAccountController {
 
     public CashAccountController (InvestorService investorService) {
         this.investorService = investorService;
-        this.investorService.getAll();
     }
 
-    @POST("/{id}/deposit")
-    public void deposit(@PathParam String id, @FormParam double amount, Context ctx) {
-        if (id == null) {
-            ctx.setResponseCode(StatusCode.FORBIDDEN);
-        }
-
-        Investor investor = investorService.getInvestor(id);
-
-        CashAccountImplementation account = new CashAccountImplementation(investor);
-
-        account.deposit(amount);
+    @POST("/dashboard/deposit")
+    public void deposit(@FormParam double amount, Context ctx) {
+        transaction(ctx).deposit(amount);
     }
 
-    @POST("/{id}/withdraw")
-    public void withdraw(@PathParam String id, @FormParam double amount, Context ctx) {
-        if (id == null) {
-            ctx.setResponseCode(StatusCode.FORBIDDEN);
-        }
+    @POST("/dashboard/withdraw")
+    public void withdraw(@FormParam double amount, Context ctx) {
+        transaction(ctx).withdraw(amount);
+    }
 
+    private CashAccountImplementation transaction (Context ctx) {
+        String id = null;
+        if (ctx != null) {
+            Session session = ctx.session();
+            id = session.get("id").value();
+        }
         Investor investor = investorService.getInvestor(id);
 
-        CashAccountImplementation account = new CashAccountImplementation(investor);
-
-        account.withdraw(amount);
+        return new CashAccountImplementation(investor);
     }
 }
 

@@ -2,8 +2,10 @@ package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
 import io.jooby.ModelAndView;
+import io.jooby.Session;
 import io.jooby.StatusCode;
 import io.jooby.annotation.GET;
+import io.jooby.annotation.HeaderParam;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.PathParam;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
@@ -17,26 +19,40 @@ import java.util.Map;
 public class HomeController {
 
     private final InvestorService investorService;
+    private Authorisation authorisation;
 
     public HomeController (InvestorService investorService) {
         this.investorService = investorService;
-        this.investorService.getAll();
     }
 
     @GET("/")
-    public ModelAndView<Map<String, Object>> homePage (@PathParam String id) {
-        if (id == null) {
-            return new ModelAndView<>("unauthorised.hbs", new HashMap<>());
+    public ModelAndView<Map<String, Object>> landingPage (@PathParam String id, Context ctx) {
+        if (ctx != null) {
+            Session session = ctx.session();
+            session.put("id", "");
+        }
+        if (id == null || id.isEmpty()) {
+            return new ModelAndView<>("landingPage.hbs", new HashMap<>());
         }
         return null;
     }
 
-    @GET("/{id}")
-    public ModelAndView<Map<String, Object>> userHome (@PathParam String id, Context ctx) {
+    @GET("/dashboard")
+    public ModelAndView<Map<String, Object>> dashboardPage (Context ctx) {
+        Session session = null;
+        String id = null;
+        if (ctx != null) {
+            session = ctx.session();
+        }
+        if (session != null && !session.get("id").isMissing()) {
+            id = session.get("id").value();
+        }
+
         Investor investor = investorService.getInvestor(id);
-        if (investor == null) {
-            ctx.setResponseCode(StatusCode.UNAUTHORIZED);
-            return new ModelAndView<>("unauthorised.hbs", new HashMap<>());
+        authorisation = new Authorisation(investor);
+
+        if (!authorisation.isAuthorised()) {
+            ctx.sendRedirect("/login");
         }
 
         CashAccountImplementation account = new CashAccountImplementation(investor);
