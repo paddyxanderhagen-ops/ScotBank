@@ -1,11 +1,12 @@
 package uk.co.asepstrath.bank;
 
-import io.jooby.Context;
-import io.jooby.StatusCode;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.controller.CashAccountController;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +19,9 @@ public class CashAccountControllerTests {
             return new Investor("123","Johnny B Good",300);
         }
 
-        @Override public void getAll(){}
+        @Override public List<Investor> getAll(){
+            return new ArrayList<>();
+        }
     }
 
     @Test
