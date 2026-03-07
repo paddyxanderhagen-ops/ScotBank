@@ -50,7 +50,5 @@ public class Investor {
         return stocks;
     }
 
-    public void setStocks(Stock stock) {
-        stocks.add(stock);
-    }
+    public void setStocks(Stock stock) { stocks.add(stock); }
 }
