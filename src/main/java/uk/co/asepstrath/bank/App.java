@@ -12,10 +12,14 @@ import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
 import uk.co.asepstrath.bank.controller.LoginController_;
 import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
+import uk.co.asepstrath.bank.repository.TransactionRepository;
 import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.InvestorService;
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -85,6 +89,23 @@ public class App extends Jooby {
                 return list;
             }
         });
+
+        get("/debug/transactions", ctx -> {
+            try (Connection conn = ds.getConnection();
+                 var stmt = conn.createStatement();
+                 var rs = stmt.executeQuery("SELECT * FROM transaction")) {
+
+                List<String> list = new java.util.ArrayList<>();
+
+
+                while (rs.next()) {
+                    list.add(rs.getString("id") + " - " + rs.getString("timestamp")
+                            + " - " + rs.getString("type") + rs.getString("investor_id")
+                            + rs.getString("ticker") + rs.getDouble("total_cash_amount"));
+                }
+                return list;
+            }
+        });
     }
 
     public static void main(final String[] args) {
@@ -95,7 +116,7 @@ public class App extends Jooby {
     This function will be called when the application starts up,
     it should be used to ensure that the DB is properly setup
      */
-    public void onStart() {
+    public void onStart() throws SQLException {
         Logger log = getLog();
         log.info("Starting Up...");
 
@@ -111,20 +132,44 @@ public class App extends Jooby {
             cash_balance DECIMAL(15,2) NOT NULL
             )""");
 
+            stmt.execute("""
+            CREATE TABLE IF NOT EXISTS transaction (
+            id VARCHAR(36) PRIMARY KEY,
+            timestamp VARCHAR(50) NOT NULL,
+            type VARCHAR(50) NOT NULL,
+            investor_id VARCHAR(36) NOT NULL,
+            ticker VARCHAR(20),
+            total_cash_amount DECIMAL(15,2) NOT NULL,
+            FOREIGN KEY (investor_id) REFERENCES investor(id)
+            )""");
+
 
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
+        //view db in browser
+        org.h2.tools.Server
+                .createWebServer("-web", "-webPort", "8082")
+                .start();
+
         APIService api = new APIService();
-        InvestorRepository repo = new InvestorRepository(ds);
+        InvestorRepository investorRepo = new InvestorRepository(ds);
+        TransactionRepository transRepo = new TransactionRepository(ds);
 
         try {
             List <Investor> investors = api.getAllInvestor().getInvestors();
-            repo.saveAll(investors);
+            investorRepo.saveAll(investors);
         } catch (Exception e) {
             log.warn("Failed to load investors from API", e);
+        }
+        try {
+            List <Transaction> transactions = api.getAllTransaction().getTransactions();
+            System.out.println("Transactions from API: " + transactions.size());
+            transRepo.saveAll(transactions);
+        } catch (Exception e) {
+            log.warn("Failed to load transactions from API", e);
         }
     }
 
