@@ -19,7 +19,9 @@ import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.InvestorService;
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 
@@ -66,9 +68,9 @@ public class App extends Jooby {
         get("/test", ctx -> {
 
 
-            try (var conn = ds.getConnection();
-                 var stmt = conn.createStatement();
-                 var rs = stmt.executeQuery("SELECT 1")) {
+            try (Connection conn = ds.getConnection();
+                 Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT 1")) {
 
                 rs.next();
                 return rs.getInt(1);
@@ -76,11 +78,11 @@ public class App extends Jooby {
         });
 
         get("/debug/investors", ctx -> {
-            try (var conn = ds.getConnection();
-                 var stmt = conn.createStatement();
-                 var rs = stmt.executeQuery("SELECT * FROM investor")) {
+            try (Connection conn = ds.getConnection();
+                 Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM investor")) {
 
-                var list = new java.util.ArrayList<String>();
+                List<String> list = new java.util.ArrayList<>();
 
                 while (rs.next()) {
                     list.add(rs.getString("id") + " - " + rs.getString("name") + " - " + rs.getDouble("cash_balance"));
@@ -92,11 +94,10 @@ public class App extends Jooby {
 
         get("/debug/transactions", ctx -> {
             try (Connection conn = ds.getConnection();
-                 var stmt = conn.createStatement();
-                 var rs = stmt.executeQuery("SELECT * FROM transaction")) {
+                 Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM transaction")) {
 
                 List<String> list = new java.util.ArrayList<>();
-
 
                 while (rs.next()) {
                     list.add(rs.getString("id") + " - " + rs.getString("timestamp")
@@ -122,8 +123,8 @@ public class App extends Jooby {
 
         DataSource ds = require(DataSource.class);
 
-        try (var conn = ds.getConnection();
-             var stmt = conn.createStatement()) {
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement()) {
 
             stmt.execute("""
             CREATE TABLE IF NOT EXISTS investor (
@@ -166,7 +167,6 @@ public class App extends Jooby {
         }
         try {
             List <Transaction> transactions = api.getAllTransaction().getTransactions();
-            System.out.println("Transactions from API: " + transactions.size());
             transRepo.saveAll(transactions);
         } catch (Exception e) {
             log.warn("Failed to load transactions from API", e);
