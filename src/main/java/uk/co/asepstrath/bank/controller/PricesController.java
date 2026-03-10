@@ -32,7 +32,6 @@ public class PricesController {
     public List<Price> Prices(@QueryParam String ticker){
         Gson gson = new Gson();
         String response = Unirest.get("https://api.asep-strath.co.uk/api/prices/"+ticker).asString().getBody();
-        System.out.println(response);
 
         PriceDTO priceResponse = gson.fromJson(response, PriceDTO.class);
 

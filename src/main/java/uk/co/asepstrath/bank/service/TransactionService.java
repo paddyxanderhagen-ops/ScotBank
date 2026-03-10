@@ -44,6 +44,14 @@ public class TransactionService {
     }
 
     public BigDecimal getValueOfShares(String InvestorId, List<Transaction> transactionList) {
-
+        HashMap<String, BigDecimal> shares = new HashMap<>();
+        BigDecimal value = BigDecimal.ZERO;
+        shares = getNumberOfShares(InvestorId, transactionList);
+        for (String ticker : shares.keySet()) {
+            PricesController pricesController = new PricesController();
+            PriceService priceService = new PriceService();
+            value = value.add( shares.get(ticker).multiply(priceService.getMostRecent(pricesController.Prices(ticker)).getPrice()));
+        }
+        return value;
     }
 }
