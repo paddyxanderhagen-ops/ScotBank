@@ -42,4 +42,8 @@ public class TransactionService {
         }
         return shares;
     }
+
+    public BigDecimal getValueOfShares(String InvestorId, List<Transaction> transactionList) {
+
+    }
 }
