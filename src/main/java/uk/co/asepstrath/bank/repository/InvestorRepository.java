@@ -19,7 +19,7 @@ public class InvestorRepository {
             conn.setAutoCommit(false);
 
             try (var stmt = conn.prepareStatement("""
-                INSERT INTO investor (id, name, cash_balance)
+                MERGE INTO investor (id, name, cash_balance)
                 VALUES (?, ?, ?)
             """)) {
 
