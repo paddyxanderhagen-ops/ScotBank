@@ -18,44 +18,44 @@ public class PriceService {
     public Price getMostRecent(List<Price> priceList) {
         Price max = priceList.get(0);
         for (Price price : priceList) {
-            char[] chars = price.getTimeStamp().toCharArray();
-            char[] chars2 = max.getTimeStamp().toCharArray();
-            String temp = "";
-            String temp2 = "";
+            char[] currentChars = price.getTimeStamp().toCharArray();
+            char[] maxChars = max.getTimeStamp().toCharArray();
+            String current = "";
+            String stringMax = "";
             for (int i = 0; i < 4; i++) {
-                temp = temp.concat(String.valueOf(chars[i]));
-                temp2 = temp2.concat(String.valueOf(chars2[i]));
+                current = current.concat(String.valueOf(currentChars[i]));
+                stringMax = stringMax.concat(String.valueOf(maxChars[i]));
             }
-            if (Integer.parseInt(temp) > Integer.parseInt(temp2)) {
+            if (Integer.parseInt(current) > Integer.parseInt(stringMax)) {
                 max = price;
             } else {
-                temp = "";
-                temp2 = "";
+                current = "";
+                stringMax = "";
                 for (int i = 5; i < 7; i++){
-                    temp = temp.concat(String.valueOf(chars[i]));
-                    temp2 = temp2.concat(String.valueOf(chars2[i]));
+                    current = current.concat(String.valueOf(currentChars[i]));
+                    stringMax = stringMax.concat(String.valueOf(maxChars[i]));
                 }
-                if (Integer.parseInt(temp) > Integer.parseInt(temp2)) {
+                if (Integer.parseInt(current) > Integer.parseInt(stringMax)) {
                     max = price;
                 } else {
-                    temp = "";
-                    temp2 = "";
+                    current = "";
+                    stringMax = "";
                     for (int i = 8; i < 10; i++){
-                        temp = temp.concat(String.valueOf(chars[i]));
-                        temp2 = temp2.concat(String.valueOf(chars2[i]));
+                        current = current.concat(String.valueOf(currentChars[i]));
+                        stringMax = stringMax.concat(String.valueOf(maxChars[i]));
                     }
-                    if (Integer.parseInt(temp) > Integer.parseInt(temp2)) {
+                    if (Integer.parseInt(current) > Integer.parseInt(stringMax)) {
                         max = price;
                     } else {
-                        temp = "";
-                        temp2 = "";
-                        for (int i = 11; i < chars.length; i++){
-                            temp = temp.concat(String.valueOf(chars[i]));
-                            temp2 = temp2.concat(String.valueOf(chars2[i]));
+                        current = "";
+                        stringMax = "";
+                        for (int i = 11; i < currentChars.length; i++){
+                            current = current.concat(String.valueOf(currentChars[i]));
+                            stringMax = stringMax.concat(String.valueOf(maxChars[i]));
                         }
-                        temp = temp.replaceAll(":", "");
-                        temp2 = temp2.replaceAll(":", "");
-                        if (Integer.parseInt(temp) > Integer.parseInt(temp2)) {
+                        current = current.replaceAll(":", "");
+                        stringMax = stringMax.replaceAll(":", "");
+                        if (Integer.parseInt(current) > Integer.parseInt(stringMax)) {
                             max = price;
                         }
                     }

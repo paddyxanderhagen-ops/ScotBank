@@ -22,22 +22,16 @@ public class TransactionService {
 
     public HashMap<String, BigDecimal> getNumberOfShares(String InvestorId, List<Transaction> transactionList) {
         HashMap<String, BigDecimal> shares = new HashMap<>();
-        BigDecimal c;
-        BigDecimal d;
+        BigDecimal numberOfShares;
+        BigDecimal currentNumberOfShares = BigDecimal.ZERO;
         for (Transaction transaction : transactionList) {
             if (transaction.getType().equals("BUY")) {
                 if (transaction.getInvestorId().equals(InvestorId)) {
-                    c = shares.getOrDefault(transaction.getTicker(), BigDecimal.ZERO);
-                    if (c.equals(0)) {
+                    numberOfShares = shares.getOrDefault(transaction.getTicker(), BigDecimal.ZERO);
                         PricesController pricesController = new PricesController();
-                        d = transaction.getTotalCashAmount().divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
-                        shares.put(transaction.getTicker(), d);
-                    } else {
-                        PricesController pricesController = new PricesController();
-                        d = transaction.getTotalCashAmount().divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
-                        c = c.add(d);
-                        shares.put(transaction.getTicker(), c);
-                    }
+                        numberOfShares = transaction.getTotalCashAmount().divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
+                        currentNumberOfShares = currentNumberOfShares.add(numberOfShares);
+                        shares.put(transaction.getTicker(), currentNumberOfShares);
                 }
             }
         }
