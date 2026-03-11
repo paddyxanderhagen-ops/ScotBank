@@ -59,4 +59,18 @@ public class TransactionController {
 
         return transactionService.getValueOfShares(investorId, transactionList);
     }
+
+    @GET("/Shares/Value")
+    public BigDecimal valueByTicker(@QueryParam String investorId, @QueryParam String ticker){
+        Gson gson = new Gson();
+        String response = Unirest.get("https://api.asep-strath.co.uk/api/transactions").accept("application/json").asString().getBody();
+
+        TransactionDTO transactionResponse = gson.fromJson(response, TransactionDTO.class);
+
+        List<Transaction> transactionList = transactionResponse.getTransactions();
+
+        TransactionService transactionService = new TransactionService();
+
+        return transactionService.getValueOfSharesByTicker(investorId, transactionList, ticker);
+    }
 }

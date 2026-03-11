@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class TransactionService {
     public String getById (String id, List<Transaction> transactionList ) {
@@ -51,6 +52,20 @@ public class TransactionService {
             PricesController pricesController = new PricesController();
             PriceService priceService = new PriceService();
             value = value.add( shares.get(ticker).multiply(priceService.getMostRecent(pricesController.Prices(ticker)).getPrice()));
+        }
+        return value;
+    }
+
+    public BigDecimal getValueOfSharesByTicker(String InvestorId, List<Transaction> transactionList, String shareTicker) {
+        HashMap<String, BigDecimal> shares = new HashMap<>();
+        BigDecimal value = BigDecimal.ZERO;
+        shares = getNumberOfShares(InvestorId, transactionList);
+        for (String ticker : shares.keySet()) {
+            PricesController pricesController = new PricesController();
+            PriceService priceService = new PriceService();
+            if (ticker.equals(shareTicker)) {
+                value = value.add(shares.get(ticker).multiply(priceService.getMostRecent(pricesController.Prices(ticker)).getPrice()));
+            }
         }
         return value;
     }
