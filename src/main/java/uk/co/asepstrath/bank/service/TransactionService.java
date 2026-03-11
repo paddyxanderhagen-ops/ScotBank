@@ -1,14 +1,12 @@
 package uk.co.asepstrath.bank.service;
 
 import uk.co.asepstrath.bank.controller.PricesController;
-import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+
 
 public class TransactionService {
     public String getById (String id, List<Transaction> transactionList ) {
