@@ -1,0 +1,19 @@
+Sprint 2 Planning Meeting 25/02
+
+- Need to create new transaction for each deposit/withdrawal.
+
+- Boyd developing login page operating using ID.
+
+- Someone create wireframes for page designs.
+
+- Discussed how to break down front-end workload.
+
+- Discussed desperate need to merge some branches.
+
+- FIRST SUCCESFUL MERGE : CashAccounts + CashAccountTests into devmain.
+
+- Debated merging strategies.
+
+- Ali going to work on TransactionLists
+
+- 
