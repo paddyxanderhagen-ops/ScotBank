@@ -20,7 +20,8 @@ public class APIService {
         String response =  Unirest.get(url.toString()).accept("application/json").asString().getBody();
 
         InvestorDTO investorDTO = gson.fromJson(response, InvestorDTO.class);
-
+        int i = url.indexOf("investors");
+        url.delete(i, url.length());
         return investorDTO;
     }
 
@@ -29,7 +30,8 @@ public class APIService {
         String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
 
         TransactionDTO transactionDTO = gson.fromJson(response, TransactionDTO.class);
-
+        int i = url.indexOf("transactions");
+        url.delete(i, url.length());
         return transactionDTO;
     }
 }

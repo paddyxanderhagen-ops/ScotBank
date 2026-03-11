@@ -13,10 +13,14 @@ import uk.co.asepstrath.bank.controller.HomeController_;
 import uk.co.asepstrath.bank.controller.LoginController_;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.model.dto.InvestorDTO;
+import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.InvestorService;
+import uk.co.asepstrath.bank.service.TransactionService;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -26,6 +30,10 @@ import java.util.List;
 
 
 public class App extends Jooby {
+
+    private APIService api;
+    private InvestorDTO investorDTO;
+    private TransactionDTO transactionDTO;
 
     {
         /*
@@ -46,7 +54,12 @@ public class App extends Jooby {
         assets("/assets/**", "/assets");
         assets("/service_worker.js","/service_worker.js");
 
-        InvestorService investorService = new InvestorService();
+        api = new APIService();
+        investorDTO = api.getAllInvestor();
+        transactionDTO = api.getAllTransaction();
+
+        InvestorService investorService = new InvestorService(investorDTO);
+        TransactionService transactionService = new TransactionService(transactionDTO);
 
         error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
             ctx.setResponseType("application/json");
@@ -155,18 +168,19 @@ public class App extends Jooby {
                 .createWebServer("-web", "-webPort", "8082")
                 .start();
 
-        APIService api = new APIService();
         InvestorRepository investorRepo = new InvestorRepository(ds);
         TransactionRepository transRepo = new TransactionRepository(ds);
 
         try {
-            List <Investor> investors = api.getAllInvestor().getInvestors();
+            List <Investor> investors = investorDTO.getInvestors();
+
             investorRepo.saveAll(investors);
         } catch (Exception e) {
             log.warn("Failed to load investors from API", e);
         }
         try {
-            List <Transaction> transactions = api.getAllTransaction().getTransactions();
+            List <Transaction> transactions = transactionDTO.getTransactions();
+
             transRepo.saveAll(transactions);
         } catch (Exception e) {
             log.warn("Failed to load transactions from API", e);
