@@ -17,3 +17,12 @@ Sprint 2 Planning Meeting 25/02
 - Ali going to work on TransactionLists
 
 - 
+
+ACTION LIST - Sprint 2 Planning (25/02)
+
+1. Implement transactions for each deposit and withdrawal - Assign owner
+2. Continue login page development using ID authentication - Owner: Boyd
+3. Create wireframes for all page designs - Assign owner
+4. Break down front-end workload into manageable tasks - Assign responsibilities
+5. Merge outstanding branches and ensure consistent merging strategy - Assign owner
+6. Develop TransactionLists feature - Owner: Ali
