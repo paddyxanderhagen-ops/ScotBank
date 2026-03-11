@@ -1,25 +1,3 @@
-STOP
-- Letting merge conflicts become complicated (recently handled well, continue vigilance)
-- Having unclear or uninformative merge request messages
-
-START
-- Creating test data proactively
-- Reducing merge sizes where possible
-- Improving frontend visuals
-- Completing InvestmentAccount interface (Finlay)
-- Completing assigned database/API tasks (Mikhailo)
-- Reviewing branches to prevent merge issues (Boyd)
-
-CONTINUE
-- Consistently improving test coverage (Jack)
-- Keeping cleaner branches
-- Maintaining good pull request standards
-- Writing unit tests preemptively to maintain code coverage
-- Good team communication
-- Deleting old branches no longer needed
-- Using proper feature branching
-- Ensuring pipeline stays unbroken
-
 Retrospective Meeting 6/3/26
 
 Present: Boyd, Jack, Mikhailo, Finlay
@@ -30,7 +8,7 @@ Summarised progress from last retro
 - Live code actually now in main
 - Pipeline not broken :)
 
-Progress Review
+Progress Review/Minutes:
 - Databases implemented now, discussed intricacies of how we are using databases and API's
 - Login feature now implemented, demo'd as a team, discussed working on frontend visuals
   discussed creating test data and how to go about this
@@ -52,3 +30,26 @@ Progress Review
 - Mikhailo will complete 
 - Jack to continue working on improving test coverage as features are added.
 - Boyd going to review his branches because of merge issues
+
+STOP
+- Letting merge conflicts become complicated (recently handled well)
+- Having unclear or uninformative merge request messages
+
+START
+- Creating test data proactively
+- Reducing merge sizes where possible
+- Improving frontend visuals
+- Completing InvestmentAccount interface (Finlay)
+- Completing assigned database/API tasks (Mikhailo)
+- Reviewing branches to prevent merge issues (Boyd)
+
+CONTINUE
+- Consistently improving test coverage (Jack)
+- Keeping cleaner branches
+- Maintaining good pull request standards
+- Writing unit tests preemptively to maintain code coverage
+- Good team communication
+- Deleting old branches no longer needed
+- Using proper feature branching
+- Ensuring pipeline stays unbroken
+
