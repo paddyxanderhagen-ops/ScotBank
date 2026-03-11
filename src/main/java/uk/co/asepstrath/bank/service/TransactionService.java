@@ -1,16 +1,32 @@
 package uk.co.asepstrath.bank.service;
 
+import com.google.gson.Gson;
+import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class TransactionService {
-    public String getById (String id, List<Transaction> transactionList ) {
-        for (Transaction transaction : transactionList) {
+
+    private List<Transaction> transactions;
+
+    public TransactionService () {
+        transactions = new ArrayList<>();
+    }
+
+    public TransactionService (TransactionDTO transactionDTO) {
+        transactions = transactionDTO.getTransactions();
+    }
+
+    public String getById (String id) {
+        for (Transaction transaction : transactions) {
             if (transaction.getId().equals(id)) {
                 return "id: " + transaction.getId() + "\ntimestamp: " + transaction.getTimestamp() + "\ntype: "  + transaction.getType() + "\ninvestorId: " + transaction.getInvestorId() + "\nticker: " + transaction.getTicker() + "\ntotalCashAmount: " + transaction.getTotalCashAmount() + "\n\n";
             }
@@ -67,4 +83,21 @@ public class TransactionService {
         }
         return value;
     }
+
+    public List<Transaction> getAll(){
+        return transactions;
+    }
+
+    public void createTransaction (String transactionId, String timestamp, String type, String investorId, String ticker, double amount) {
+        Transaction transaction = new Transaction();
+        transaction.setId(transactionId);
+        transaction.setTimestamp(timestamp);
+        transaction.setType(type);
+        transaction.setInvestorId(investorId);
+        transaction.setTicker(ticker);
+        transaction.setTotalCashAmount(BigDecimal.valueOf(amount));
+
+        transactions.add(transaction);
+    }
+
 }

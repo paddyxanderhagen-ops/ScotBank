@@ -12,4 +12,7 @@ Welcome to your-bank!!
 
 ## Contributors
 - Boyd Scott
+- Mykhailo Shalavin
+- Patrick Hagen
+- Jack Burnett
 

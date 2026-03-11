@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Scotbank - Home</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    </head>
+    <body class="min-vh-100 vh-100">
+        <header class="container row py-3 m-auto" style="height:10%;">
+            <div class="row">
+                <h1 class="m-0 col-9">Scotbank</h1>
+                <a href="/" class="col-3 nav-link align-self-center fs-5">Log Out</a>
+            </div>
+        </header>
+
+        <main class="container row m-auto">
+            <div class="bg-light border mb-3">
+                <h4 class="py-3 m-0 ps-2">Hello, {{name}}</h4>
+
+                <h2 class="py-3 m-0 ps-2">Balance: £{{balance}}</h2>
+
+                <div class="row py-3 m-auto" style="width: 90%;">
+                    <button onclick="openCloseForm()" class="btn btn-primary btn-lg col">Deposit/Withdraw</button>
+                </div>
+            </div>
+
+            <div class="py-3 m-0 bg-light border ps-2 h-auto">
+                <h2 class="m-0">Transaction History</h2>
+            </div>
+
+            <form class="container bg-light border d-none position-absolute top-50 start-50 translate-middle h-75" style="width: 95%;" id="transactionForm">
+                <div class="row py-3">
+                    <h2 class="col m-0 mt-3">Transaction</h2>
+                    <button onclick="openCloseForm()" class="col-3 btn btn-primary m-3" type="button">Close X</button>
+                </div>
+
+                <div class="row py-3 m-auto">
+                    <div class="form-group position-relative">
+                        <label for="amount" class="form-label">Amount:</label>
+                        <input type="text" name="amount" id="amount" inputmode="numeric" autocomplete="off"placeholder="0.00" class="form-control form-control-lg m-auto">
+                        <div class="invalid-tooltip" id="amount-error"></div>
+                    </div>
+
+                </div>
+
+                <div class="row py-3 m-auto">
+                    <div class="col">
+                        <label for="transaction-type" class="form-label">Transaction type:</label>
+                        <select name="transactionType" id="transaction-type" class="row form-control form-control-lg form-select m-auto">
+                            <option value="deposit">Deposit</option>
+                            <option value="withdraw">Withdraw</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg row position-absolute bottom-0 start-50 translate-middle m-auto w-75">Submit</button>
+            </form>
+        </main>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+                integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+                crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+                crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="/assets/CashAccount.js"></script>
+    </body>
+</html>

@@ -1,0 +1,55 @@
+Retrospective Meeting 6/3/26
+
+Present: Boyd, Jack, Mikhailo, Finlay
+
+Summarised progress from last retro
+- Consistently improving test coverage
+- Have been keeping cleaner branches
+- Live code actually now in main
+- Pipeline not broken :)
+
+Progress Review/Minutes:
+- Databases implemented now, discussed intricacies of how we are using databases and API's
+- Login feature now implemented, demo'd as a team, discussed working on frontend visuals
+  discussed creating test data and how to go about this
+- Discussed testing progress and what should come next, trying to make sure we keep writing
+  tests preemptively, pushing quick unit tests before implementing a feature to maintain code
+  coverage, discussed confusion around whether sonarqube is
+  is counting integration tests towards code coverage
+- Discussed how we have been dealing with merge conflicts which was overall positive as they
+  were all easily resolved
+- Good pull request standards
+- Good communication between the team for the most part
+- Discussed possibly trying to reduce merge sizes, trying to improve message descriptiveness
+  and informativity on merge requests
+- Good feature branches, branching off of the right place
+- Deleted old branches we no longer needed
+- Went through meeting review for last retrospective and assured that we worked on everything
+- Discussed how much and what we still need to do for the progress checkin on wednesday 11th march
+- Discussed Finlay completing the InvestmentAccount interface
+- Mikhailo will complete 
+- Jack to continue working on improving test coverage as features are added.
+- Boyd going to review his branches because of merge issues
+
+STOP
+- Letting merge conflicts become complicated (recently handled well)
+- Having unclear or uninformative merge request messages
+
+START
+- Creating test data proactively
+- Reducing merge sizes where possible
+- Improving frontend visuals
+- Completing InvestmentAccount interface (Finlay)
+- Completing assigned database/API tasks (Mikhailo)
+- Reviewing branches to prevent merge issues (Boyd)
+
+CONTINUE
+- Consistently improving test coverage (Jack)
+- Keeping cleaner branches
+- Maintaining good pull request standards
+- Writing unit tests preemptively to maintain code coverage
+- Good team communication
+- Deleting old branches no longer needed
+- Using proper feature branching
+- Ensuring pipeline stays unbroken
+

@@ -1,16 +1,33 @@
 package uk.co.asepstrath.bank.service;
 
 import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InvestorService {
-    public String getById (String id, List<Investor> investorList) {
-        for (Investor investor : investorList) {
+
+    private List<Investor> investors;
+
+    public InvestorService () {
+        investors = new ArrayList<>();
+    }
+
+    public InvestorService (InvestorDTO investorDTO) {
+        investors = investorDTO.getInvestors();
+    }
+
+    public  Investor getInvestor (String id) {
+        for (Investor investor : investors) {
             if (investor.getId().equals(id)) {
-                return "Name: " + investor.getName() + " Balance: " + investor.getCashBalance();
+                return investor;
             }
         }
-        return "Investor:" + id + " not found";
+        return null;
+    }
+
+    public List<Investor> getAll () {
+        return investors;
     }
 }

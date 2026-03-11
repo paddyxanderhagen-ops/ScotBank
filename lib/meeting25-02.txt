@@ -1,0 +1,8 @@
+ACTION LIST - Sprint 2 Planning (25/02)
+
+1. Implement transactions for each deposit and withdrawal
+2. Continue login page development using ID authentication
+3. Create wireframes for all page designs - Assign owner
+4. Break down front-end workload into manageable tasks
+5. Merge outstanding branches and ensure consistent merging strategy
+6. Develop TransactionLists feature
