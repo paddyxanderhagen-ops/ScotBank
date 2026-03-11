@@ -1,0 +1,37 @@
+Work for Sprint 3
+
+Need-dones:
+ - Pi chart that breaks down investments by "sector" (API)
+ - Yet to be implemented features for Minimum Viable Product (due 25/03)
+    - Investment Evaluation
+    - Capital Gains
+    - Portfolio Categorization
+ - Lottle bit of Cash Management (issue board "1. ..")
+ - Full quality assurance tests for all implemented features.
+ - Prepare 10 minute demo (3 minutes allocated to Q&A)
+    - Must be presented on a student laptop which can connect by HDMI
+    - Outline extra features we have implemented
+
+Boyd: 
+ - Big refactor
+
+Mikhailo: 
+ - 
+
+Alireza:
+ - "Capital Gains Summary" Issue board task.
+
+Jack: 
+ - Providing test coverage to every file on master before next check-in.
+
+Finlay: 
+ - Work on front-end, make it look gorgeous.
+ - "Portfolio Categorization" Issue board task.
+
+Patrick: 
+ - Finish work on current branch and -
+
+
+ Other Discussion:
+- Keep list of all investors or pull them based on ID? Pull based on ID.
+- 
