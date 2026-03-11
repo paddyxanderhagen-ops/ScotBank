@@ -33,6 +33,12 @@ public class TransactionService {
                         currentNumberOfShares = currentNumberOfShares.add(numberOfShares);
                         shares.put(transaction.getTicker(), currentNumberOfShares);
                 }
+            } else if (transaction.getType().equals("SELL")) {
+                numberOfShares = shares.getOrDefault(transaction.getTicker(), BigDecimal.ZERO);
+                PricesController pricesController = new PricesController();
+                numberOfShares = transaction.getTotalCashAmount().divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
+                currentNumberOfShares = currentNumberOfShares.subtract(numberOfShares);
+                shares.put(transaction.getTicker(), currentNumberOfShares);
             }
         }
         return shares;
