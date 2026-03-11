@@ -1,3 +1,25 @@
+STOP
+- Letting merge conflicts become complicated (recently handled well, continue vigilance)
+- Having unclear or uninformative merge request messages
+
+START
+- Creating test data proactively
+- Reducing merge sizes where possible
+- Improving frontend visuals
+- Completing InvestmentAccount interface (Finlay)
+- Completing assigned database/API tasks (Mikhailo)
+- Reviewing branches to prevent merge issues (Boyd)
+
+CONTINUE
+- Consistently improving test coverage (Jack)
+- Keeping cleaner branches
+- Maintaining good pull request standards
+- Writing unit tests preemptively to maintain code coverage
+- Good team communication
+- Deleting old branches no longer needed
+- Using proper feature branching
+- Ensuring pipeline stays unbroken
+
 Retrospective Meeting 6/3/26
 
 Present: Boyd, Jack, Mikhailo, Finlay
