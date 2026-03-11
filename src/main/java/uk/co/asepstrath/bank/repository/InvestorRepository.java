@@ -1,8 +1,14 @@
 package uk.co.asepstrath.bank.repository;
 import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.dto.InvestorDTO;
+
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -20,7 +26,7 @@ public class InvestorRepository {
 
             try (var stmt = conn.prepareStatement("""
                 MERGE INTO investor (id, name, cash_balance)
-                VALUES (?, ?, ?)
+                VALUES (?, ?, ?);
             """)) {
 
                 for (Investor i : investors) {
@@ -40,5 +46,31 @@ public class InvestorRepository {
                 conn.commit();
             }
         }
+    }
+
+    public InvestorDTO getAll () {
+        InvestorDTO investorDTO = new InvestorDTO();
+        try (Connection conn = ds.getConnection()) {
+            conn.setAutoCommit(false);
+
+            String sql = """
+                    SELECT *
+                    FROM investor;""";
+
+
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                ResultSet resultSet = stmt.executeQuery();
+
+                while (resultSet.next()) {
+                    Investor i = new Investor(resultSet.getString("id"), resultSet.getString("name"), resultSet.getDouble("cash_balance"));
+                    investorDTO.addInvestor(i);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+
+        return investorDTO;
     }
 }

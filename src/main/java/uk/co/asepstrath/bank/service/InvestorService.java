@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank.service;
 
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
+import uk.co.asepstrath.bank.repository.InvestorRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,8 @@ public class InvestorService {
         investors = new ArrayList<>();
     }
 
-    public InvestorService (InvestorDTO investorDTO) {
-        investors = investorDTO.getInvestors();
+    public InvestorService (InvestorRepository investorRepo) {
+        investors = investorRepo.getAll().getInvestors();
     }
 
     public  Investor getInvestor (String id) {

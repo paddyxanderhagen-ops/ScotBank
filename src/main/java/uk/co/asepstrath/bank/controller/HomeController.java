@@ -12,6 +12,7 @@ import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
 
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,9 +21,11 @@ public class HomeController {
 
     private final InvestorService investorService;
     private Authorisation authorisation;
+    private DataSource ds;
 
-    public HomeController (InvestorService investorService) {
+    public HomeController (InvestorService investorService, DataSource ds) {
         this.investorService = investorService;
+        this.ds = ds;
     }
 
     @GET("/")
@@ -55,7 +58,7 @@ public class HomeController {
             ctx.sendRedirect("/login");
         }
 
-        CashAccountImplementation account = new CashAccountImplementation(investor);
+        CashAccountImplementation account = new CashAccountImplementation(investor, ds);
 
         Map<String, Object> map = new HashMap<>();
         map.put("name", investor.getName());

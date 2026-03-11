@@ -1,20 +1,25 @@
 package uk.co.asepstrath.bank.implementation;
 
 import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.repository.CashAccountRepository;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
     private final Investor investor;
     private static final int SCALE = 2;
+    private CashAccountRepository cashRepo;
 
-    public CashAccountImplementation() {
+    public CashAccountImplementation(DataSource ds) {
         this.investor = new Investor();
+        this.cashRepo = new CashAccountRepository(ds);
     }
 
-    public CashAccountImplementation(Investor investor) {
+    public CashAccountImplementation(Investor investor, DataSource ds) {
         this.investor = investor;
+        this.cashRepo = new CashAccountRepository(ds);
     }
 
     @Override
@@ -37,6 +42,8 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
             newBalance = newBalance.setScale(SCALE, RoundingMode.FLOOR);
 
             investor.setCashBalance(newBalance.doubleValue());
+
+            cashRepo.transaction(investor.getId(), newBalance.doubleValue());
         } else {
             throw new IllegalArgumentException ("Deposit amount cannot be less than 0");
         }
@@ -60,6 +67,8 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
         BigDecimal newBalance = currentBalance.subtract(amount.setScale(SCALE, RoundingMode.FLOOR));
 
         investor.setCashBalance(newBalance.doubleValue());
+
+        cashRepo.transaction(investor.getId(), newBalance.doubleValue());
     }
 
     private void checkDecimals (double value) {

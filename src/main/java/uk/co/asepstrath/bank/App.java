@@ -13,7 +13,6 @@ import uk.co.asepstrath.bank.controller.HomeController_;
 import uk.co.asepstrath.bank.controller.LoginController_;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
@@ -31,9 +30,13 @@ import java.util.List;
 
 public class App extends Jooby {
 
-    private APIService api;
-    private InvestorDTO investorDTO;
+    private final APIService api;
     private TransactionDTO transactionDTO;
+    private InvestorRepository investorRepo;
+    private InvestorService investorService;
+    private TransactionRepository transRepo;
+    private TransactionService transactionService;
+    private final DataSource ds;
 
     {
         /*
@@ -45,21 +48,17 @@ public class App extends Jooby {
 
         setSessionStore(SessionStore.memory(Cookie.session("scotbank")));
 
+        ds = require(DataSource.class);
+        api = new APIService();
+        investorRepo = new InvestorRepository(ds);
+        transRepo = new TransactionRepository(ds);
 
-        DataSource ds = require(DataSource.class);
-        /*
-        This will host any files in src/main/resources/assets on <host>/assets
-        For example in the dice template (dice.hbs) it references "assets/dice.png" which is in resources/assets folder
-         */
+        investorService = new InvestorService(investorRepo);
+
         assets("/assets/**", "/assets");
         assets("/service_worker.js","/service_worker.js");
 
-        api = new APIService();
-        investorDTO = api.getAllInvestor();
-        transactionDTO = api.getAllTransaction();
-
-        InvestorService investorService = new InvestorService(investorDTO);
-        TransactionService transactionService = new TransactionService(transactionDTO);
+        transactionService = new TransactionService(api.getAllTransaction());
 
         error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
             ctx.setResponseType("application/json");
@@ -68,8 +67,8 @@ public class App extends Jooby {
             ctx.render(gson.toJson(cause.getMessage()));
         });
 
-        mvc(new HomeController_(investorService));
-        mvc(new CashAccountController_(investorService));
+        mvc(new HomeController_(investorService, ds));
+        mvc(new CashAccountController_(investorService, ds));
         mvc(new LoginController_());
         /*
         Finally we register our application lifecycle methods
@@ -134,8 +133,6 @@ public class App extends Jooby {
         Logger log = getLog();
         log.info("Starting Up...");
 
-        DataSource ds = require(DataSource.class);
-
         try (Connection conn = ds.getConnection();
              Statement stmt = conn.createStatement()) {
 
@@ -156,9 +153,6 @@ public class App extends Jooby {
             total_cash_amount DECIMAL(15,2) NOT NULL,
             FOREIGN KEY (investor_id) REFERENCES investor(id)
             )""");
-
-
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -168,16 +162,16 @@ public class App extends Jooby {
                 .createWebServer("-web", "-webPort", "8082")
                 .start();
 
-        InvestorRepository investorRepo = new InvestorRepository(ds);
-        TransactionRepository transRepo = new TransactionRepository(ds);
-
         try {
-            List <Investor> investors = investorDTO.getInvestors();
+            List <Investor> investors = api.getAllInvestor().getInvestors();
 
             investorRepo.saveAll(investors);
         } catch (Exception e) {
             log.warn("Failed to load investors from API", e);
         }
+
+        transactionDTO = api.getAllTransaction();
+
         try {
             List <Transaction> transactions = transactionDTO.getTransactions();
 

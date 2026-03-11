@@ -1,0 +1,54 @@
+2026-03-11 14:31:00.159191Z jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Method is only allowed for a query. Use execute or executeUpdate instead of executeQuery; SQL statement:
+UPDATE investor
+SET cash_balance = ?
+WHERE id = ? [90002-224]
+	at jars//org.h2.message.DbException.getJdbcSQLException(DbException.java:566)
+	at jars//org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at jars//org.h2.message.DbException.get(DbException.java:223)
+	at jars//org.h2.message.DbException.get(DbException.java:199)
+	at jars//org.h2.message.DbException.get(DbException.java:188)
+	at jars//org.h2.command.Prepared.query(Prepared.java:256)
+	at jars//org.h2.command.CommandContainer.query(CommandContainer.java:252)
+	at jars//org.h2.command.Command.executeQuery(Command.java:192)
+	at jars//org.h2.jdbc.JdbcPreparedStatement.executeQuery(JdbcPreparedStatement.java:131)
+	at jars//com.zaxxer.hikari.pool.ProxyPreparedStatement.executeQuery(ProxyPreparedStatement.java:52)
+	at jars//com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeQuery(HikariProxyPreparedStatement.java)
+	at scotbank//uk.co.asepstrath.bank.repository.InvestorRepository.updateDeposit(InvestorRepository.java:113)
+	at scotbank//uk.co.asepstrath.bank.implementation.CashAccountImplementation.deposit(CashAccountImplementation.java:46)
+	at scotbank//uk.co.asepstrath.bank.controller.CashAccountController.deposit(CashAccountController.java:24)
+	at scotbank//uk.co.asepstrath.bank.controller.CashAccountController_.deposit(CashAccountController_.java:38)
+	at jars//io.jooby.internal.handler.DefaultHandler.lambda$apply$0(DefaultHandler.java:21)
+	at jars//io.jooby.Route$ThenHandler.apply(Route.java:96)
+	at jars//io.jooby.internal.handler.WorkerHandler.lambda$apply$0(WorkerHandler.java:22)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at jars//io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+2026-03-11 14:31:01.983186Z jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Method is only allowed for a query. Use execute or executeUpdate instead of executeQuery; SQL statement:
+UPDATE investor
+SET cash_balance = ?
+WHERE id = ? [90002-224]
+	at jars//org.h2.message.DbException.getJdbcSQLException(DbException.java:566)
+	at jars//org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at jars//org.h2.message.DbException.get(DbException.java:223)
+	at jars//org.h2.message.DbException.get(DbException.java:199)
+	at jars//org.h2.message.DbException.get(DbException.java:188)
+	at jars//org.h2.command.Prepared.query(Prepared.java:256)
+	at jars//org.h2.command.CommandContainer.query(CommandContainer.java:252)
+	at jars//org.h2.command.Command.executeQuery(Command.java:192)
+	at jars//org.h2.jdbc.JdbcPreparedStatement.executeQuery(JdbcPreparedStatement.java:131)
+	at jars//com.zaxxer.hikari.pool.ProxyPreparedStatement.executeQuery(ProxyPreparedStatement.java:52)
+	at jars//com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeQuery(HikariProxyPreparedStatement.java)
+	at scotbank//uk.co.asepstrath.bank.repository.InvestorRepository.updateDeposit(InvestorRepository.java:113)
+	at scotbank//uk.co.asepstrath.bank.implementation.CashAccountImplementation.deposit(CashAccountImplementation.java:46)
+	at scotbank//uk.co.asepstrath.bank.controller.CashAccountController.deposit(CashAccountController.java:24)
+	at scotbank//uk.co.asepstrath.bank.controller.CashAccountController_.deposit(CashAccountController_.java:38)
+	at jars//io.jooby.internal.handler.DefaultHandler.lambda$apply$0(DefaultHandler.java:21)
+	at jars//io.jooby.Route$ThenHandler.apply(Route.java:96)
+	at jars//io.jooby.internal.handler.WorkerHandler.lambda$apply$0(WorkerHandler.java:22)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at jars//io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
