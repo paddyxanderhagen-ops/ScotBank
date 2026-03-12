@@ -1,49 +1,19 @@
 package uk.co.asepstrath.bank.service;
 
-import com.google.gson.Gson;
-import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.model.dto.TransactionDTO;
+import uk.co.asepstrath.bank.repository.TransactionRepository;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionService {
 
-    private List<Transaction> transactions;
+    private TransactionRepository repo;
 
-    public TransactionService () {
-        transactions = new ArrayList<>();
+    public TransactionService (TransactionRepository repo) {
+        this.repo = repo;
     }
 
-    public TransactionService (TransactionDTO transactionDTO) {
-        transactions = transactionDTO.getTransactions();
+    public List<Transaction> getTransactionsByInvestor (String id) {
+        return repo.getTransactionsByInvestor(id);
     }
-
-    public String getById (String id) {
-        for (Transaction transaction : transactions) {
-            if (transaction.getId().equals(id)) {
-                return "id: " + transaction.getId() + "\ntimestamp: " + transaction.getTimestamp() + "\ntype: "  + transaction.getType() + "\ninvestorId: " + transaction.getInvestorId() + "\nticker: " + transaction.getTicker() + "\ntotalCashAmount: " + transaction.getTotalCashAmount() + "\n\n";
-            }
-        }
-        return "Transaction:" + id + " not found";
-    }
-
-    public List<Transaction> getAll(){
-        return transactions;
-    }
-
-    public void createTransaction (String transactionId, String timestamp, String type, String investorId, String ticker, double amount) {
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        transaction.setTimestamp(timestamp);
-        transaction.setType(type);
-        transaction.setInvestorId(investorId);
-        transaction.setTicker(ticker);
-        transaction.setTotalCashAmount(BigDecimal.valueOf(amount));
-
-        transactions.add(transaction);
-    }
-
 }

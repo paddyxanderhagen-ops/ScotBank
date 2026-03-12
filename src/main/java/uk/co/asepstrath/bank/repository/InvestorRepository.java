@@ -1,4 +1,5 @@
 package uk.co.asepstrath.bank.repository;
+
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 
@@ -63,8 +64,8 @@ public class InvestorRepository {
                 ResultSet resultSet = stmt.executeQuery();
 
                 while (resultSet.next()) {
-                    Investor i = new Investor(resultSet.getString("id"), resultSet.getString("name"), resultSet.getDouble("cash_balance"));
-                    investorDTO.addInvestor(i);
+                    Investor investor = new Investor(resultSet.getString("id"), resultSet.getString("name"), resultSet.getDouble("cash_balance"));
+                    investorDTO.addInvestor(investor);
                 }
             }
         } catch (SQLException e) {
@@ -72,5 +73,30 @@ public class InvestorRepository {
         }
 
         return investorDTO;
+    }
+
+    public Investor getInvestor (String id) {
+        Investor investor = null;
+
+        try (Connection conn = ds.getConnection()) {
+            String sql = """
+                    SELECT id, name, cash_balance
+                    FROM investor
+                    WHERE investor.id = ?""";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, id);
+                ResultSet resultSet = stmt.executeQuery();
+
+                if (resultSet.next()) {
+                    investor = new Investor(resultSet.getString("id"), resultSet.getString("name"), resultSet.getDouble("cash_balance"));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get investor with id: " + id, e);
+        }
+
+        return investor;
     }
 }

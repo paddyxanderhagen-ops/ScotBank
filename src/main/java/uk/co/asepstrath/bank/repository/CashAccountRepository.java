@@ -31,13 +31,13 @@ public class CashAccountRepository {
         }
     }
 
-    public double getBalance(long id) {
+    public double getBalance(String id) {
         String sql = "SELECT balance FROM cash_account WHERE id = ?";
 
         try (var conn = ds.getConnection();
              var ps = conn.prepareStatement(sql)) {
 
-            ps.setLong(1, id);
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {

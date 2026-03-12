@@ -10,16 +10,16 @@ import java.math.RoundingMode;
 public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
     private final Investor investor;
     private static final int SCALE = 2;
-    private CashAccountRepository cashRepo;
+    private CashAccountRepository repo;
 
     public CashAccountImplementation(DataSource ds) {
         this.investor = new Investor();
-        this.cashRepo = new CashAccountRepository(ds);
+        this.repo = new CashAccountRepository(ds);
     }
 
     public CashAccountImplementation(Investor investor, DataSource ds) {
         this.investor = investor;
-        this.cashRepo = new CashAccountRepository(ds);
+        this.repo = new CashAccountRepository(ds);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
 
             investor.setCashBalance(newBalance.doubleValue());
 
-            cashRepo.transaction(investor.getId(), newBalance.doubleValue());
+            repo.transaction(investor.getId(), newBalance.doubleValue());
         } else {
             throw new IllegalArgumentException ("Deposit amount cannot be less than 0");
         }
@@ -68,7 +68,7 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
 
         investor.setCashBalance(newBalance.doubleValue());
 
-        cashRepo.transaction(investor.getId(), newBalance.doubleValue());
+        repo.transaction(investor.getId(), newBalance.doubleValue());
     }
 
     private void checkDecimals (double value) {

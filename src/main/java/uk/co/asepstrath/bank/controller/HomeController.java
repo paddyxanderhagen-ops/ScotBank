@@ -3,14 +3,13 @@ package uk.co.asepstrath.bank.controller;
 import io.jooby.Context;
 import io.jooby.ModelAndView;
 import io.jooby.Session;
-import io.jooby.StatusCode;
 import io.jooby.annotation.GET;
-import io.jooby.annotation.HeaderParam;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.PathParam;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
+import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -22,10 +21,12 @@ public class HomeController {
     private final InvestorService investorService;
     private Authorisation authorisation;
     private DataSource ds;
+    private TransactionService transactionService;
 
-    public HomeController (InvestorService investorService, DataSource ds) {
+    public HomeController (InvestorService investorService, DataSource ds, TransactionService transactionService) {
         this.investorService = investorService;
         this.ds = ds;
+        this.transactionService = transactionService;
     }
 
     @GET("/")
@@ -56,6 +57,7 @@ public class HomeController {
 
         if (!authorisation.isAuthorised()) {
             ctx.sendRedirect("/login");
+            return null;
         }
 
         CashAccountImplementation account = new CashAccountImplementation(investor, ds);
@@ -63,6 +65,7 @@ public class HomeController {
         Map<String, Object> map = new HashMap<>();
         map.put("name", investor.getName());
         map.put("balance", Math.floor(account.getBalance() * 100.0) / 100.0);
+        map.put("transactions", transactionService.getTransactionsByInvestor(investor.getId()));
 
         return new ModelAndView<>("index.hbs", map);
     }

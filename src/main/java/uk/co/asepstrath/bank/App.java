@@ -2,11 +2,10 @@ package uk.co.asepstrath.bank;
 
 import com.google.gson.Gson;
 import io.jooby.*;
-import io.jooby.netty.NettyServer;
-import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
+import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
@@ -37,6 +36,7 @@ public class App extends Jooby {
     private TransactionRepository transRepo;
     private TransactionService transactionService;
     private final DataSource ds;
+    private Logger log;
 
     {
         /*
@@ -52,13 +52,13 @@ public class App extends Jooby {
         api = new APIService();
         investorRepo = new InvestorRepository(ds);
         transRepo = new TransactionRepository(ds);
-
         investorService = new InvestorService(investorRepo);
+        transactionService = new TransactionService(transRepo);
+        log = getLog();
 
         assets("/assets/**", "/assets");
         assets("/service_worker.js","/service_worker.js");
 
-        transactionService = new TransactionService(api.getAllTransaction());
 
         error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
             ctx.setResponseType("application/json");
@@ -67,7 +67,23 @@ public class App extends Jooby {
             ctx.render(gson.toJson(cause.getMessage()));
         });
 
-        mvc(new HomeController_(investorService, ds));
+        try {
+            List <Investor> investors = api.getAllInvestor().getInvestors();
+
+            investorRepo.saveAll(investors);
+        } catch (Exception e) {
+            log.warn("Failed to load investors from API", e);
+        }
+
+        try {
+            List <Transaction> transactions = transactionDTO.getTransactions();
+
+            transRepo.saveAll(transactions);
+        } catch (Exception e) {
+            log.warn("Failed to load transactions from API", e);
+        }
+
+        mvc(new HomeController_(investorService, ds, transactionService));
         mvc(new CashAccountController_(investorService, ds));
         mvc(new LoginController_());
         /*
@@ -161,24 +177,6 @@ public class App extends Jooby {
         org.h2.tools.Server
                 .createWebServer("-web", "-webPort", "8082")
                 .start();
-
-        try {
-            List <Investor> investors = api.getAllInvestor().getInvestors();
-
-            investorRepo.saveAll(investors);
-        } catch (Exception e) {
-            log.warn("Failed to load investors from API", e);
-        }
-
-        transactionDTO = api.getAllTransaction();
-
-        try {
-            List <Transaction> transactions = transactionDTO.getTransactions();
-
-            transRepo.saveAll(transactions);
-        } catch (Exception e) {
-            log.warn("Failed to load transactions from API", e);
-        }
     }
 
     /*
