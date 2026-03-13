@@ -8,9 +8,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
-    private final Investor investor;
+    private Investor investor;
     private static final int SCALE = 2;
     private CashAccountRepository repo;
+
+    public CashAccountImplementation () {
+        this.investor = new Investor();
+        this.repo = null;
+    }
 
     public CashAccountImplementation(DataSource ds) {
         this.investor = new Investor();
@@ -43,7 +48,9 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
 
             investor.setCashBalance(newBalance.doubleValue());
 
-            repo.transaction(investor.getId(), newBalance.doubleValue());
+            if (repo != null) {
+                repo.transaction(investor.getId(), newBalance.doubleValue());
+            }
         } else {
             throw new IllegalArgumentException ("Deposit amount cannot be less than 0");
         }
@@ -67,8 +74,9 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
         BigDecimal newBalance = currentBalance.subtract(amount.setScale(SCALE, RoundingMode.FLOOR));
 
         investor.setCashBalance(newBalance.doubleValue());
-
-        repo.transaction(investor.getId(), newBalance.doubleValue());
+        if (repo != null) {
+            repo.transaction(investor.getId(), newBalance.doubleValue());
+        }
     }
 
     private void checkDecimals (double value) {
