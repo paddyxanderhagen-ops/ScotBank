@@ -3,7 +3,9 @@ package uk.co.asepstrath.bank.service;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 
-public class InvestorService {
+import java.util.List;
+
+public abstract class InvestorService {
 
     private InvestorRepository repo;
 
@@ -14,4 +16,6 @@ public class InvestorService {
     public Investor getInvestor (String id) {
         return repo.getInvestor(id);
     }
+
+    public abstract List<Investor> getAll();
 }
