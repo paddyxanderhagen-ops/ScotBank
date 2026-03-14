@@ -1,14 +1,11 @@
 package uk.co.asepstrath.bank.service;
 
-import com.google.gson.Gson;
-import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +22,7 @@ public class TransactionService {
         transactions = transactionDTO.getTransactions();
     }
 
-    public String getById (String id) {
+    public String getById (String id, List<Transaction> transactionList) {
         for (Transaction transaction : transactions) {
             if (transaction.getId().equals(id)) {
                 return "id: " + transaction.getId() + "\ntimestamp: " + transaction.getTimestamp() + "\ntype: "  + transaction.getType() + "\ninvestorId: " + transaction.getInvestorId() + "\nticker: " + transaction.getTicker() + "\ntotalCashAmount: " + transaction.getTotalCashAmount() + "\n\n";

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import io.jooby.*;
 import io.jooby.netty.NettyServer;
 import uk.co.asepstrath.bank.controller.*;
-import uk.co.asepstrath.bank.example.ExampleController;
+//import uk.co.asepstrath.bank.example.ExampleController;
 import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
@@ -60,9 +60,9 @@ public class App extends Jooby {
         investorDTO = api.getAllInvestor();
         transactionDTO = api.getAllTransaction();
 
-        mvc(new ExampleController_(ds,log));
-        mvc(new InvestorController_());
-        mvc(new SignInController_());
+        //mvc(new ExampleController_(ds,log));
+        //mvc(new InvestorController_());
+        //mvc(new SignInController_());
         mvc(new TransactionController_());
         mvc(new EtfController_());
         mvc(new EquitiesController_());

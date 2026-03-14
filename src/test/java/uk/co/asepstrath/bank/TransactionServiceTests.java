@@ -2,11 +2,7 @@ package uk.co.asepstrath.bank;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.service.TransactionService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +20,7 @@ public class TransactionServiceTests {
 
     @Test
     void GetByID_CorrectDetails(){
-        String result = ts.getById("123");
+        String result = ts.getById("123", transactionList);
 
         assertTrue(result.contains("id: 123"));
         assertTrue(result.contains("timestamp: 12:00"));
@@ -36,7 +32,7 @@ public class TransactionServiceTests {
 
     @Test
     void testGetById_notFound() {
-        String result = ts.getById("CD245");
+        String result = ts.getById("CD245", transactionList);
 
         assertEquals("Transaction:CD245 not found", result);
     }
