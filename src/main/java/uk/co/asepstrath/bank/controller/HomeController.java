@@ -8,11 +8,13 @@ import io.jooby.annotation.Path;
 import io.jooby.annotation.PathParam;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Path("/")
@@ -36,7 +38,7 @@ public class HomeController {
             session.put("id", "");
         }
         if (id == null || id.isEmpty()) {
-            return new ModelAndView<>("landingPage.hbs", new HashMap<>());
+            return new ModelAndView<>("landing.hbs", new HashMap<>());
         }
         return null;
     }
@@ -62,10 +64,12 @@ public class HomeController {
 
         CashAccountImplementation account = new CashAccountImplementation(investor, ds);
 
+        List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(3).toList();
+
         Map<String, Object> map = new HashMap<>();
         map.put("name", investor.getName());
         map.put("balance", Math.floor(account.getBalance() * 100.0) / 100.0);
-        map.put("transactions", transactionService.getTransactionsByInvestor(investor.getId()));
+        map.put("transactions", transactions);
 
         return new ModelAndView<>("index.hbs", map);
     }

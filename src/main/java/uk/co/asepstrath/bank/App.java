@@ -185,8 +185,6 @@ public class App extends Jooby {
             FOREIGN KEY (investor_id) REFERENCES investor(id)
             )""");
 
-
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
