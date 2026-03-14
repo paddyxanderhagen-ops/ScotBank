@@ -13,9 +13,11 @@ public class AnalyticsService {
     private PriceService priceService;
     private PricesController pricesController;
 
+
     public AnalyticsService (TransactionRepository repo, PriceService priceService) {
         this.repo = repo;
         this.priceService = priceService;
+        pricesController = new PricesController();
     }
 
     public List<Position> getPositions(String investorId) {
@@ -75,8 +77,11 @@ public class AnalyticsService {
                 shares -= numberOfShares;
             }
         }
-
-        double avgBuyPrice = buyCash / shares;
+        double avgBuyPrice;
+        if(shares!=0) {
+            avgBuyPrice = buyCash / shares;
+        }
+        else return null;
 
         List<Price> prices = pricesController.Prices(ticker);
 

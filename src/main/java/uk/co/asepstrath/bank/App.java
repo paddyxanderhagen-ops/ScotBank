@@ -18,9 +18,7 @@ import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
-import uk.co.asepstrath.bank.service.APIService;
-import uk.co.asepstrath.bank.service.InvestorService;
-import uk.co.asepstrath.bank.service.TransactionService;
+import uk.co.asepstrath.bank.service.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -39,6 +37,8 @@ public class App extends Jooby {
     private InvestorService investorService;
     private TransactionRepository transRepo;
     private TransactionService transactionService;
+    private AnalyticsService analyticsService;
+    private PriceService priceService;
     private final DataSource ds;
     private Logger log;
 
@@ -58,6 +58,8 @@ public class App extends Jooby {
         transRepo = new TransactionRepository(ds);
         investorService = new InvestorService(investorRepo);
         transactionService = new TransactionService(transRepo);
+        priceService = new PriceService();
+        analyticsService = new AnalyticsService(transRepo, priceService);
         log = getLog();
 
         /*
@@ -98,6 +100,8 @@ public class App extends Jooby {
         mvc(new EtfController_());
         mvc(new EquitiesController_());
         mvc(new PricesController_());
+        mvc(new AnalyticsController_(analyticsService));
+
 
         /*
         Finally we register our application lifecycle methods
