@@ -5,7 +5,7 @@ import uk.co.asepstrath.bank.repository.InvestorRepository;
 
 import java.util.List;
 
-public abstract class InvestorService {
+public class InvestorService {
 
     private InvestorRepository repo;
 
@@ -17,5 +17,8 @@ public abstract class InvestorService {
         return repo.getInvestor(id);
     }
 
-    public abstract List<Investor> getAll();
+    public List<Investor> getAll() {
+        return repo.getAll().getInvestors();
+    }
+
 }

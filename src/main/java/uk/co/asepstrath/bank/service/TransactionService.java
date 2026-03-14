@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank.service;
 
 import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
 import java.math.BigDecimal;
@@ -33,6 +34,7 @@ public class TransactionService {
 
     public TransactionService (TransactionRepository repo) {
         this.repo = repo;
+    }
     public HashMap<String, BigDecimal> getNumberOfShares(String InvestorId, List<Transaction> transactionList) {
         HashMap<String, BigDecimal> shares = new HashMap<>();
         BigDecimal numberOfShares;
@@ -42,14 +44,14 @@ public class TransactionService {
                 if (transaction.getInvestorId().equals(InvestorId)) {
                     currentNumberOfShares = shares.getOrDefault(transaction.getTicker(), BigDecimal.ZERO);
                         PricesController pricesController = new PricesController();
-                        numberOfShares = transaction.getTotalCashAmount().divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
+                        numberOfShares = BigDecimal.valueOf(transaction.getTotalCashAmount()).divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
                         currentNumberOfShares = currentNumberOfShares.add(numberOfShares);
                         shares.put(transaction.getTicker(), currentNumberOfShares);
                 }
             } else if (transaction.getType().equals("SELL")) {
                 currentNumberOfShares = shares.getOrDefault(transaction.getTicker(), BigDecimal.ZERO);
                 PricesController pricesController = new PricesController();
-                numberOfShares = transaction.getTotalCashAmount().divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
+                numberOfShares = BigDecimal.valueOf(transaction.getTotalCashAmount()).divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
                 currentNumberOfShares = currentNumberOfShares.subtract(numberOfShares);
                 shares.put(transaction.getTicker(), currentNumberOfShares);
             }
