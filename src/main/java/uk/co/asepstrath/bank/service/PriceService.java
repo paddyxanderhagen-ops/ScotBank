@@ -64,4 +64,19 @@ public class PriceService {
         }
         return max;
     }
+
+    public BigDecimal getLatestPrice(List<Price> priceList) {
+        return getMostRecent(priceList).getPrice();
+    }
+
+    public BigDecimal getPrice(String timestamp, List<Price> priceList) {
+        Price price = getByTimestamp(timestamp, priceList);
+
+        if (price == null) {
+            throw new IllegalArgumentException("Price not found for timestamp: " + timestamp);
+        }
+
+        return price.getPrice();
+    }
+
 }
