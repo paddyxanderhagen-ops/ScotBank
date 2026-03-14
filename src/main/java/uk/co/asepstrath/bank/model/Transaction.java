@@ -1,16 +1,14 @@
 package uk.co.asepstrath.bank.model;
 
-import java.math.BigDecimal;
-
 public class Transaction {
     private String id;
     private String timestamp;
     private String type;
     private String investorId;
     private String ticker;
-    private BigDecimal totalCashAmount;
+    private double totalCashAmount;
 
-    public Transaction(String id, String timestamp, String type, String investorId, String ticker, BigDecimal totalCashAmount) {
+    public Transaction(String id, String timestamp, String type, String investorId, String ticker, double totalCashAmount) {
         this.id = id;
         this.timestamp = timestamp;
         this.type = type;
@@ -25,7 +23,7 @@ public class Transaction {
         type = "";
         investorId = "";
         ticker = "";
-        totalCashAmount = BigDecimal.valueOf(0);
+        totalCashAmount = 0;
     }
 
     public String getId() {
@@ -66,11 +64,11 @@ public class Transaction {
         this.ticker = ticker;
     }
 
-    public BigDecimal getTotalCashAmount() {
+    public double getTotalCashAmount() {
         return totalCashAmount;
     }
 
-    public void setTotalCashAmount(BigDecimal totalCashAmount) {
+    public void setTotalCashAmount(double totalCashAmount) {
         this.totalCashAmount = totalCashAmount;
     }
 }

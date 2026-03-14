@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class CashAccountRepository {
 
@@ -30,22 +31,40 @@ public class CashAccountRepository {
         }
     }
 
-    public BigDecimal getBalance(long id) {
+    public double getBalance(String id) {
         String sql = "SELECT balance FROM cash_account WHERE id = ?";
 
         try (var conn = ds.getConnection();
              var ps = conn.prepareStatement(sql)) {
 
-            ps.setLong(1, id);
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return rs.getBigDecimal("balance");
+                return rs.getDouble("balance");
             }
 
             throw new IllegalArgumentException("Account not found");
 
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void transaction (String investorId, double updatedBalance) {
+        try (Connection conn = ds.getConnection()) {
+            String sql = """
+                    UPDATE investor
+                    SET cash_balance = ?
+                    WHERE id = ?;""";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setDouble(1, updatedBalance);
+                stmt.setString(2, investorId);
+
+                stmt.execute();
+            }
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

@@ -2,16 +2,16 @@ package uk.co.asepstrath.bank.service;
 
 import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.model.dto.TransactionDTO;
+import uk.co.asepstrath.bank.repository.TransactionRepository;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class TransactionService {
 
+    private TransactionRepository repo;
     private List<Transaction> transactions;
 
     public TransactionService () {
@@ -31,6 +31,8 @@ public class TransactionService {
         return "Transaction:" + id + " not found";
     }
 
+    public TransactionService (TransactionRepository repo) {
+        this.repo = repo;
     public HashMap<String, BigDecimal> getNumberOfShares(String InvestorId, List<Transaction> transactionList) {
         HashMap<String, BigDecimal> shares = new HashMap<>();
         BigDecimal numberOfShares;
@@ -85,16 +87,8 @@ public class TransactionService {
         return transactions;
     }
 
-    public void createTransaction (String transactionId, String timestamp, String type, String investorId, String ticker, double amount) {
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        transaction.setTimestamp(timestamp);
-        transaction.setType(type);
-        transaction.setInvestorId(investorId);
-        transaction.setTicker(ticker);
-        transaction.setTotalCashAmount(BigDecimal.valueOf(amount));
-
-        transactions.add(transaction);
+    public List<Transaction> getTransactionsByInvestor (String id) {
+        return repo.getTransactionsByInvestor(id);
     }
 
 }

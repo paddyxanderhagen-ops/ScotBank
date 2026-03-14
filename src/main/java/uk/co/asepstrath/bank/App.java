@@ -9,6 +9,7 @@ import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
+import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
@@ -33,9 +34,14 @@ import java.util.List;
 
 public class App extends Jooby {
 
-    private APIService api;
-    private InvestorDTO investorDTO;
+    private final APIService api;
     private TransactionDTO transactionDTO;
+    private InvestorRepository investorRepo;
+    private InvestorService investorService;
+    private TransactionRepository transRepo;
+    private TransactionService transactionService;
+    private final DataSource ds;
+    private Logger log;
 
     {
         /*
@@ -47,6 +53,13 @@ public class App extends Jooby {
 
         setSessionStore(SessionStore.memory(Cookie.session("scotbank")));
 
+        ds = require(DataSource.class);
+        api = new APIService();
+        investorRepo = new InvestorRepository(ds);
+        transRepo = new TransactionRepository(ds);
+        investorService = new InvestorService(investorRepo);
+        transactionService = new TransactionService(transRepo);
+        log = getLog();
 
         DataSource ds = require(DataSource.class);
         /*
@@ -77,8 +90,24 @@ public class App extends Jooby {
             ctx.render(gson.toJson(cause.getMessage()));
         });
 
-        mvc(new HomeController_(investorService));
-        mvc(new CashAccountController_(investorService));
+        try {
+            List <Investor> investors = api.getAllInvestor().getInvestors();
+
+            investorRepo.saveAll(investors);
+        } catch (Exception e) {
+            log.warn("Failed to load investors from API", e);
+        }
+
+        try {
+            List <Transaction> transactions = transactionDTO.getTransactions();
+
+            transRepo.saveAll(transactions);
+        } catch (Exception e) {
+            log.warn("Failed to load transactions from API", e);
+        }
+
+        mvc(new HomeController_(investorService, ds, transactionService));
+        mvc(new CashAccountController_(investorService, ds));
         mvc(new LoginController_());
         /*
         Finally we register our application lifecycle methods

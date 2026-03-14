@@ -5,7 +5,6 @@ import uk.co.asepstrath.bank.model.Stock;
 import uk.co.scotbank.InvestmentAccount;
 
 public class InvestmentAccountImplementation implements InvestmentAccount {
-    //private Stock stock;
     private Investor investor;
 
     public InvestmentAccountImplementation(Investor investor) {

@@ -1,8 +1,14 @@
 package uk.co.asepstrath.bank.repository;
 
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionRepository {
@@ -31,7 +37,7 @@ public class TransactionRepository {
                     stmt.setString(3, t.getType());
                     stmt.setString(4, t.getInvestorId());
                     stmt.setString(5, t.getTicker());
-                    stmt.setBigDecimal(6, t.getTotalCashAmount());
+                    stmt.setDouble(6, t.getTotalCashAmount());
 
                     stmt.addBatch();
                 }
@@ -40,5 +46,55 @@ public class TransactionRepository {
                 conn.commit();
             }
         }
+    }
+
+    public TransactionDTO getAll () {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        try (Connection conn = ds.getConnection()) {
+            conn.setAutoCommit(false);
+
+            String sql = """
+                    SELECT *
+                    FROM transaction;""";
+
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                ResultSet resultSet = stmt.executeQuery();
+
+                while (resultSet.next()) {
+                    Transaction transaction = new Transaction(resultSet.getString("id"), resultSet.getString("timestamp"), resultSet.getString("type"), resultSet.getString("investor_id"), resultSet.getString("ticker"), resultSet.getDouble("total_cash_amount"));
+                    transactionDTO.addTransaction(transaction);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+
+        return transactionDTO;
+    }
+
+    public List<Transaction> getTransactionsByInvestor (String id) {
+        List<Transaction> transactions = new ArrayList<>();
+        try (Connection conn = ds.getConnection()) {
+            String sql = """
+                    SELECT *
+                    FROM transaction
+                    WHERE investor_id = ?""";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, id);
+                ResultSet resultSet = stmt.executeQuery();
+                Transaction transaction = null;
+
+                while (resultSet.next()) {
+                    transaction = new Transaction(resultSet.getString("id"), resultSet.getString("timestamp"), resultSet.getString("type"), resultSet.getString("investor_id"), resultSet.getString("ticker"), resultSet.getDouble("total_cash_amount"));
+                }
+                transactions.add(transaction);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Transaction could not be found for investor: " + id, e);
+        }
+
+        return transactions;
     }
 }
