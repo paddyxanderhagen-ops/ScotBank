@@ -33,7 +33,7 @@ public class Position {
         this.buyCashAmount = buyCashAmount;
         this.currentCashAmount = currentCashAmount;
         this.pnl = Math.round((currentCashAmount - buyCashAmount) * 100.0) / 100.0;
-        this.pnlPercentage = Math.round((100 - (currentCashAmount / buyCashAmount) * 100) * 100.0) / 100.0;
+        this.pnlPercentage = Math.round(-(100 - (currentCashAmount / buyCashAmount) * 100) * 100.0) / 100.0;
 
     }
 

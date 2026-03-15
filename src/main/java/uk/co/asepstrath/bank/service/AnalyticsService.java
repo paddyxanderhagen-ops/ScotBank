@@ -6,6 +6,7 @@ import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class AnalyticsService {
@@ -71,54 +72,56 @@ public class AnalyticsService {
     private Position calculatePosition(String ticker, List<Transaction> transactions) {
 
         double shares = 0;
+        double buyShares = 0;
         double buyCash = 0;
+
+        List<Price> prices = pricesController.Prices(ticker);
 
         for (Transaction t : transactions) {
 
-            if (t == null || t.getTicker() == null || t.getTicker().isBlank())
+            if (t == null || t.getTicker() == null)
                 continue;
 
-            List<Price> prices = pricesController.Prices(t.getTicker());
+            BigDecimal p = priceService.getPrice(t.getTimestamp(), prices);
+            if (p == null)
+                continue;
 
-            double price =
-                    priceService
-                            .getPrice(t.getTimestamp(), prices)
-                            .doubleValue();
-
-
-            double numberOfShares =
-                    t.getTotalCashAmount() / price;
+            double price = p.doubleValue();
+            double numberOfShares = t.getTotalCashAmount() / price;
 
             if (t.getType().equals("BUY")) {
 
                 shares += numberOfShares;
+                buyShares += numberOfShares;
                 buyCash += t.getTotalCashAmount();
 
             } else if (t.getType().equals("SELL")) {
 
                 shares -= numberOfShares;
+
             }
         }
 
-        double avgBuyPrice = buyCash;
+        if (shares <= 0)
+            return null;
 
-
-        List<Price> prices = pricesController.Prices(ticker);
+        double avgBuyPrice = buyCash / buyShares;
 
         double lastPrice =
                 priceService
                         .getLatestPrice(prices)
                         .doubleValue();
 
-
         double currentCash = lastPrice * shares;
 
-        return new Position(ticker,
+        return new Position(
+                ticker,
                 round(shares),
                 round(avgBuyPrice),
                 round(lastPrice),
                 round(buyCash),
-                round(currentCash));
+                round(currentCash)
+        );
     }
 
 }
