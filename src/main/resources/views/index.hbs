@@ -16,29 +16,7 @@
 
 <body>
 
-<header class="topbar">
-
-    <div class="d-flex justify-content-between align-items-center p-3">
-
-        <div class="brand fs-4">Scotbank</div>
-
-        <button class="menu-btn" onclick="toggleMenu()">☰</button>
-
-    </div>
-
-    <nav id="menu" class="menu">
-
-        <a href="/dashboard">Dashboard</a>
-        <a href="/transactions">Transactions</a>
-        <a href="/transactions/shares/value">Investment Analytics</a>
-        <a href="/tax-report">Tax Report</a>
-        <a href="#" onclick="openCloseForm()">Manage Cash</a>
-        <a href="/contact">Contact</a>
-        <a href="/">Log Out</a>
-
-    </nav>
-
-</header>
+{{>partials/navbar.hbs}}
 
 <main class="container py-3">
 
@@ -66,7 +44,7 @@
         <div class="row g-3">
 
             <div class="col-6">
-                <a href="/tax-report" class="action-card">
+                <a href="/taxreport" class="action-card">
                     <div class="fw-bold">Tax Report</div>
                     <div class="small text-muted">
                         View realised gains and tax summary
@@ -75,7 +53,7 @@
             </div>
 
             <div class="col-6">
-                <a href="/transactions/shares/value" class="action-card">
+                <a href="/analytics" class="action-card">
                     <div class="fw-bold">Investment Analytics</div>
                     <div class="small text-muted">
                         Portfolio value and performance
@@ -84,7 +62,7 @@
             </div>
 
             <div class="col-6">
-                <a href="#" onclick="openCloseForm()" class="action-card">
+                <a href="/managecash" onclick="openCloseForm()" class="action-card">
                     <div class="fw-bold">Manage Cash</div>
                     <div class="small text-muted">
                         Deposit or withdraw funds
@@ -111,7 +89,7 @@
 
             <h5 class="fw-bold m-0">Recent Transactions</h5>
 
-            <a href="/transactions" class="showall">Show all</a>
+            <a href="/debug/transactions" class="showall">Show all</a>
 
         </div>
 

@@ -20,6 +20,11 @@ public class AnalyticsService {
         pricesController = new PricesController();
     }
 
+    private double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
+
     public List<Position> getPositions(String investorId) {
 
         List<Transaction> transactions =
@@ -29,7 +34,7 @@ public class AnalyticsService {
 
         for (Transaction t : transactions) {
 
-            if (t.getTicker() == null)
+            if (t==null || t.getTicker() == null || t.getTicker().isBlank())
                 continue;
 
             grouped
@@ -44,17 +49,34 @@ public class AnalyticsService {
             Position position =
                     calculatePosition(ticker, grouped.get(ticker));
 
-            positions.add(position);
+            if (position != null) {
+                positions.add(position);
+            }
+
         }
 
         return positions;
     }
-    private Position calculatePosition(String ticker, List<Transaction> txs) {
+
+    public Position getPosition(String ticker, String investorId) {
+        List <Position> positions = getPositions(investorId);
+        for (Position p : positions) {
+            if (p.getTicker().equals(ticker)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private Position calculatePosition(String ticker, List<Transaction> transactions) {
 
         double shares = 0;
         double buyCash = 0;
 
-        for (Transaction t : txs) {
+        for (Transaction t : transactions) {
+
+            if (t == null || t.getTicker() == null || t.getTicker().isBlank())
+                continue;
 
             List<Price> prices = pricesController.Prices(t.getTicker());
 
@@ -77,11 +99,9 @@ public class AnalyticsService {
                 shares -= numberOfShares;
             }
         }
-        double avgBuyPrice;
-        if(shares!=0) {
-            avgBuyPrice = buyCash / shares;
-        }
-        else return null;
+
+        double avgBuyPrice = buyCash;
+
 
         List<Price> prices = pricesController.Prices(ticker);
 
@@ -93,14 +113,12 @@ public class AnalyticsService {
 
         double currentCash = lastPrice * shares;
 
-        return new Position(
-                ticker,
-                (int) shares,
-                avgBuyPrice,
-                lastPrice,
-                buyCash,
-                currentCash
-        );
+        return new Position(ticker,
+                round(shares),
+                round(avgBuyPrice),
+                round(lastPrice),
+                round(buyCash),
+                round(currentCash));
     }
 
 }

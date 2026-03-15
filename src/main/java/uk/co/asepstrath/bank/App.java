@@ -85,7 +85,10 @@ public class App extends Jooby {
             log.warn("Failed to load investors from API", e);
         }
 
+
         try {
+            transactionDTO = api.getAllTransaction();
+
             List <Transaction> transactions = transactionDTO.getTransactions();
 
             transRepo.saveAll(transactions);
