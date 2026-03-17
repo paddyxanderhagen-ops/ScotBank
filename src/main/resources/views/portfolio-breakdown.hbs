@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <Title>Scotbank</Title>
+        <link rel="stylesheet" href="/assets/styles.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+
+    <body>
+        <div class="breakdown-container">
+            <h2>Portfolio Breakdown</h2>
+            <div class="breakdown-summary">
+                <div class="summary-card">Invested Value: <strong id="investedValue">£0.00</strong></div>
+                <div class="summary-card">Cash Balance: <strong id="cashBalance">£0.00</strong></div>
+                <div class="summary-card">Total Portfolio: <strong id="totalPortfolio">£0.00</strong></div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs" id="categoryTabs">
+                <button class="tab-btn active" data-tab="country">Country</button>
+                <button class="tab-btn" data-tab="region">Geographic Exposure</button>
+                <button class="tab-btn" data-tab="sector">Sector Breakdown</button>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Left: Pie Chart -->
+                <div class="chart-container">
+                    <canvas id="portfolioPieChart"></canvas>
+                </div>
+
+                <!-- Right: Details Table -->
+                <div class="table-container">
+                    <h3 id="tableTitle">All Equities</h3>
+                    <table class="details-table">
+                        <thead>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Name</th>
+                            <th>Shares</th>
+                            <th>Value (£)</th>
+                            <th>% of Category</th>
+                            <th>% of Total</th>
+                        </tr>
+                        </thead>
+                        <tbody id="equitiesTableBody">
+                            <!-- done using JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script src="/assets/portfolio-breakdown.js"></script>
+    </body>
+</html>
