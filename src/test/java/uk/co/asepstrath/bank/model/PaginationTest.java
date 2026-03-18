@@ -1,0 +1,22 @@
+package uk.co.asepstrath.bank.model;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class PaginationTest {
+    @Test
+    void getNextToken() {
+        Pagination p = new Pagination();
+        p.setNextToken("abcde");
+        assertEquals("abcde",p.getNextToken());
+    }
+
+    @Test
+    void setNextToken() {
+        Pagination p = new Pagination();
+        p.setNextToken("test string");
+        assertEquals("test string",p.getNextToken());
+    }
+}
