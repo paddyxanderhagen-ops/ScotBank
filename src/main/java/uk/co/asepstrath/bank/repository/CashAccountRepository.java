@@ -15,7 +15,7 @@ public class CashAccountRepository {
         this.ds = ds;
     }
 
-    public void createAccount(long id, String ownerName, BigDecimal balance) {
+    public void createAccount(long id, String ownerName, BigDecimal balance) throws SQLException {
         String sql = "INSERT INTO cash_account (id, owner_name, balance) VALUES (?, ?, ?)";
 
         try (Connection conn = ds.getConnection();
@@ -25,17 +25,15 @@ public class CashAccountRepository {
             ps.setString(2, ownerName);
             ps.setBigDecimal(3, balance);
             ps.executeUpdate();
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
-    public double getBalance(String id) {
+    public double getBalance (String id) throws SQLException {
         String sql = "SELECT balance FROM cash_account WHERE id = ?";
 
-        try (var conn = ds.getConnection();
-             var ps = conn.prepareStatement(sql)) {
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
 
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
@@ -46,26 +44,22 @@ public class CashAccountRepository {
 
             throw new IllegalArgumentException("Account not found");
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
-    public void transaction (String investorId, double updatedBalance) {
-        try (Connection conn = ds.getConnection()) {
-            String sql = """
-                    UPDATE investor
-                    SET cash_balance = ?
-                    WHERE id = ?;""";
+    public void transaction(String investorId, double updatedBalance) throws SQLException{
+        String sql = """
+                UPDATE investor
+                SET cash_balance = ?
+                WHERE id = ?;""";
 
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setDouble(1, updatedBalance);
-                stmt.setString(2, investorId);
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-                stmt.execute();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            ps.setDouble(1, updatedBalance);
+            ps.setString(2, investorId);
+
+            ps.execute();
         }
     }
 }

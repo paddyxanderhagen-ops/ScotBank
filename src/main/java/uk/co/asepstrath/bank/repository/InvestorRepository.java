@@ -69,11 +69,10 @@ public class InvestorRepository {
                 }
             }
         }
-
         return investorDTO;
     }
 
-    public Investor getInvestor (String id) {
+    public Investor getInvestor (String id) throws SQLException {
         Investor investor = null;
 
         try (Connection conn = ds.getConnection()) {
@@ -90,9 +89,6 @@ public class InvestorRepository {
                     investor = new Investor(resultSet.getString("id"), resultSet.getString("name"), resultSet.getDouble("cash_balance"));
                 }
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to get investor with id: " + id, e);
         }
 
         return investor;

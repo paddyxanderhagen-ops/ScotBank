@@ -67,6 +67,11 @@ public class App extends Jooby {
             ctx.render(gson.toJson(cause.getMessage()));
         });
 
+        error((ctx, cause, code) -> {
+           ctx.setResponseCode(code);
+           ctx.render("Error" + code.value() + cause.getMessage());
+        });
+
         try {
             List <Investor> investors = api.getAllInvestor().getInvestors();
 

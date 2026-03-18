@@ -1,11 +1,14 @@
 package uk.co.asepstrath.bank.implementation;
 
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.repository.CashAccountRepository;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 
 public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
     private Investor investor;
@@ -46,11 +49,14 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
 
             newBalance = newBalance.setScale(SCALE, RoundingMode.FLOOR);
 
-            investor.setCashBalance(newBalance.doubleValue());
-
             if (repo != null) {
-                repo.transaction(investor.getId(), newBalance.doubleValue());
+                try {
+                    repo.transaction(investor.getId(), newBalance.doubleValue());
+                } catch (SQLException e) {
+                    throw new StatusCodeException(StatusCode.NOT_FOUND, "Unable to create transaction");
+                }
             }
+            investor.setCashBalance(newBalance.doubleValue());
         } else {
             throw new IllegalArgumentException ("Deposit amount cannot be less than 0");
         }
@@ -75,7 +81,11 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
 
         investor.setCashBalance(newBalance.doubleValue());
         if (repo != null) {
-            repo.transaction(investor.getId(), newBalance.doubleValue());
+            try {
+                repo.transaction(investor.getId(), newBalance.doubleValue());
+            } catch (SQLException e) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Unable to create transaction");
+            }
         }
     }
 
