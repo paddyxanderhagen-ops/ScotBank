@@ -1,0 +1,90 @@
+package uk.co.asepstrath.bank.controller;
+
+import io.jooby.value.Value;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.service.InvestorService;
+import uk.co.asepstrath.bank.service.TransactionService;
+
+import javax.sql.DataSource;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import io.jooby.Context;
+import io.jooby.ModelAndView;
+import io.jooby.Session;
+
+import java.util.List;
+import java.util.Map;
+
+
+class HomeControllerTest {
+
+    private HomeController hc;
+
+    private InvestorService is;
+    private TransactionService ts;
+    private DataSource dsrc;
+
+    private Context ctx;
+    private Session sess;
+
+    @BeforeEach
+    void setup(){
+        is = mock(InvestorService.class);
+        ts = mock(TransactionService.class);
+        dsrc = mock(DataSource.class);
+        hc = new HomeController(is, dsrc, ts);
+        ctx = mock(Context.class);
+        sess = mock(Session.class);
+
+        when(ctx.session()).thenReturn(sess);
+    }
+
+    @Test
+    void landingPageNoIDReturnsView() {
+        ModelAndView<Map<String, Object>> result = hc.landingPage(null, ctx);
+        verify(sess).put("id","");
+        assertEquals("landingPage.hbs", result.getView());
+    }
+
+    @Test
+    void dashboardPageAuthorisedReturnsView() {
+        String id = "TS1505";
+        Investor i = mock(Investor.class);
+
+        Value mockValue = mock(Value.class);
+        when(sess.get("id")).thenReturn(mockValue);
+        when(mockValue.isMissing()).thenReturn(false); // or true if testing missing
+        when(mockValue.value()).thenReturn(id);
+
+        when(is.getInvestor(id)).thenReturn(i);
+        when(i.getName()).thenReturn("Tupac");
+        when(i.getId()).thenReturn(id);
+        when(ts.getTransactionsByInvestor(id)).thenReturn(List.of());
+
+        ModelAndView<Map<String, Object>> result = hc.dashboardPage(ctx);
+        assertEquals("index.hbs",result.getView());
+        assertEquals("Tupac",result.getModel().get("name"));
+    }
+
+    @Test
+    void dashboardUnauthorisedRedirects() {
+        String id = "Jambo243";
+
+        Investor investor = mock(Investor.class);
+        Value mockValue = mock(Value.class);
+        when(sess.get("id")).thenReturn(mockValue);
+        when(mockValue.isMissing()).thenReturn(false); // or true if testing missing
+        when(mockValue.value()).thenReturn(id);
+
+        when(is.getInvestor(id)).thenReturn(null);
+
+        ModelAndView<Map<String, Object>> result = hc.dashboardPage(ctx);
+
+        verify(ctx).sendRedirect("/login");
+        assertNull(result);
+    }
+}
