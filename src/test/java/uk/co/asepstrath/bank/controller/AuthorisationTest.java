@@ -28,6 +28,6 @@ class AuthorisationTest {
 
     @Test
     void isAuthorisedWithoutInvestor(){
-        assertEquals(false, new Authorisation(null));
+        assertEquals(false, new Authorisation(null).isAuthorised());
     }
 }

@@ -46,7 +46,7 @@ class TransactionTest {
 
     @Test
     void getTimestamp() {
-        assertEquals("01-01-70",t.getId());
+        assertEquals("01-01-70",t.getTimestamp());
     }
 
     @Test
@@ -57,7 +57,7 @@ class TransactionTest {
 
     @Test
     void getType() {
-        assertEquals("Withdrawal",t.getId());
+        assertEquals("Withdrawal",t.getType());
     }
 
     @Test

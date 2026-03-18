@@ -75,9 +75,8 @@ class InvestorTest {
     void setStocks() {
         Stock s1 = new Stock();
         Stock s2 = new Stock("META",500,55.5,true);
-        ArrayList<Stock> l = new ArrayList<>();
-        l.add(s1);
-        l.add(s2);
+        i.setStocks(s1);
+        i.setStocks(s2);
         assertEquals(2,i.getStocks().size());
     }
 }
