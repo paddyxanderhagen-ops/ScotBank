@@ -29,7 +29,14 @@ public class AnalyticsService {
     public List<Position> getPositions(String investorId) {
 
         List<Transaction> transactions =
-                repo.getTransactionsByInvestor(investorId);
+                repo.getStockTransactionsByInvestor(investorId);
+
+        System.out.println("transactions: " + transactions.size());
+        for (Transaction t : transactions) {
+            System.out.println(t.getTicker());
+            System.out.println(t.getType());
+            System.out.println(t.getTimestamp());
+        }
 
         Map<String, List<Transaction>> grouped = new HashMap<>();
 

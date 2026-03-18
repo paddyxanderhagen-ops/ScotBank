@@ -67,6 +67,7 @@ public class HomeController {
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(3).toList();
 
         Map<String, Object> map = new HashMap<>();
+        map.put("id", investor.getId());
         map.put("name", investor.getName());
         map.put("balance", Math.floor(account.getBalance() * 100.0) / 100.0);
         map.put("transactions", transactions);

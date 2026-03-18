@@ -34,8 +34,6 @@ public class APIService {
         List<Transaction> transactions = new ArrayList<>();
         TransactionDTO transactionDTO = new TransactionDTO();
 
-        System.out.println("test");
-
         while (nextToken != null) {
             url.append("transactions?nextToken=").append(nextToken);
             String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
