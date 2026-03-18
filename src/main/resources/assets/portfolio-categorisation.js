@@ -44,15 +44,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch(`/api/equities/metadata?tickers=${tickers}`);
+            if (!response.ok) throw new Error(`Error fetching metadata: ${response.status}`);
+
             const json = await response.json();
             const metaMap = {};
 
-            if (json.data) {
-                json.data.forEach(item => { metaMap[item.ticker] = item; });
-            }
+            const items = json.data || json.assets || [];
+            items.forEach(item => { metaMap[item.ticker] = item;});
 
             enrichedData = rawHoldings.map(holding => {
-                const currentValue = holding.shares * holding.currentPrice;
+                const currentValue = holding.currentValue !== undefined ? holding.currentValue : (holding.shares * holding.currentPrice);
                 const meta = metaMap[holding.ticker] || {};
 
                 return {
@@ -60,9 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     shares: holding.shares,
                     currentValue: currentValue,
                     name: meta.name || 'Unknown',
-                    country: meta.country || 'Uncategorized',
-                    region: meta.region || 'Uncategorized',
-                    sector: meta.sector || 'Uncategorized'
+                    country: meta.country || 'Uncategorised',
+                    region: meta.region || 'Uncategorised',
+                    sector: meta.sector || 'Uncategorised'
                 };
             });
         } catch (error) {
@@ -86,9 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalInvested = enrichedData.reduce((sum, item) => sum + item.currentValue, 0);
         const totalPortfolio = totalInvested + cashBalance;
 
-        document.getElementById('investedValue').innerText = `£${totalInvested.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-        document.getElementById('cashBalance').innerText = `£${cashBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-        document.getElementById('totalPortfolio').innerText = `£${totalPortfolio.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        document.getElementById('investedValue').innerText = `£${totalInvested.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('cashBalance').innerText = `£${cashBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('totalPortfolio').innerText = `£${totalPortfolio.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
         let groups = {};
         enrichedData.forEach(item => {
@@ -207,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><strong>${item.ticker}</strong></td>
                 <td>${item.name}</td>
                 <td>${item.shares}</td>
-                <td>£${item.currentValue.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                <td>£${item.currentValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 <td>${percOfCat}%</td>
                 <td>${percOfTotal}%</td>
             `;

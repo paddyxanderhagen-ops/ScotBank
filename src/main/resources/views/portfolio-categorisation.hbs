@@ -10,14 +10,14 @@
 
         <style>
 
-        .breakdown-container {
+        .categorisation-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             font-family: Arial, sans-serif;
         }
 
-        .breakdown-summary {
+        .categorisation-summary {
             display: flex;
             gap: 20px;
             margin-bottom: 20px;
@@ -100,7 +100,7 @@
                 margin: 0 auto;
             }
 
-            .breakdown-summary {
+            .categorisation-summary {
                 flex-direction: column;
             }
         }
@@ -112,9 +112,9 @@
     <body>
         {{>partials/navbar.hbs}}
 
-        <div class="breakdown-container">
-            <h2>Portfolio Breakdown</h2>
-            <div class="breakdown-summary">
+        <div class="categorisation-container">
+            <h2>Portfolio categorisation</h2>
+            <div class="categorisation-summary">
                 <div class="summary-card">Invested Value: <strong id="investedValue">£0.00</strong></div>
                 <div class="summary-card">Cash Balance: <strong id="cashBalance">£{{balance}}</strong></div>
                 <div class="summary-card">Total Portfolio: <strong id="totalPortfolio">£0.00</strong></div>
@@ -141,6 +141,7 @@
                         <thead>
                         <tr>
                             <th>Ticker</th>
+                            <th>Name</th>
                             <th>Shares</th>
                             <th>Value (£)</th>
                             <th>% of Category</th>
@@ -155,6 +156,6 @@
             </div>
         </div>
 
-        <script src="/assets/portfolio-breakdown.js"></script>
+        <script src="/assets/portfolio-categorisation.js"></script>
     </body>
 </html>

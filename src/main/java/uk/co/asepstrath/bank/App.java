@@ -104,7 +104,7 @@ public class App extends Jooby {
         mvc(new EquitiesController_());
         mvc(new PricesController_());
         mvc(new AnalyticsController_(analyticsService));
-        mvc(new PortfolioBreakdownController_());
+        mvc(new PortfolioCategorisationController_());
 
 
         /*
@@ -155,6 +155,77 @@ public class App extends Jooby {
                 }
                 return list;
             }
+        });
+
+        get("/api/portfolio", ctx -> {
+            io.jooby.Session session = ctx.session();
+            if (session.get("id").isMissing()) {
+                ctx.setResponseCode(io.jooby.StatusCode.UNAUTHORIZED);
+            }
+            String id = session.get("id").value();
+
+            uk.co.asepstrath.bank.model.Investor investor = investorService.getInvestor(id);
+            uk.co.asepstrath.bank.implementation.CashAccountImplementation account =
+                    new uk.co.asepstrath.bank.implementation.CashAccountImplementation(investor, ds);
+
+            double cash = account.getBalance();
+            List<uk.co.asepstrath.bank.model.Position> positions = analyticsService.getPositions(id);
+
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("cash", cash);
+
+            List<java.util.Map<String, Object>> holdings = new java.util.ArrayList<>();
+            for (uk.co.asepstrath.bank.model.Position p : positions) {
+                java.util.Map<String, Object> h = new java.util.HashMap<>();
+                h.put("ticker", p.getTicker());
+                h.put("shares", p.getNumberOfShares());
+                h.put("currentPrice", p.getLastPrice());
+                h.put("currentValue", p.getCurrentCashAmount());
+                holdings.add(h);
+            }
+
+            //test, remove before merge
+            if (holdings.size() <= 1) {
+                java.util.Map<String, Object> mock1 = new java.util.HashMap<>();
+                mock1.put("ticker", "AAPL");
+                mock1.put("shares", 50.0);
+                mock1.put("currentPrice", 150.0);
+                mock1.put("currentValue", 7500.0);
+                holdings.add(mock1);
+
+                java.util.Map<String, Object> mock2 = new java.util.HashMap<>();
+                mock2.put("ticker", "VOD");
+                mock2.put("shares", 200.0);
+                mock2.put("currentPrice", 80.0);
+                mock2.put("currentValue", 16000.0);
+                holdings.add(mock2);
+
+                java.util.Map<String, Object> mock3 = new java.util.HashMap<>();
+                mock3.put("ticker", "BABA");
+                mock3.put("shares", 100.0);
+                mock3.put("currentPrice", 100.0);
+                mock3.put("currentValue", 10000.0);
+                holdings.add(mock3);
+            }
+            //end of test
+
+            response.put("holdings", holdings);
+
+            Gson gson = new Gson();
+            ctx.setResponseType("application/json");
+            return gson.toJson(response);
+        });
+
+        get("/api/equities/metadata", ctx -> {
+            String tickerName = ctx.query("tickers").value("");
+
+            String response = kong.unirest.core.Unirest.get("https://api.asep-strath.co.uk/api/equities/metadata")
+                    .queryString("tickers", tickerName)
+                    .accept("application/json")
+                    .asString().getBody();
+
+            ctx.setResponseType("application/json");
+            return response;
         });
     }
 
