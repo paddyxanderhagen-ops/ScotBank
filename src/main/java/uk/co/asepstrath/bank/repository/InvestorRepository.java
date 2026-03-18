@@ -21,7 +21,7 @@ public class InvestorRepository {
         this.ds = ds;
     }
 
-    public void saveAll(List<Investor> investors) throws Exception {
+    public void saveAll(List<Investor> investors) throws SQLException {
         try (var conn = ds.getConnection()) {
             conn.setAutoCommit(false);
 
@@ -49,7 +49,7 @@ public class InvestorRepository {
         }
     }
 
-    public InvestorDTO getAll () {
+    public InvestorDTO getAll () throws SQLException {
         InvestorDTO investorDTO = new InvestorDTO();
         try (Connection conn = ds.getConnection()) {
             conn.setAutoCommit(false);
@@ -68,8 +68,6 @@ public class InvestorRepository {
                     investorDTO.addInvestor(investor);
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException();
         }
 
         return investorDTO;
