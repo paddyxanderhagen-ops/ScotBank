@@ -76,7 +76,7 @@ public class App extends Jooby {
         }
 
         try {
-            List <Transaction> transactions = transactionDTO.getTransactions();
+            List <Transaction> transactions = api.getAllTransaction().getTransactions();
 
             transRepo.saveAll(transactions);
         } catch (Exception e) {
