@@ -12,13 +12,13 @@ import java.util.*;
 public class AnalyticsService {
     private TransactionRepository repo;
     private PriceService priceService;
-    private PricesController pricesController;
+    private APIService apiService;
 
 
-    public AnalyticsService (TransactionRepository repo, PriceService priceService) {
+    public AnalyticsService (TransactionRepository repo, PriceService priceService, APIService api) {
         this.repo = repo;
         this.priceService = priceService;
-        pricesController = new PricesController();
+        this.apiService = api;
     }
 
     private double round(double value) {
@@ -82,12 +82,13 @@ public class AnalyticsService {
         double buyShares = 0;
         double buyCash = 0;
 
-        List<Price> prices = pricesController.Prices(ticker);
+        List<Price> prices = apiService.getPricesForStock(ticker);
 
         for (Transaction t : transactions) {
 
             if (t == null || t.getTicker() == null)
                 continue;
+
 
             BigDecimal p = priceService.getPrice(t.getTimestamp(), prices);
             if (p == null)

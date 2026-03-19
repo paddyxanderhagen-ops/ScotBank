@@ -15,6 +15,7 @@ import uk.co.asepstrath.bank.controller.LoginController_;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
+import uk.co.asepstrath.bank.model.dto.PriceDTO;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
@@ -22,10 +23,11 @@ import uk.co.asepstrath.bank.service.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class App extends Jooby {
@@ -41,6 +43,7 @@ public class App extends Jooby {
     private PriceService priceService;
     private final DataSource ds;
     private Logger log;
+    private PriceDTO priceDTO;
 
     {
         /*
@@ -53,13 +56,13 @@ public class App extends Jooby {
         setSessionStore(SessionStore.memory(Cookie.session("scotbank")));
 
         ds = require(DataSource.class);
-        api = new APIService();
         investorRepo = new InvestorRepository(ds);
         transRepo = new TransactionRepository(ds);
+        api = new APIService();
         investorService = new InvestorService(investorRepo);
-        transactionService = new TransactionService(transRepo);
+        transactionService = new TransactionService(transRepo, priceService, api);
         priceService = new PriceService();
-        analyticsService = new AnalyticsService(transRepo, priceService);
+        analyticsService = new AnalyticsService(transRepo, priceService, api);
         log = getLog();
 
         /*
@@ -95,6 +98,34 @@ public class App extends Jooby {
         } catch (Exception e) {
             log.warn("Failed to load transactions from API", e);
         }
+        try {
+            transactionDTO = api.getAllTransaction();
+            List<Transaction> transactions = transactionDTO.getTransactions();
+            transRepo.saveAll(transactions);
+
+
+            Set<String> tickers = new HashSet<>();
+            for (Transaction t : transactions) {
+                if (t.getTicker() != null && !t.getTicker().isBlank()) {
+                    tickers.add(t.getTicker());
+                }
+            }
+
+            System.out.println("Preloading prices for " + tickers.size() + " tickers...");
+
+
+            tickers.parallelStream().forEach(ticker -> {
+                System.out.println("Caching: " + ticker);
+                api.getPricesForStock(ticker);
+                System.out.println("Done: " + ticker);
+            });
+
+            System.out.println("All prices cached!");
+
+        } catch (Exception e) {
+            log.warn("Failed to load data from API", e);
+        }
+
 
         mvc(new HomeController_(investorService, ds, transactionService));
         mvc(new CashAccountController_(investorService, ds));
@@ -102,7 +133,7 @@ public class App extends Jooby {
         mvc(new TransactionController_(transactionService));
         mvc(new EtfController_());
         mvc(new EquitiesController_());
-        mvc(new PricesController_());
+        //mvc(new PricesController_());
         mvc(new AnalyticsController_(analyticsService));
 
 
@@ -112,49 +143,6 @@ public class App extends Jooby {
         onStarted(() -> onStart());
         onStop(() -> onStop());
 
-
-        get("/test", ctx -> {
-
-
-            try (Connection conn = ds.getConnection();
-                 Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT 1")) {
-
-                rs.next();
-                return rs.getInt(1);
-            }
-        });
-
-        get("/debug/investors", ctx -> {
-            try (Connection conn = ds.getConnection();
-                 Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT * FROM investor")) {
-
-                List<String> list = new java.util.ArrayList<>();
-
-                while (rs.next()) {
-                    list.add(rs.getString("id") + " - " + rs.getString("name") + " - " + rs.getDouble("cash_balance"));
-                }
-
-                return list;
-            }
-        });
-
-        get("/debug/transactions", ctx -> {
-            try (Connection conn = ds.getConnection();
-                 Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT * FROM transaction")) {
-
-                List<String> list = new java.util.ArrayList<>();
-
-                while (rs.next()) {
-                    list.add(rs.getString("id") + " - " + rs.getString("timestamp")
-                            + " - " + rs.getString("type") + rs.getString("investor_id")
-                            + rs.getString("ticker") + rs.getDouble("total_cash_amount"));
-                }
-                return list;
-            }
-        });
     }
 
     public static void main(final String[] args) {
@@ -190,6 +178,14 @@ public class App extends Jooby {
             ticker VARCHAR(20),
             total_cash_amount DECIMAL(15,2) NOT NULL,
             FOREIGN KEY (investor_id) REFERENCES investor(id)
+            )""");
+
+            stmt.execute("""
+            CREATE TABLE IF NOT EXISTS price (
+            timestamp VARCHAR(50) NOT NULL,
+            ticker VARCHAR(20) NOT NULL,
+            price DECIMAL(15,2) NOT NULL,
+            PRIMARY KEY (ticker, timestamp)
             )""");
 
         } catch (Exception e) {
