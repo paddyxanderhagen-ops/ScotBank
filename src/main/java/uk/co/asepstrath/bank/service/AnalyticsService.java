@@ -1,5 +1,7 @@
 package uk.co.asepstrath.bank.service;
 
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.model.Price;
@@ -7,6 +9,7 @@ import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.*;
 
 public class AnalyticsService {
@@ -27,40 +30,43 @@ public class AnalyticsService {
 
 
     public List<Position> getPositions(String investorId) {
+        try {
+            List<Transaction> transactions =
+                    repo.getTransactionsByInvestor(investorId);
 
-        List<Transaction> transactions =
-                repo.getTransactionsByInvestor(investorId);
+            Map<String, List<Transaction>> grouped = new HashMap<>();
 
-        Map<String, List<Transaction>> grouped = new HashMap<>();
+            for (Transaction t : transactions) {
 
-        for (Transaction t : transactions) {
+                if (t == null || t.getTicker() == null || t.getTicker().isBlank())
+                    continue;
 
-            if (t==null || t.getTicker() == null || t.getTicker().isBlank())
-                continue;
-
-            grouped
-                    .computeIfAbsent(t.getTicker(), k -> new ArrayList<>())
-                    .add(t);
-        }
-
-        List<Position> positions = new ArrayList<>();
-
-        for (String ticker : grouped.keySet()) {
-
-            Position position =
-                    calculatePosition(ticker, grouped.get(ticker));
-
-            if (position != null) {
-                positions.add(position);
+                grouped
+                        .computeIfAbsent(t.getTicker(), k -> new ArrayList<>())
+                        .add(t);
             }
 
-        }
+            List<Position> positions = new ArrayList<>();
 
-        return positions;
+            for (String ticker : grouped.keySet()) {
+
+                Position position =
+                        calculatePosition(ticker, grouped.get(ticker));
+
+                if (position != null) {
+                    positions.add(position);
+                }
+
+            }
+
+            return positions;
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve transactions");
+        }
     }
 
     public Position getPosition(String ticker, String investorId) {
-        List <Position> positions = getPositions(investorId);
+        List<Position> positions = getPositions(investorId);
         for (Position p : positions) {
             if (p.getTicker().equals(ticker)) {
                 return p;

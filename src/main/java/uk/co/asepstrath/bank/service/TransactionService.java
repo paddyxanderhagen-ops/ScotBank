@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TransactionService {
 
-    private final TransactionRepository repo;
+    private TransactionRepository repo;
     private List<Transaction> transactions;
 
     public TransactionService () {
