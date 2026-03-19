@@ -1,7 +1,8 @@
-package uk.co.asepstrath.bank.controller;
+package uk.co.asepstrath.bank.unit.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.co.asepstrath.bank.controller.Authorisation;
 import uk.co.asepstrath.bank.model.Investor;
 
 import static org.junit.jupiter.api.Assertions.*;

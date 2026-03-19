@@ -1,9 +1,10 @@
-package uk.co.asepstrath.bank.repository;
+package uk.co.asepstrath.bank.unit.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
+import uk.co.asepstrath.bank.repository.InvestorRepository;
 
 import javax.sql.DataSource;
 
@@ -45,6 +46,8 @@ class InvestorRepositoryTest {
         verify(ps).setString(1, "1");
         verify(ps).setString(2, "John Doe");
         verify(ps).setDouble(3, 100.0);
+        verify(ps, times(1)).addBatch();
+        verify(ps).executeBatch();
     }
 
     @Test
@@ -59,9 +62,15 @@ class InvestorRepositoryTest {
         verify(ps).setDouble(3, 99.99);
     }
 
+    @Test
+    void saveAllMultipleInvestors () throws SQLException {
+        repository.saveAll(List.of (new Investor("1", "John Doe", 100.0), new Investor("2", "Jane Doe", 99.999)));
+        verify(ps, times(2)).addBatch();
+    }
+
 
     @Test
-    void getAllHappyPath() throws SQLException {
+    void getAll () throws SQLException {
         when(rs.next()).thenReturn(true, false);
         when(rs.getString("id")).thenReturn("1");
         when(rs.getString("name")).thenReturn("John Doe");
@@ -82,12 +91,6 @@ class InvestorRepositoryTest {
     }
 
     @Test
-    void saveAllMultipleInvestors () throws SQLException {
-        repository.saveAll(List.of (new Investor("1", "John Doe", 100.0), new Investor("2", "Jane Doe", 99.999)));
-        verify(ps, times(2)).addBatch();
-    }
-
-    @Test
     void getInvestor() throws SQLException {
         when(rs.next()).thenReturn(true, false);
         when(rs.getString("id")).thenReturn("1");
@@ -103,6 +106,20 @@ class InvestorRepositoryTest {
 
     @Test
     void getInvestorWhenNoInvestors () throws SQLException {
+        when(rs.next()).thenReturn(false);
+        Investor investor = repository.getInvestor("1");
+        assertNull(investor);
+    }
+
+    @Test
+    void transaction () throws SQLException {
+        repository.transaction("1", 100.0);
+        verify(ps).setDouble(1, 100.0);
+        verify(ps).setString(2, "1");
+    }
+
+    @Test
+    void transactionWhenNoInvestor () throws SQLException {
         when(rs.next()).thenReturn(false);
         Investor investor = repository.getInvestor("1");
         assertNull(investor);

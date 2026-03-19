@@ -3,7 +3,7 @@ package uk.co.asepstrath.bank.implementation;
 import io.jooby.StatusCode;
 import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Investor;
-import uk.co.asepstrath.bank.repository.CashAccountRepository;
+import uk.co.asepstrath.bank.repository.InvestorRepository;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
     private Investor investor;
     private static final int SCALE = 2;
-    private CashAccountRepository repo;
+    private InvestorRepository repo;
 
     public CashAccountImplementation () {
         this.investor = new Investor();
@@ -22,12 +22,12 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
 
     public CashAccountImplementation(DataSource ds) {
         this.investor = new Investor();
-        this.repo = new CashAccountRepository(ds);
+        this.repo = new InvestorRepository(ds);
     }
 
     public CashAccountImplementation(Investor investor, DataSource ds) {
         this.investor = investor;
-        this.repo = new CashAccountRepository(ds);
+        this.repo = new InvestorRepository(ds);
     }
 
     @Override

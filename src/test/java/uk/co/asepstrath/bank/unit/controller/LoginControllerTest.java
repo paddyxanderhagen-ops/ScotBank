@@ -1,4 +1,4 @@
-package uk.co.asepstrath.bank.controller;
+package uk.co.asepstrath.bank.unit.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,7 @@ import io.jooby.annotation.FormParam;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.POST;
 import io.jooby.annotation.Path;
+import uk.co.asepstrath.bank.controller.LoginController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ class LoginControllerTest {
     }
 
     @Test
-    void postLogin() {
+     void postLogin() {
         String id = "Hailey45";
 
         lc.postLogin(id,ctx);

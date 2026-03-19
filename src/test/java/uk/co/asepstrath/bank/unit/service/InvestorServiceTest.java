@@ -1,4 +1,4 @@
-package uk.co.asepstrath.bank.service;
+package uk.co.asepstrath.bank.unit.service;
 
 import org.junit.jupiter.api.Test;
 

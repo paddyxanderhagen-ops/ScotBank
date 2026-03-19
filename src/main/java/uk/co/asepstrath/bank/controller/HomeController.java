@@ -12,6 +12,7 @@ import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class HomeController {
     }
 
     @GET("/dashboard")
-    public ModelAndView<Map<String, Object>> dashboardPage (Context ctx) {
+    public ModelAndView<Map<String, Object>> dashboardPage (Context ctx) throws SQLException {
         Session session = null;
         String id = null;
         if (ctx != null) {

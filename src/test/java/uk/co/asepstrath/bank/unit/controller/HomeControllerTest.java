@@ -1,8 +1,9 @@
-package uk.co.asepstrath.bank.controller;
+package uk.co.asepstrath.bank.unit.controller;
 
 import io.jooby.value.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.co.asepstrath.bank.controller.HomeController;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
@@ -16,6 +17,7 @@ import io.jooby.Context;
 import io.jooby.ModelAndView;
 import io.jooby.Session;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +53,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void dashboardPageAuthorisedReturnsView() {
+    void dashboardPageAuthorisedReturnsView() throws SQLException {
         String id = "TS1505";
         Investor i = mock(Investor.class);
 
@@ -71,7 +73,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void dashboardUnauthorisedRedirects() {
+    void dashboardUnauthorisedRedirects() throws SQLException {
         String id = "Jambo243";
 
         Investor investor = mock(Investor.class);

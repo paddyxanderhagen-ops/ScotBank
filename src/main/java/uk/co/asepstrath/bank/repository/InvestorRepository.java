@@ -93,4 +93,20 @@ public class InvestorRepository {
 
         return investor;
     }
+
+    public void transaction (String investorId, double updatedBalance) throws SQLException {
+        String sql = """
+                UPDATE investor
+                SET cash_balance = ?
+                WHERE id = ?;""";
+
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDouble(1, updatedBalance);
+            ps.setString(2, investorId);
+
+            ps.execute();
+        }
+    }
 }

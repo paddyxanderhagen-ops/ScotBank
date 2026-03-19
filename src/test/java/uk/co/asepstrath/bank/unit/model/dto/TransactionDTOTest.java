@@ -1,9 +1,10 @@
-package uk.co.asepstrath.bank.model.dto;
+package uk.co.asepstrath.bank.unit.model.dto;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.model.Pagination;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
 import java.sql.Array;
 import java.util.ArrayList;

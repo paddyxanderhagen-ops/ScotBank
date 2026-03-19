@@ -19,8 +19,7 @@ public class TransactionRepository {
         this.ds = ds;
     }
 
-    public void saveAll(List<Transaction> transactions) throws Exception {
-
+    public void saveAll(List<Transaction> transactions) throws SQLException {
         try (var conn = ds.getConnection()) {
             conn.setAutoCommit(false);
 
@@ -48,7 +47,7 @@ public class TransactionRepository {
         }
     }
 
-    public TransactionDTO getAll () {
+    public TransactionDTO getAll () throws SQLException{
         TransactionDTO transactionDTO = new TransactionDTO();
         try (Connection conn = ds.getConnection()) {
             conn.setAutoCommit(false);
@@ -66,14 +65,11 @@ public class TransactionRepository {
                     transactionDTO.addTransaction(transaction);
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException();
         }
-
         return transactionDTO;
     }
 
-    public List<Transaction> getTransactionsByInvestor (String id) {
+    public List<Transaction> getTransactionsByInvestor (String id) throws SQLException {
         List<Transaction> transactions = new ArrayList<>();
         try (Connection conn = ds.getConnection()) {
             String sql = """
@@ -91,8 +87,6 @@ public class TransactionRepository {
                 }
                 transactions.add(transaction);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Transaction could not be found for investor: " + id, e);
         }
 
         return transactions;
