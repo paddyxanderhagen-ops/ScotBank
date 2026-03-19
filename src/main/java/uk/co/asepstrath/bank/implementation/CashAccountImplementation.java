@@ -1,25 +1,33 @@
 package uk.co.asepstrath.bank.implementation;
 
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Investor;
-import uk.co.asepstrath.bank.repository.CashAccountRepository;
+import uk.co.asepstrath.bank.repository.InvestorRepository;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 
 public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
-    private final Investor investor;
     private static final int SCALE = 2;
-    private CashAccountRepository repo;
+    private final Investor investor;
+    private final InvestorRepository repo;
+
+    public CashAccountImplementation() {
+        this.investor = new Investor();
+        this.repo = null;
+    }
 
     public CashAccountImplementation(DataSource ds) {
         this.investor = new Investor();
-        this.repo = new CashAccountRepository(ds);
+        this.repo = new InvestorRepository(ds);
     }
 
     public CashAccountImplementation(Investor investor, DataSource ds) {
         this.investor = investor;
-        this.repo = new CashAccountRepository(ds);
+        this.repo = new InvestorRepository(ds);
     }
 
     @Override
@@ -41,14 +49,18 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
 
             newBalance = newBalance.setScale(SCALE, RoundingMode.FLOOR);
 
+            if (repo != null) {
+                try {
+                    repo.transaction(investor.getId(), newBalance.doubleValue());
+                } catch (SQLException e) {
+                    throw new StatusCodeException(StatusCode.NOT_FOUND, "Unable to create transaction");
+                }
+            }
             investor.setCashBalance(newBalance.doubleValue());
-
-            repo.transaction(investor.getId(), newBalance.doubleValue());
         } else {
-            throw new IllegalArgumentException ("Deposit amount cannot be less than 0");
+            throw new IllegalArgumentException("Deposit amount cannot be less than 0");
         }
     }
-
 
 
     @Override
@@ -59,7 +71,7 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
         checkDecimals(value);
 
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException ("Withdraw amount cannot be less than 0");
+            throw new IllegalArgumentException("Withdraw amount cannot be less than 0");
         } else if (amount.compareTo(currentBalance) > 0) {
             throw new IllegalArgumentException("Withdraw amount cannot be greater than balance");
         }
@@ -67,11 +79,16 @@ public class CashAccountImplementation implements uk.co.scotbank.CashAccount {
         BigDecimal newBalance = currentBalance.subtract(amount.setScale(SCALE, RoundingMode.FLOOR));
 
         investor.setCashBalance(newBalance.doubleValue());
-
-        repo.transaction(investor.getId(), newBalance.doubleValue());
+        if (repo != null) {
+            try {
+                repo.transaction(investor.getId(), newBalance.doubleValue());
+            } catch (SQLException e) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Unable to create transaction");
+            }
+        }
     }
 
-    private void checkDecimals (double value) {
+    private void checkDecimals(double value) {
         String stringV = Double.toString(Math.abs(value));
         int integerPlaces = stringV.indexOf('.');
         int decimalPlaces = stringV.length() - integerPlaces - 1;

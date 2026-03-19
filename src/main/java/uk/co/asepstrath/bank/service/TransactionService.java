@@ -1,10 +1,13 @@
 package uk.co.asepstrath.bank.service;
 
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
+import java.sql.SQLException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -12,7 +15,7 @@ import java.util.List;
 
 public class TransactionService {
 
-    private TransactionRepository repo;
+    private final TransactionRepository repo;
     private List<Transaction> transactions;
 
     public TransactionService () {
@@ -21,6 +24,10 @@ public class TransactionService {
 
     public TransactionService (TransactionDTO transactionDTO) {
         transactions = transactionDTO.getTransactions();
+    }
+
+    public TransactionService(TransactionRepository repo) {
+        this.repo = repo;
     }
 
     public String getById (String id, List<Transaction> transactionList) {
@@ -32,9 +39,6 @@ public class TransactionService {
         return "Transaction:" + id + " not found";
     }
 
-    public TransactionService (TransactionRepository repo) {
-        this.repo = repo;
-    }
     public HashMap<String, BigDecimal> getNumberOfShares(String InvestorId, List<Transaction> transactionList) {
         HashMap<String, BigDecimal> shares = new HashMap<>();
         BigDecimal numberOfShares;
@@ -89,8 +93,16 @@ public class TransactionService {
         return transactions;
     }
 
-    public List<Transaction> getTransactionsByInvestor (String id) {
-        return repo.getTransactionsByInvestor(id);
-    }
+    public List<Transaction> getTransactionsByInvestor(String id) {
+        try {
+            List<Transaction> transactions = repo.getTransactionsByInvestor(id);
 
+            if (transactions == null) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Transactions not found for investor");
+            }
+            return transactions;
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve transactions");
+        }
+    }
 }

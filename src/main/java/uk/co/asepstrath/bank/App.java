@@ -2,12 +2,10 @@ package uk.co.asepstrath.bank;
 
 import com.google.gson.Gson;
 import io.jooby.*;
-import io.jooby.netty.NettyServer;
-import uk.co.asepstrath.bank.controller.*;
-import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
+import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.CashAccountController_;
 import uk.co.asepstrath.bank.controller.HomeController_;
@@ -40,7 +38,7 @@ public class App extends Jooby {
     private AnalyticsService analyticsService;
     private PriceService priceService;
     private final DataSource ds;
-    private Logger log;
+    private final Logger log;
 
     {
         /*
@@ -67,7 +65,8 @@ public class App extends Jooby {
         For example in the dice template (dice.hbs) it references "assets/dice.png" which is in resources/assets folder
          */
         assets("/assets/**", "/assets");
-        assets("/service_worker.js","/service_worker.js");
+        assets("/service_worker.js", "/service_worker.js");
+
 
         error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
             ctx.setResponseType("application/json");
@@ -76,20 +75,21 @@ public class App extends Jooby {
             ctx.render(gson.toJson(cause.getMessage()));
         });
 
+        error((ctx, cause, code) -> {
+            ctx.setResponseCode(code);
+            ctx.render("Error" + code.value() + cause.getMessage());
+        });
 
         try {
-            List <Investor> investors = api.getAllInvestor().getInvestors();
+            List<Investor> investors = api.getAllInvestor().getInvestors();
 
             investorRepo.saveAll(investors);
         } catch (Exception e) {
             log.warn("Failed to load investors from API", e);
         }
 
-
         try {
-            transactionDTO = api.getAllTransaction();
-
-            List <Transaction> transactions = transactionDTO.getTransactions();
+            List<Transaction> transactions = api.getAllTransaction().getTransactions();
 
             transRepo.saveAll(transactions);
         } catch (Exception e) {
@@ -169,29 +169,26 @@ public class App extends Jooby {
         Logger log = getLog();
         log.info("Starting Up...");
 
-        DataSource ds = require(DataSource.class);
-
         try (Connection conn = ds.getConnection();
              Statement stmt = conn.createStatement()) {
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS investor (
-            id VARCHAR(36) PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            cash_balance DECIMAL(15,2) NOT NULL
-            )""");
+                    CREATE TABLE IF NOT EXISTS investor (
+                    id VARCHAR(36) PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    cash_balance DECIMAL(15,2) NOT NULL
+                    )""");
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS transaction (
-            id VARCHAR(36) PRIMARY KEY,
-            timestamp VARCHAR(50) NOT NULL,
-            type VARCHAR(50) NOT NULL,
-            investor_id VARCHAR(36) NOT NULL,
-            ticker VARCHAR(20),
-            total_cash_amount DECIMAL(15,2) NOT NULL,
-            FOREIGN KEY (investor_id) REFERENCES investor(id)
-            )""");
-
+                    CREATE TABLE IF NOT EXISTS transaction (
+                    id VARCHAR(36) PRIMARY KEY,
+                    timestamp VARCHAR(50) NOT NULL,
+                    type VARCHAR(50) NOT NULL,
+                    investor_id VARCHAR(36) NOT NULL,
+                    ticker VARCHAR(20),
+                    total_cash_amount DECIMAL(15,2) NOT NULL,
+                    FOREIGN KEY (investor_id) REFERENCES investor(id)
+                    )""");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -200,7 +197,6 @@ public class App extends Jooby {
         org.h2.tools.Server
                 .createWebServer("-web", "-webPort", "8082")
                 .start();
-
     }
 
     /*
