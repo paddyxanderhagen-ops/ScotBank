@@ -13,6 +13,7 @@ import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
+import javax.swing.text.View;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,11 @@ public class HomeController {
             return new ModelAndView<>("landing.hbs", new HashMap<>());
         }
         return null;
+    }
+
+    @GET("/contact")
+    public ModelAndView contact() {
+        return new ModelAndView<>("contact.hbs", new HashMap<>());
     }
 
     @GET("/dashboard")

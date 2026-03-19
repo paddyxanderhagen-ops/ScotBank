@@ -26,6 +26,7 @@
             align-items: center;
             padding: 16px;
             border-bottom: 1px solid var(--border);
+            background: #f8fbff;
         }
         .position-row:hover {
             background: #f8fbff;
@@ -45,6 +46,69 @@
             font-weight: 700;
             font-size: 15px;
             color: #6c7b93;
+            cursor: pointer;
+            user-select: none;
+        }
+        .table-header:hover {
+            color: #1a73e8;
+        }
+        .table-header .sort-icon {
+            font-size: 11px;
+            margin-left: 4px;
+        }
+        .badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .badge-buy {
+            background: #e6f4ea;
+            color: #1e7e34;
+        }
+        .badge-sell {
+            background: #fdecea;
+            color: #c0392b;
+        }
+        .badge-other {
+            background: #e8f0fe;
+            color: #1a73e8;
+        }
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .filter-btn.active {
+            background: #1a73e8;
+            color: white;
+            border-color: #1a73e8;
+        }
+        .search-box {
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            outline: none;
+            width: 200px;
+        }
+        .search-box:focus {
+            border-color: #1a73e8;
+        }
+        .no-results {
+            text-align: center;
+            padding: 32px;
+            color: #6c7b93;
         }
     </style>
 </head>
@@ -57,50 +121,126 @@
 
     <h3 class="mb-4">Transaction History</h3>
 
+    <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('ALL')">All</button>
+        <button class="filter-btn" onclick="setFilter('BUY')">Buy</button>
+        <button class="filter-btn" onclick="setFilter('SELL')">Sell</button>
+        <button class="filter-btn" onclick="setFilter('OTHER')">Other</button>
+        <input class="search-box" type="text" placeholder="Search ticker..." oninput="setSearch(this.value)">
+    </div>
+
     <div class="card-soft">
 
         <div class="position-header">
-            <div class="table-header" style="flex:2">Type</div>
-            <div class="table-header" style="flex:2">Ticker</div>
-            <div class="table-header" style="flex:2">Date</div>
-            <div class="table-header" style="flex:1;text-align:right">Amount</div>
+            <div class="table-header" style="flex:2" onclick="sortBy('type')">
+                Type <span class="sort-icon" id="sort-type">↕</span>
+            </div>
+            <div class="table-header" style="flex:2" onclick="sortBy('ticker')">
+                Ticker <span class="sort-icon" id="sort-ticker">↕</span>
+            </div>
+            <div class="table-header" style="flex:2" onclick="sortBy('timestamp')">
+                Date <span class="sort-icon" id="sort-timestamp">↕</span>
+            </div>
+            <div class="table-header" style="flex:1;text-align:right" onclick="sortBy('amount')">
+                Amount <span class="sort-icon" id="sort-amount">↕</span>
+            </div>
         </div>
 
-        {{#if transactions}}
-
-            {{#each transactions}}
-
-                <div class="position-row">
-
-                    <div style="flex:2">
-                        <span class="meta">{{type}}</span>
-                    </div>
-
-                    <div style="flex:2">
-                        <div class="ticker">{{#if ticker}}{{ticker}}{{else}}—{{/if}}</div>
-                    </div>
-
-                    <div style="flex:2">
-                        <div class="meta">{{timestamp}}</div>
-                    </div>
-
-                    <div style="flex:1;text-align:right">
-                        <div class="value">£{{totalCashAmount}}</div>
-                    </div>
-
-                </div>
-
-            {{/each}}
-
-        {{else}}
-
-            <p class="text-muted p-3">No transactions found</p>
-
-        {{/if}}
+        <div id="transaction-list"></div>
 
     </div>
 
 </main>
+
+<script>
+    const raw = [
+        {{#each transactions}}
+            {
+                type: "{{type}}",
+                ticker: "{{#if ticker}}{{ticker}}{{else}}{{/if}}",
+                timestamp: "{{timestamp}}",
+                amount: {{totalCashAmount}}
+            }{{#unless @last}},{{/unless}}
+        {{/each}}
+    ];
+
+    let currentFilter = 'ALL';
+    let currentSearch = '';
+    let sortKey = 'timestamp';
+    let sortDir = -1;
+
+    function getBadge(type) {
+        if (type === 'BUY') return `<span class="badge badge-buy">BUY</span>`;
+        if (type === 'SELL') return `<span class="badge badge-sell">SELL</span>`;
+        return `<span class="badge badge-other">${type}</span>`;
+    }
+
+    function setFilter(f) {
+        currentFilter = f;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        render();
+    }
+
+    function setSearch(val) {
+        currentSearch = val.toLowerCase();
+        render();
+    }
+
+    function sortBy(key) {
+        if (sortKey === key) {
+            sortDir *= -1;
+        } else {
+            sortKey = key;
+            sortDir = 1;
+        }
+        document.querySelectorAll('.sort-icon').forEach(i => i.textContent = '↕');
+        document.getElementById('sort-' + key).textContent = sortDir === 1 ? '↑' : '↓';
+        render();
+    }
+
+    function render() {
+        let data = [...raw];
+
+        if (currentFilter !== 'ALL') {
+            if (currentFilter === 'OTHER') {
+                data = data.filter(t => t.type !== 'BUY' && t.type !== 'SELL');
+            } else {
+                data = data.filter(t => t.type === currentFilter);
+            }
+        }
+
+        if (currentSearch) {
+            data = data.filter(t => t.ticker.toLowerCase().includes(currentSearch));
+        }
+
+        data.sort((a, b) => {
+            let va = sortKey === 'amount' ? a.amount : (a[sortKey] || '');
+            let vb = sortKey === 'amount' ? b.amount : (b[sortKey] || '');
+            if (va < vb) return -1 * sortDir;
+            if (va > vb) return 1 * sortDir;
+            return 0;
+        });
+
+        const list = document.getElementById('transaction-list');
+
+        if (data.length === 0) {
+            list.innerHTML = '<div class="no-results">No transactions found</div>';
+            return;
+        }
+
+        list.innerHTML = data.map(t => `
+            <div class="position-row">
+                <div style="flex:2">${getBadge(t.type)}</div>
+                <div style="flex:2"><span class="ticker">${t.ticker || '—'}</span></div>
+                <div style="flex:2"><span class="meta">${t.timestamp}</span></div>
+                <div style="flex:1;text-align:right"><span class="value">£${t.amount.toFixed(2)}</span></div>
+            </div>
+        `).join('');
+    }
+
+    render();
+</script>
 
 </body>
 </html>
