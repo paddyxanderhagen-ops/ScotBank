@@ -170,14 +170,6 @@ public class App extends Jooby {
             FOREIGN KEY (investor_id) REFERENCES investor(id)
             )""");
 
-            stmt.execute("""
-            CREATE TABLE IF NOT EXISTS price (
-            timestamp VARCHAR(50) NOT NULL,
-            ticker VARCHAR(20) NOT NULL,
-            price DECIMAL(15,2) NOT NULL,
-            PRIMARY KEY (ticker, timestamp)
-            )""");
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

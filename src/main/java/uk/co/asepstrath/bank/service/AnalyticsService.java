@@ -80,46 +80,36 @@ public class AnalyticsService {
 
         double shares = 0;
         double buyShares = 0;
-        double buyCash = 0;
+        double totalBuyCash = 0;
+        double realisedPnl = 0;
+        double avgBuyPrice = 0;
 
         List<Price> prices = apiService.getPricesForStock(ticker);
 
         for (Transaction t : transactions) {
-
-            if (t == null || t.getTicker() == null)
-                continue;
-
+            if (t == null || t.getTicker() == null) continue;
 
             BigDecimal p = priceService.getPrice(t.getTimestamp(), prices);
-            if (p == null)
-                continue;
+            if (p == null) continue;
 
             double price = p.doubleValue();
             double numberOfShares = t.getTotalCashAmount() / price;
 
             if (t.getType().equals("BUY")) {
-
                 shares += numberOfShares;
                 buyShares += numberOfShares;
-                buyCash += t.getTotalCashAmount();
+                totalBuyCash += t.getTotalCashAmount();
+                avgBuyPrice = totalBuyCash / buyShares;
 
             } else if (t.getType().equals("SELL")) {
-
+                realisedPnl += (price - avgBuyPrice) * numberOfShares;
                 shares -= numberOfShares;
-
             }
         }
 
-        if (shares <= 0)
-            return null;
+        if (shares <= 0 && realisedPnl == 0) return null;
 
-        double avgBuyPrice = buyCash / buyShares;
-
-        double lastPrice =
-                priceService
-                        .getLatestPrice(prices)
-                        .doubleValue();
-
+        double lastPrice = priceService.getLatestPrice(prices).doubleValue();
         double currentCash = lastPrice * shares;
 
         return new Position(
@@ -127,9 +117,10 @@ public class AnalyticsService {
                 round(shares),
                 round(avgBuyPrice),
                 round(lastPrice),
-                round(buyCash),
-                round(currentCash)
-        );
+                round(avgBuyPrice * shares),
+                round(currentCash),
+                round(realisedPnl),
+                round(totalBuyCash));
     }
 
 }
