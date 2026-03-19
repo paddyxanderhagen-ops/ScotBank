@@ -7,8 +7,6 @@ import uk.co.asepstrath.bank.repository.InvestorRepository;
 
 import java.sql.SQLException;
 
-import java.util.List;
-
 public class InvestorService {
 
     private final InvestorRepository repo;
@@ -28,9 +26,4 @@ public class InvestorService {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve investor: " + id);
         }
     }
-
-    public List<Investor> getAll() throws SQLException {
-        return repo.getAll().getInvestors();
-    }
-
 }

@@ -6,10 +6,7 @@ import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 
@@ -19,6 +16,18 @@ public class InvestorRepository {
 
     public InvestorRepository(DataSource ds) {
         this.ds = ds;
+    }
+
+    public void setUp() throws SQLException {
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS investor (
+                    id VARCHAR(36) PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    cash_balance DECIMAL(15,2) NOT NULL
+                    )""");
+        }
     }
 
     public void saveAll(List<Investor> investors) throws SQLException {

@@ -21,12 +21,11 @@ import static org.mockito.Mockito.when;
 public class TransactionServiceTest {
     private TransactionRepository repository;
     private TransactionService service;
-    private TransactionDTO tDTO;
 
     @BeforeEach
     void setUp () {
         repository = mock(TransactionRepository.class);
-        service = new TransactionService(tDTO);
+        service = new TransactionService(repository);
     }
 
     @Test

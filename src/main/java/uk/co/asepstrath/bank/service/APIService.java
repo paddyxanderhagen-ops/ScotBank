@@ -71,6 +71,8 @@ public class APIService {
         return transactionDTO;
     }
 
+    public
+
     public List<Price> getPricesForStock(String ticker) {
         if (cache.containsKey(ticker)) {
             return cache.get(ticker);

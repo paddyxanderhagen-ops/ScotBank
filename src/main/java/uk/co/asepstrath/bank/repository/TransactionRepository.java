@@ -4,10 +4,7 @@ import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +14,23 @@ public class TransactionRepository {
 
     public TransactionRepository(DataSource ds) {
         this.ds = ds;
+    }
+
+    public void setUp() throws SQLException{
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS transaction (
+                    id VARCHAR(36) PRIMARY KEY,
+                    timestamp VARCHAR(50) NOT NULL,
+                    type VARCHAR(50) NOT NULL,
+                    investor_id VARCHAR(36) NOT NULL,
+                    ticker VARCHAR(20),
+                    total_cash_amount DECIMAL(15,2) NOT NULL,
+                    FOREIGN KEY (investor_id) REFERENCES investor(id)
+                    )""");
+        }
     }
 
     public void saveAll(List<Transaction> transactions) throws SQLException {
@@ -96,7 +110,7 @@ public class TransactionRepository {
         return transactions;
     }
 
-    public List<Transaction> getStockTransactionsByInvestor (String id) {
+    public List<Transaction> getStockTransactionsByInvestor(String id) {
         List<Transaction> transactions = new ArrayList<>();
         try (Connection conn = ds.getConnection()) {
             String sql = """

@@ -39,7 +39,7 @@ public class PricesController {
 //
 //        return priceService.getByTimestamp(timeStamp,priceList).getPrice();
 //    }
-
+//
 //    public List<Price> Prices(String ticker) {
 //        if (cache.containsKey(ticker)) {
 //            return cache.get(ticker);
@@ -79,9 +79,9 @@ public class PricesController {
 //        PriceService priceService = new PriceService();
 //        return priceService.getLatestPrice(prices);
 //    }
-
 //
-//        Gson gson = new Gson();
+//
+//        gson = new Gson();
 //        String response = Unirest.get("https://api.asep-strath.co.uk/api/prices/"+ticker).asString().getBody();
 //
 //        PriceDTO priceResponse = gson.fromJson(response, PriceDTO.class);

@@ -2,7 +2,6 @@ package uk.co.asepstrath.bank.service;
 
 import io.jooby.StatusCode;
 import io.jooby.exception.StatusCodeException;
-import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
@@ -76,7 +75,6 @@ public class AnalyticsService {
     }
 
     private Position calculatePosition(String ticker, List<Transaction> transactions) {
-
         double shares = 0;
         double buyShares = 0;
         double totalBuyCash = 0;
