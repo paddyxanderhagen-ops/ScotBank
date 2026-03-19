@@ -113,4 +113,11 @@ public class TransactionRepositoryTests {
         assertEquals("AWSM", result.getFirst().getTicker());
         assertEquals(100.0, result.getFirst().getTotalCashAmount());
     }
+
+    @Test
+    void getTransactionWhenNone () throws SQLException {
+        when(rs.next()).thenReturn(false);
+        List<Transaction> transaction = repository.getTransactionsByInvestor("1");
+        assertTrue(transaction.isEmpty());
+    }
 }

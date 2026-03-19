@@ -84,8 +84,8 @@ public class TransactionRepository {
 
                 while (resultSet.next()) {
                     transaction = new Transaction(resultSet.getString("id"), resultSet.getString("timestamp"), resultSet.getString("type"), resultSet.getString("investor_id"), resultSet.getString("ticker"), resultSet.getDouble("total_cash_amount"));
+                    transactions.add(transaction);
                 }
-                transactions.add(transaction);
             }
         }
 
