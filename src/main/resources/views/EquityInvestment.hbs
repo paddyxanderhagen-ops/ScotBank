@@ -58,6 +58,10 @@
             font-weight:700;
             font-size:18px;
         }
+        .login-btn:hover{
+            background:var(--blue-dark);
+            color:white;
+        }
 
     </style>
 
@@ -66,6 +70,13 @@
 <body>
 
 {{>partials/navbar.hbs}}
+<form class="login-card" action="/Investments" method="get">
+<button
+                type="submit"
+                class="btn login-btn w-100">
+
+            Return
+  </button>
 <main class="page-wrapper">
 
     <h3 class="mb-4">Information for investment {{ticker}}</h3>
@@ -75,6 +86,7 @@
     <p>name: {{name}}</p>
     <p>ticker: {{ticker}}</p>
     <p>sector: {{sector}}</p>
+    <p>latest price: {{price}}</p>
 
     {{/with}}
 
