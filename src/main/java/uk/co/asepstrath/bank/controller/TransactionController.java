@@ -1,6 +1,8 @@
 package uk.co.asepstrath.bank.controller;
 
 import com.google.gson.Gson;
+import io.jooby.Context;
+import io.jooby.ModelAndView;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.QueryParam;
@@ -21,6 +23,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Path("/transactions")
 public class TransactionController {
@@ -44,11 +47,13 @@ public class TransactionController {
 
         return transactionService.getById(id, transactionList);
     }
-    @GET("/test")
-    public List<Transaction> getTransactionsForInvestor (@QueryParam String id) {
-
+    @GET("/ViewAll")
+    public ModelAndView getTransactionsForInvestor(@QueryParam String id, Context ctx) {
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
-        return transactions;
+        Map<String, Object> model = new HashMap<>();
+        model.put("transactions", transactions);
+        model.put("investorId", id);
+        return new ModelAndView("transactions.hbs", model);
     }
 
     @GET("/Shares")

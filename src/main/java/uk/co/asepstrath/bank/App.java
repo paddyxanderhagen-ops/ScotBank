@@ -60,8 +60,8 @@ public class App extends Jooby {
         transRepo = new TransactionRepository(ds);
         api = new APIService();
         investorService = new InvestorService(investorRepo);
-        transactionService = new TransactionService(transRepo, priceService, api);
-        priceService = new PriceService();
+        priceService = new PriceService();  // сначала priceService
+        transactionService = new TransactionService(transRepo, priceService, api);  // потом transactionService
         analyticsService = new AnalyticsService(transRepo, priceService, api);
         log = getLog();
 
@@ -88,16 +88,6 @@ public class App extends Jooby {
             log.warn("Failed to load investors from API", e);
         }
 
-
-        try {
-            transactionDTO = api.getAllTransaction();
-
-            List <Transaction> transactions = transactionDTO.getTransactions();
-
-            transRepo.saveAll(transactions);
-        } catch (Exception e) {
-            log.warn("Failed to load transactions from API", e);
-        }
         try {
             transactionDTO = api.getAllTransaction();
             List<Transaction> transactions = transactionDTO.getTransactions();
