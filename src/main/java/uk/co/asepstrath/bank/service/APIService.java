@@ -1,41 +1,45 @@
 package uk.co.asepstrath.bank.service;
 
 import com.google.gson.Gson;
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class APIService {
 
     private StringBuilder url;
-    private Gson gson;
+    private final Gson gson;
 
-    public APIService () {
+    public APIService() {
         url = new StringBuilder("https://api.asep-strath.co.uk/api/");
         gson = new Gson();
     }
 
-    public InvestorDTO getAllInvestor () {
+    public InvestorDTO getAllInvestor() {
         url.append("investors");
-        String response =  Unirest.get(url.toString()).accept("application/json").asString().getBody();
+        String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
 
         InvestorDTO investorDTO = gson.fromJson(response, InvestorDTO.class);
-        int i = url.indexOf("investors");
-        url.delete(i, url.length());
+
+        url = new StringBuilder("https://api.asep-strath.co.uk/api/");
+
+        if (investorDTO.getInvestors().isEmpty()) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Could not retrieve investors");
+        }
+
         return investorDTO;
     }
 
-    public TransactionDTO getAllTransaction () {
+    public TransactionDTO getAllTransaction() {
         String nextToken = "";
         List<Transaction> transactions = new ArrayList<>();
         TransactionDTO transactionDTO = new TransactionDTO();
-
-        System.out.println("test");
 
         while (nextToken != null) {
             url.append("transactions?nextToken=").append(nextToken);
@@ -48,6 +52,10 @@ public class APIService {
 
         for (Transaction transaction : transactions) {
             transactionDTO.addTransaction(transaction);
+        }
+
+        if (transactionDTO.getTransactions().isEmpty()) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Could not retrieve transactions");
         }
 
         return transactionDTO;

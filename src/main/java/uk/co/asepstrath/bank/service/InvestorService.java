@@ -9,13 +9,13 @@ import java.sql.SQLException;
 
 public class InvestorService {
 
-    private InvestorRepository repo;
+    private final InvestorRepository repo;
 
-    public InvestorService (InvestorRepository repo) {
+    public InvestorService(InvestorRepository repo) {
         this.repo = repo;
     }
 
-    public Investor getInvestor (String id) {
+    public Investor getInvestor(String id) {
         try {
             Investor investor = repo.getInvestor(id);
             if (investor == null) {

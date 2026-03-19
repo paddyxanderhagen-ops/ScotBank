@@ -1,5 +1,8 @@
 package uk.co.asepstrath.bank.unit.controller;
 
+import io.jooby.Context;
+import io.jooby.ModelAndView;
+import io.jooby.Session;
 import io.jooby.value.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,17 +12,13 @@ import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import io.jooby.Context;
-import io.jooby.ModelAndView;
-import io.jooby.Session;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.*;
 
 
 class HomeControllerTest {
@@ -34,7 +33,7 @@ class HomeControllerTest {
     private Session sess;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         is = mock(InvestorService.class);
         ts = mock(TransactionService.class);
         dsrc = mock(DataSource.class);
@@ -48,7 +47,7 @@ class HomeControllerTest {
     @Test
     void landingPageNoIDReturnsView() {
         ModelAndView<Map<String, Object>> result = hc.landingPage(null, ctx);
-        verify(sess).put("id","");
+        verify(sess).put("id", "");
         assertEquals("landingPage.hbs", result.getView());
     }
 
@@ -68,8 +67,8 @@ class HomeControllerTest {
         when(ts.getTransactionsByInvestor(id)).thenReturn(List.of());
 
         ModelAndView<Map<String, Object>> result = hc.dashboardPage(ctx);
-        assertEquals("index.hbs",result.getView());
-        assertEquals("Tupac",result.getModel().get("name"));
+        assertEquals("index.hbs", result.getView());
+        assertEquals("Tupac", result.getModel().get("name"));
     }
 
     @Test

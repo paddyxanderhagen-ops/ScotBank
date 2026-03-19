@@ -7,7 +7,7 @@ import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InvestorDTOTest {
 
@@ -17,7 +17,7 @@ class InvestorDTOTest {
     InvestorDTO iDTO;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         i1 = new Investor();
         i2 = new Investor();
         i3 = new Investor();
@@ -25,7 +25,7 @@ class InvestorDTOTest {
     }
 
     @Test
-    void constructorParamless(){
+    void constructorParamless() {
         assertEquals(new ArrayList<Investor>(), iDTO.getInvestors());
     }
 
@@ -34,12 +34,12 @@ class InvestorDTOTest {
         iDTO.addInvestor(i1);
         iDTO.addInvestor(i2);
         iDTO.addInvestor(i3);
-        assertEquals(3,iDTO.getInvestors().size());
+        assertEquals(3, iDTO.getInvestors().size());
     }
 
     @Test
     void addInvestor() {
         iDTO.addInvestor(i1);
-        assertEquals(1,iDTO.getInvestors().size());
+        assertEquals(1, iDTO.getInvestors().size());
     }
 }

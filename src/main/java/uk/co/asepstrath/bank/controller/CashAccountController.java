@@ -10,11 +10,11 @@ import uk.co.asepstrath.bank.service.InvestorService;
 import javax.sql.DataSource;
 
 public class CashAccountController {
-    private CashAccountImplementation account;
     private final InvestorService investorService;
-    private DataSource ds;
+    private CashAccountImplementation account;
+    private final DataSource ds;
 
-    public CashAccountController (InvestorService investorService, DataSource ds) {
+    public CashAccountController(InvestorService investorService, DataSource ds) {
         this.investorService = investorService;
         this.ds = ds;
     }
@@ -35,7 +35,7 @@ public class CashAccountController {
         }
     }
 
-    private void transaction (Context ctx) {
+    private void transaction(Context ctx) {
         if (ctx == null) {
             return;
         }

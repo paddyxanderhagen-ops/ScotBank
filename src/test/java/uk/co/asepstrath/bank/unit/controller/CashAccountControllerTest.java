@@ -2,11 +2,9 @@ package uk.co.asepstrath.bank.unit.controller;
 
 import io.jooby.Context;
 import io.jooby.Session;
-import io.jooby.value.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.controller.CashAccountController;
-import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
 
 import javax.sql.DataSource;

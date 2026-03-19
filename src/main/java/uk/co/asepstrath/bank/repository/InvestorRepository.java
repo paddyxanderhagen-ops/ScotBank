@@ -26,9 +26,9 @@ public class InvestorRepository {
             conn.setAutoCommit(false);
 
             try (var stmt = conn.prepareStatement("""
-                MERGE INTO investor (id, name, cash_balance)
-                VALUES (?, ?, ?);
-            """)) {
+                        MERGE INTO investor (id, name, cash_balance)
+                        VALUES (?, ?, ?);
+                    """)) {
 
                 for (Investor i : investors) {
                     stmt.setString(1, i.getId());
@@ -49,7 +49,7 @@ public class InvestorRepository {
         }
     }
 
-    public InvestorDTO getAll () throws SQLException {
+    public InvestorDTO getAll() throws SQLException {
         InvestorDTO investorDTO = new InvestorDTO();
         try (Connection conn = ds.getConnection()) {
             conn.setAutoCommit(false);
@@ -57,7 +57,6 @@ public class InvestorRepository {
             String sql = """
                     SELECT *
                     FROM investor;""";
-
 
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -72,7 +71,7 @@ public class InvestorRepository {
         return investorDTO;
     }
 
-    public Investor getInvestor (String id) throws SQLException {
+    public Investor getInvestor(String id) throws SQLException {
         Investor investor = null;
 
         try (Connection conn = ds.getConnection()) {
@@ -94,7 +93,7 @@ public class InvestorRepository {
         return investor;
     }
 
-    public void transaction (String investorId, double updatedBalance) throws SQLException {
+    public void transaction(String investorId, double updatedBalance) throws SQLException {
         String sql = """
                 UPDATE investor
                 SET cash_balance = ?

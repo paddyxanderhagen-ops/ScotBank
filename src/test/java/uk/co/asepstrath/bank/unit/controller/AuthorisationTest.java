@@ -12,23 +12,23 @@ class AuthorisationTest {
     Authorisation a;
 
     @BeforeEach
-    void setup(){
-        Investor i = new Investor("JF2020","Jimmy Fitzsimmons", 123000);
+    void setup() {
+        Investor i = new Investor("JF2020", "Jimmy Fitzsimmons", 123000);
         a = new Authorisation(i);
     }
 
-    void constructorParamless(){
+    void constructorParamless() {
         a = new Authorisation(null);
         assertEquals(new Authorisation(null), a);
     }
 
     @Test
     void isAuthorisedWithInvestor() {
-        assertEquals(true,a.isAuthorised());
+        assertTrue(a.isAuthorised());
     }
 
     @Test
-    void isAuthorisedWithoutInvestor(){
-        assertEquals(false, new Authorisation(null).isAuthorised());
+    void isAuthorisedWithoutInvestor() {
+        assertFalse(new Authorisation(null).isAuthorised());
     }
 }

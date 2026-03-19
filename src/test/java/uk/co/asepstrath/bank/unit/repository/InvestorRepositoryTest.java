@@ -7,7 +7,6 @@ import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 
 import javax.sql.DataSource;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,24 +52,24 @@ class InvestorRepositoryTest {
     @Test
     void saveAllConnectionFails() throws SQLException {
         when(ds.getConnection()).thenThrow(new SQLException("Connection Failed"));
-        assertThrows(SQLException.class, () -> repository.saveAll(List.of (new Investor("1", "John Doe", 100))));
+        assertThrows(SQLException.class, () -> repository.saveAll(List.of(new Investor("1", "John Doe", 100))));
     }
 
     @Test
-    void saveAllRoundsCorrect () throws SQLException {
+    void saveAllRoundsCorrect() throws SQLException {
         repository.saveAll(List.of(new Investor("1", "John Doe", 99.999)));
         verify(ps).setDouble(3, 99.99);
     }
 
     @Test
-    void saveAllMultipleInvestors () throws SQLException {
-        repository.saveAll(List.of (new Investor("1", "John Doe", 100.0), new Investor("2", "Jane Doe", 99.999)));
+    void saveAllMultipleInvestors() throws SQLException {
+        repository.saveAll(List.of(new Investor("1", "John Doe", 100.0), new Investor("2", "Jane Doe", 99.999)));
         verify(ps, times(2)).addBatch();
     }
 
 
     @Test
-    void getAll () throws SQLException {
+    void getAll() throws SQLException {
         when(rs.next()).thenReturn(true, false);
         when(rs.getString("id")).thenReturn("1");
         when(rs.getString("name")).thenReturn("John Doe");
@@ -84,7 +83,7 @@ class InvestorRepositoryTest {
     }
 
     @Test
-    void getAllWhenNoInvestor () throws SQLException {
+    void getAllWhenNoInvestor() throws SQLException {
         when(rs.next()).thenReturn(false);
         InvestorDTO investorDTO = repository.getAll();
         assertTrue(investorDTO.getInvestors().isEmpty());
@@ -105,21 +104,21 @@ class InvestorRepositoryTest {
     }
 
     @Test
-    void getInvestorWhenNoInvestors () throws SQLException {
+    void getInvestorWhenNoInvestors() throws SQLException {
         when(rs.next()).thenReturn(false);
         Investor investor = repository.getInvestor("1");
         assertNull(investor);
     }
 
     @Test
-    void transaction () throws SQLException {
+    void transaction() throws SQLException {
         repository.transaction("1", 100.0);
         verify(ps).setDouble(1, 100.0);
         verify(ps).setString(2, "1");
     }
 
     @Test
-    void transactionWhenNoInvestor () throws SQLException {
+    void transactionWhenNoInvestor() throws SQLException {
         when(rs.next()).thenReturn(false);
         Investor investor = repository.getInvestor("1");
         assertNull(investor);

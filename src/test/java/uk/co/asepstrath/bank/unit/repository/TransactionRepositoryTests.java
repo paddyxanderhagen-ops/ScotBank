@@ -2,10 +2,8 @@ package uk.co.asepstrath.bank.unit.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
-import uk.co.asepstrath.bank.repository.InvestorRepository;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
 import javax.sql.DataSource;
@@ -18,7 +16,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 public class TransactionRepositoryTests {
 
@@ -29,7 +26,7 @@ public class TransactionRepositoryTests {
     private TransactionRepository repository;
 
     @BeforeEach
-    void setUp () throws SQLException {
+    void setUp() throws SQLException {
         ds = mock(DataSource.class);
         conn = mock(Connection.class);
         ps = mock(PreparedStatement.class);
@@ -43,7 +40,7 @@ public class TransactionRepositoryTests {
     }
 
     @Test
-    void saveAll () throws SQLException {
+    void saveAll() throws SQLException {
         repository.saveAll(List.of(new Transaction("1", "12.20", "DEPOSIT", "1", "AWSM", 100.0)));
         verify(ps).setString(1, "1");
         verify(ps).setString(2, "12.20");
@@ -62,13 +59,13 @@ public class TransactionRepositoryTests {
     }
 
     @Test
-    void saveAllMultipleInvestors () throws SQLException {
+    void saveAllMultipleInvestors() throws SQLException {
         repository.saveAll(List.of(new Transaction("1", "12.20", "DEPOSIT", "1", "AWSM", 100.0), new Transaction("2", "12.20", "DEPOSIT", "2", "AWSM", 100.0)));
         verify(ps, times(2)).addBatch();
     }
 
     @Test
-    void getAll () throws SQLException {
+    void getAll() throws SQLException {
         when(rs.next()).thenReturn(true, false);
         when(rs.getString("id")).thenReturn("1");
         when(rs.getString("timestamp")).thenReturn("12.20");
@@ -88,14 +85,14 @@ public class TransactionRepositoryTests {
     }
 
     @Test
-    void getAllWhenNoTransaction () throws SQLException {
+    void getAllWhenNoTransaction() throws SQLException {
         when(rs.next()).thenReturn(false);
         TransactionDTO transactionDTO = repository.getAll();
         assertTrue(transactionDTO.getTransactions().isEmpty());
     }
 
     @Test
-    void getTransaction () throws SQLException {
+    void getTransaction() throws SQLException {
         when(rs.next()).thenReturn(true, false);
         when(rs.getString("id")).thenReturn("1");
         when(rs.getString("timestamp")).thenReturn("12.20");
@@ -115,7 +112,7 @@ public class TransactionRepositoryTests {
     }
 
     @Test
-    void getTransactionWhenNone () throws SQLException {
+    void getTransactionWhenNone() throws SQLException {
         when(rs.next()).thenReturn(false);
         List<Transaction> transaction = repository.getTransactionsByInvestor("1");
         assertTrue(transaction.isEmpty());

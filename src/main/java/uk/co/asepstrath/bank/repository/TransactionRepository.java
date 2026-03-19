@@ -24,10 +24,10 @@ public class TransactionRepository {
             conn.setAutoCommit(false);
 
             try (var stmt = conn.prepareStatement("""
-                MERGE INTO transaction 
-                (id, timestamp, type, investor_id, ticker, total_cash_amount)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """)) {
+                        MERGE INTO transaction 
+                        (id, timestamp, type, investor_id, ticker, total_cash_amount)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """)) {
 
                 for (Transaction t : transactions) {
 
@@ -47,7 +47,7 @@ public class TransactionRepository {
         }
     }
 
-    public TransactionDTO getAll () throws SQLException{
+    public TransactionDTO getAll() throws SQLException {
         TransactionDTO transactionDTO = new TransactionDTO();
         try (Connection conn = ds.getConnection()) {
             conn.setAutoCommit(false);
@@ -69,7 +69,7 @@ public class TransactionRepository {
         return transactionDTO;
     }
 
-    public List<Transaction> getTransactionsByInvestor (String id) throws SQLException {
+    public List<Transaction> getTransactionsByInvestor(String id) throws SQLException {
         List<Transaction> transactions = new ArrayList<>();
         try (Connection conn = ds.getConnection()) {
             String sql = """

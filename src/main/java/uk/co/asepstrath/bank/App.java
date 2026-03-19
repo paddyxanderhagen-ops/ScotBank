@@ -30,13 +30,13 @@ import java.util.List;
 public class App extends Jooby {
 
     private final APIService api;
-    private TransactionDTO transactionDTO;
-    private InvestorRepository investorRepo;
-    private InvestorService investorService;
-    private TransactionRepository transRepo;
-    private TransactionService transactionService;
     private final DataSource ds;
-    private Logger log;
+    private TransactionDTO transactionDTO;
+    private final InvestorRepository investorRepo;
+    private final InvestorService investorService;
+    private final TransactionRepository transRepo;
+    private final TransactionService transactionService;
+    private final Logger log;
 
     {
         /*
@@ -57,7 +57,7 @@ public class App extends Jooby {
         log = getLog();
 
         assets("/assets/**", "/assets");
-        assets("/service_worker.js","/service_worker.js");
+        assets("/service_worker.js", "/service_worker.js");
 
 
         error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
@@ -68,12 +68,12 @@ public class App extends Jooby {
         });
 
         error((ctx, cause, code) -> {
-           ctx.setResponseCode(code);
-           ctx.render("Error" + code.value() + cause.getMessage());
+            ctx.setResponseCode(code);
+            ctx.render("Error" + code.value() + cause.getMessage());
         });
 
         try {
-            List <Investor> investors = api.getAllInvestor().getInvestors();
+            List<Investor> investors = api.getAllInvestor().getInvestors();
 
             investorRepo.saveAll(investors);
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class App extends Jooby {
         }
 
         try {
-            List <Transaction> transactions = api.getAllTransaction().getTransactions();
+            List<Transaction> transactions = api.getAllTransaction().getTransactions();
 
             transRepo.saveAll(transactions);
         } catch (Exception e) {
@@ -158,22 +158,22 @@ public class App extends Jooby {
              Statement stmt = conn.createStatement()) {
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS investor (
-            id VARCHAR(36) PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            cash_balance DECIMAL(15,2) NOT NULL
-            )""");
+                    CREATE TABLE IF NOT EXISTS investor (
+                    id VARCHAR(36) PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    cash_balance DECIMAL(15,2) NOT NULL
+                    )""");
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS transaction (
-            id VARCHAR(36) PRIMARY KEY,
-            timestamp VARCHAR(50) NOT NULL,
-            type VARCHAR(50) NOT NULL,
-            investor_id VARCHAR(36) NOT NULL,
-            ticker VARCHAR(20),
-            total_cash_amount DECIMAL(15,2) NOT NULL,
-            FOREIGN KEY (investor_id) REFERENCES investor(id)
-            )""");
+                    CREATE TABLE IF NOT EXISTS transaction (
+                    id VARCHAR(36) PRIMARY KEY,
+                    timestamp VARCHAR(50) NOT NULL,
+                    type VARCHAR(50) NOT NULL,
+                    investor_id VARCHAR(36) NOT NULL,
+                    ticker VARCHAR(20),
+                    total_cash_amount DECIMAL(15,2) NOT NULL,
+                    FOREIGN KEY (investor_id) REFERENCES investor(id)
+                    )""");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

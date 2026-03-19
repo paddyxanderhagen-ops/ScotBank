@@ -6,7 +6,7 @@ public class Investor {
     private String id;
     private String name;
     private double cashBalance;
-    private ArrayList<Stock> stocks;
+    private final ArrayList<Stock> stocks;
 
     public Investor(String id, String name, double cashBalance) {
         this.id = id;
@@ -37,7 +37,7 @@ public class Investor {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public double getCashBalance() {
         return cashBalance;
     }
@@ -50,5 +50,7 @@ public class Investor {
         return stocks;
     }
 
-    public void setStocks(Stock stock) { stocks.add(stock); }
+    public void setStocks(Stock stock) {
+        stocks.add(stock);
+    }
 }
