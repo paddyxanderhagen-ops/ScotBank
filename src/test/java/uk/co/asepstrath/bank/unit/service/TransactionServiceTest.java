@@ -5,6 +5,7 @@ import io.jooby.exception.StatusCodeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 import uk.co.asepstrath.bank.service.TransactionService;
 
@@ -20,11 +21,12 @@ import static org.mockito.Mockito.when;
 public class TransactionServiceTest {
     private TransactionRepository repository;
     private TransactionService service;
+    private TransactionDTO tDTO;
 
     @BeforeEach
     void setUp () {
         repository = mock(TransactionRepository.class);
-        service = new TransactionService(repository);
+        service = new TransactionService(tDTO);
     }
 
     @Test

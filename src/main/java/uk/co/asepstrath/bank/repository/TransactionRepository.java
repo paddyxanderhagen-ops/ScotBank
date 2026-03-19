@@ -65,7 +65,10 @@ public class TransactionRepository {
                     transactionDTO.addTransaction(transaction);
                 }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException();
         }
+
         return transactionDTO;
     }
 
@@ -87,6 +90,34 @@ public class TransactionRepository {
                     transactions.add(transaction);
                 }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException("Transaction could not be found for investor: " + id, e);
+        }
+        return transactions;
+    }
+
+    public List<Transaction> getStockTransactionsByInvestor (String id) {
+        List<Transaction> transactions = new ArrayList<>();
+        try (Connection conn = ds.getConnection()) {
+            String sql = """
+                    SELECT *
+                    FROM transaction
+                    WHERE investor_id = ? 
+                    AND ticker IS NOT NULL""";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, id);
+                ResultSet resultSet = stmt.executeQuery();
+                Transaction transaction = null;
+
+                while (resultSet.next()) {
+                    transaction = new Transaction(resultSet.getString("id"), resultSet.getString("timestamp"), resultSet.getString("type"), resultSet.getString("investor_id"), resultSet.getString("ticker"), resultSet.getDouble("total_cash_amount"));
+                    transactions.add(transaction);
+                }
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Transaction could not be found for investor: " + id, e);
         }
 
         return transactions;

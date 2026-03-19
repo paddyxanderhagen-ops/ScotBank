@@ -1,12 +1,18 @@
 package uk.co.asepstrath.bank.service;
 
 import io.jooby.StatusCode;
+import uk.co.asepstrath.bank.model.Price;
+import io.jooby.StatusCode;
 import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.sql.SQLException;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -17,79 +23,82 @@ public class TransactionService {
 
     private TransactionRepository repo;
     private List<Transaction> transactions;
+    private PriceService priceService;
+    private APIService api;
 
     public TransactionService () {
         transactions = new ArrayList<>();
     }
 
-    public TransactionService (TransactionDTO transactionDTO) {
+    public TransactionService(TransactionDTO transactionDTO) {
         transactions = transactionDTO.getTransactions();
     }
 
-    public TransactionService(TransactionRepository repo) {
+    public TransactionService(TransactionRepository repo, PriceService priceService, APIService api) {
         this.repo = repo;
+        this.priceService = priceService;
+        this.api = api;
     }
 
-    public String getById (String id, List<Transaction> transactionList) {
+    public String getById(String id, List<Transaction> transactionList) {
         for (Transaction transaction : transactions) {
             if (transaction.getId().equals(id)) {
-                return "id: " + transaction.getId() + "\ntimestamp: " + transaction.getTimestamp() + "\ntype: "  + transaction.getType() + "\ninvestorId: " + transaction.getInvestorId() + "\nticker: " + transaction.getTicker() + "\ntotalCashAmount: " + transaction.getTotalCashAmount() + "\n\n";
+                return "id: " + transaction.getId() + "\ntimestamp: " + transaction.getTimestamp() + "\ntype: " + transaction.getType() + "\ninvestorId: " + transaction.getInvestorId() + "\nticker: " + transaction.getTicker() + "\ntotalCashAmount: " + transaction.getTotalCashAmount() + "\n\n";
             }
         }
         return "Transaction:" + id + " not found";
     }
 
-    public HashMap<String, BigDecimal> getNumberOfShares(String InvestorId, List<Transaction> transactionList) {
+    public HashMap<String, BigDecimal> getNumberOfShares(String investorId, List<Transaction> transactionList) {
         HashMap<String, BigDecimal> shares = new HashMap<>();
-        BigDecimal numberOfShares;
-        BigDecimal currentNumberOfShares;
+
         for (Transaction transaction : transactionList) {
+            if (transaction.getTicker() == null) continue;
+            if (!transaction.getInvestorId().equals(investorId)) continue;
+
+            List<Price> prices = api.getPricesForStock(transaction.getTicker()); // из кэша
+            BigDecimal price = priceService.getPrice(transaction.getTimestamp(), prices);
+            BigDecimal numberOfShares = BigDecimal.valueOf(transaction.getTotalCashAmount())
+                    .divide(price, 4, RoundingMode.HALF_UP);
+
+            BigDecimal current = shares.getOrDefault(transaction.getTicker(), BigDecimal.ZERO);
+
             if (transaction.getType().equals("BUY")) {
-                if (transaction.getInvestorId().equals(InvestorId)) {
-                    currentNumberOfShares = shares.getOrDefault(transaction.getTicker(), BigDecimal.ZERO);
-                        PricesController pricesController = new PricesController();
-                        numberOfShares = BigDecimal.valueOf(transaction.getTotalCashAmount()).divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
-                        currentNumberOfShares = currentNumberOfShares.add(numberOfShares);
-                        shares.put(transaction.getTicker(), currentNumberOfShares);
-                }
+                shares.put(transaction.getTicker(), current.add(numberOfShares));
             } else if (transaction.getType().equals("SELL")) {
-                currentNumberOfShares = shares.getOrDefault(transaction.getTicker(), BigDecimal.ZERO);
-                PricesController pricesController = new PricesController();
-                numberOfShares = BigDecimal.valueOf(transaction.getTotalCashAmount()).divide(pricesController.Price(transaction.getTicker(), transaction.getTimestamp()), 4);
-                currentNumberOfShares = currentNumberOfShares.subtract(numberOfShares);
-                shares.put(transaction.getTicker(), currentNumberOfShares);
+                shares.put(transaction.getTicker(), current.subtract(numberOfShares));
             }
         }
         return shares;
     }
 
-    public BigDecimal getValueOfShares(String InvestorId, List<Transaction> transactionList) {
-        HashMap<String, BigDecimal> shares = new HashMap<>();
+    public BigDecimal getValueOfShares(String investorId, List<Transaction> transactionList) {
+        HashMap<String, BigDecimal> shares = getNumberOfShares(investorId, transactionList);
         BigDecimal value = BigDecimal.ZERO;
-        shares = getNumberOfShares(InvestorId, transactionList);
+
         for (String ticker : shares.keySet()) {
-            PricesController pricesController = new PricesController();
-            PriceService priceService = new PriceService();
-            value = value.add( shares.get(ticker).multiply(priceService.getMostRecent(pricesController.Prices(ticker)).getPrice()));
+            List<Price> prices = api.getPricesForStock(ticker); // из кэша
+            BigDecimal latestPrice = priceService.getLatestPrice(prices);
+            value = value.add(shares.get(ticker).multiply(latestPrice));
         }
         return value;
     }
 
-    public BigDecimal getValueOfSharesByTicker(String InvestorId, List<Transaction> transactionList, String shareTicker) {
-        HashMap<String, BigDecimal> shares = new HashMap<>();
+    public BigDecimal getValueOfSharesByTicker(String investorId, List<Transaction> transactionList, String shareTicker) {
+        HashMap<String, BigDecimal> shares = getNumberOfShares(investorId, transactionList);
         BigDecimal value = BigDecimal.ZERO;
-        shares = getNumberOfShares(InvestorId, transactionList);
+
         for (String ticker : shares.keySet()) {
-            PricesController pricesController = new PricesController();
-            PriceService priceService = new PriceService();
             if (ticker.equals(shareTicker)) {
-                value = value.add(shares.get(ticker).multiply(priceService.getMostRecent(pricesController.Prices(ticker)).getPrice()));
+                List<Price> prices = api.getPricesForStock(ticker); // из кэша
+                BigDecimal latestPrice = priceService.getLatestPrice(prices);
+                value = value.add(shares.get(ticker).multiply(latestPrice));
             }
         }
         return value;
     }
 
-    public List<Transaction> getAll(){
+    public List<Transaction> getAll() {
         return transactions;
     }
 

@@ -13,6 +13,7 @@ import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
+import javax.swing.text.View;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class HomeController {
     }
 
     @GET("/")
-    public ModelAndView<Map<String, Object>> landingPage(@PathParam String id, Context ctx) {
+    public ModelAndView<Map<String, Object>> landingPage (@PathParam String id, Context ctx) {
         if (ctx != null) {
             Session session = ctx.session();
             session.put("id", "");
@@ -42,6 +43,11 @@ public class HomeController {
             return new ModelAndView<>("landing.hbs", new HashMap<>());
         }
         return null;
+    }
+
+    @GET("/contact")
+    public ModelAndView contact() {
+        return new ModelAndView<>("contact.hbs", new HashMap<>());
     }
 
     @GET("/dashboard")
@@ -68,6 +74,7 @@ public class HomeController {
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(3).toList();
 
         Map<String, Object> map = new HashMap<>();
+        map.put("id", investor.getId());
         map.put("name", investor.getName());
         map.put("balance", Math.floor(account.getBalance() * 100.0) / 100.0);
         map.put("transactions", transactions);

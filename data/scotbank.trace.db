@@ -291,8 +291,8 @@ org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (
 	at java.base/java.lang.Thread.run(Thread.java:1474)
 2026-03-12 00:35:45.955556Z jdbc[3]: exception
 org.h2.jdbc.JdbcSQLNonTransientException: No data is available [2000-224]
-2026-03-18 14:10:00.494729Z database: flush
-org.h2.message.DbException: General error: "org.h2.mvstore.MVStoreException: The file is locked: /home/boyd/uni/CS217/scotbank/data/scotbank.mv.db [2.2.224/7]" [50000-224]
+2026-03-14 16:53:27.944605Z database: flush
+org.h2.message.DbException: General error: "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/nevernynocap/IdeaProjects/scotbank/data/scotbank.mv.db [2.2.224/7]" [50000-224]
 	at org.h2.message.DbException.get(DbException.java:212)
 	at org.h2.message.DbException.convert(DbException.java:407)
 	at org.h2.mvstore.db.Store.lambda$new$0(Store.java:122)
@@ -316,24 +316,24 @@ org.h2.message.DbException: General error: "org.h2.mvstore.MVStoreException: The
 	at com.zaxxer.hikari.HikariDataSource.<init>(HikariDataSource.java:81)
 	at io.jooby.hikari.HikariModule.install(HikariModule.java:212)
 	at io.jooby.Jooby.install(Jooby.java:577)
-	at uk.co.asepstrath.bank.App.<init>(App.java:47)
+	at uk.co.asepstrath.bank.App.<init>(App.java:51)
 	at io.jooby.Jooby.createApp(Jooby.java:1300)
 	at io.jooby.Jooby.runApp(Jooby.java:1246)
 	at io.jooby.Jooby.runApp(Jooby.java:1223)
 	at io.jooby.Jooby.runApp(Jooby.java:1101)
-	at uk.co.asepstrath.bank.App.main(App.java:141)
-Caused by: org.h2.jdbc.JdbcSQLNonTransientException: General error: "org.h2.mvstore.MVStoreException: The file is locked: /home/boyd/uni/CS217/scotbank/data/scotbank.mv.db [2.2.224/7]" [50000-224]
+	at uk.co.asepstrath.bank.App.main(App.java:154)
+Caused by: org.h2.jdbc.JdbcSQLNonTransientException: General error: "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/nevernynocap/IdeaProjects/scotbank/data/scotbank.mv.db [2.2.224/7]" [50000-224]
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:566)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
 	... 29 more
-Caused by: org.h2.mvstore.MVStoreException: The file is locked: /home/boyd/uni/CS217/scotbank/data/scotbank.mv.db [2.2.224/7]
+Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/nevernynocap/IdeaProjects/scotbank/data/scotbank.mv.db [2.2.224/7]
 	at org.h2.mvstore.DataUtils.newMVStoreException(DataUtils.java:996)
 	at org.h2.mvstore.SingleFileStore.lockFileChannel(SingleFileStore.java:143)
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:117)
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 23 more
-2026-03-18 14:11:01.597293Z jdbc[3]: exception
+2026-03-19 15:57:17.093115Z jdbc[68]: exception
 org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (to disable automatic closing at VM shutdown, add ";DB_CLOSE_ON_EXIT=FALSE" to the db URL) [90121-224]
 	at jars//org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
 	at jars//org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
@@ -345,7 +345,7 @@ org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (
 	at jars//com.zaxxer.hikari.pool.ProxyConnection.createStatement(ProxyConnection.java:284)
 	at jars//com.zaxxer.hikari.pool.HikariProxyConnection.createStatement(HikariProxyConnection.java)
 	at scotbank//uk.co.asepstrath.bank.App.onStart(App.java:153)
-	at scotbank//uk.co.asepstrath.bank.App.lambda$new$1(App.java:92)
+	at scotbank//uk.co.asepstrath.bank.App.lambda$new$2(App.java:133)
 	at jars//io.jooby.SneakyThrows$Runnable.run(SneakyThrows.java:120)
 	at jars//io.jooby.Jooby.fire(Jooby.java:1381)
 	at jars//io.jooby.Jooby.ready(Jooby.java:959)
@@ -354,7 +354,7 @@ org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (
 	at jars//io.jooby.Jooby.runApp(Jooby.java:1260)
 	at jars//io.jooby.Jooby.runApp(Jooby.java:1223)
 	at jars//io.jooby.Jooby.runApp(Jooby.java:1101)
-	at scotbank//uk.co.asepstrath.bank.App.main(App.java:141)
+	at scotbank//uk.co.asepstrath.bank.App.main(App.java:139)
 	at org.jboss.modules.Module.run(Module.java:345)
 	at io.jooby.run.JoobyRun$AppModule.start(JoobyRun.java:105)
 	at io.jooby.run.JoobyRun$AppModule.restart(JoobyRun.java:175)
@@ -365,7 +365,7 @@ org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
 	at java.base/java.lang.Thread.run(Thread.java:1474)
-2026-03-18 14:11:01.598967Z jdbc[3]: exception
+2026-03-19 15:57:17.099114Z jdbc[68]: exception
 org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (to disable automatic closing at VM shutdown, add ";DB_CLOSE_ON_EXIT=FALSE" to the db URL) [90121-224]
 	at jars//org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
 	at jars//org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
@@ -376,7 +376,7 @@ org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (
 	at jars//org.h2.jdbc.JdbcConnection.clearWarnings(JdbcConnection.java:660)
 	at jars//com.zaxxer.hikari.pool.ProxyConnection.close(ProxyConnection.java:257)
 	at scotbank//uk.co.asepstrath.bank.App.onStart(App.java:152)
-	at scotbank//uk.co.asepstrath.bank.App.lambda$new$1(App.java:92)
+	at scotbank//uk.co.asepstrath.bank.App.lambda$new$2(App.java:133)
 	at jars//io.jooby.SneakyThrows$Runnable.run(SneakyThrows.java:120)
 	at jars//io.jooby.Jooby.fire(Jooby.java:1381)
 	at jars//io.jooby.Jooby.ready(Jooby.java:959)
@@ -385,7 +385,7 @@ org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (
 	at jars//io.jooby.Jooby.runApp(Jooby.java:1260)
 	at jars//io.jooby.Jooby.runApp(Jooby.java:1223)
 	at jars//io.jooby.Jooby.runApp(Jooby.java:1101)
-	at scotbank//uk.co.asepstrath.bank.App.main(App.java:141)
+	at scotbank//uk.co.asepstrath.bank.App.main(App.java:139)
 	at org.jboss.modules.Module.run(Module.java:345)
 	at io.jooby.run.JoobyRun$AppModule.start(JoobyRun.java:105)
 	at io.jooby.run.JoobyRun$AppModule.restart(JoobyRun.java:175)

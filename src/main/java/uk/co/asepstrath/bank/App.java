@@ -2,14 +2,18 @@ package uk.co.asepstrath.bank;
 
 import com.google.gson.Gson;
 import io.jooby.*;
+import io.jooby.netty.NettyServer;
+import uk.co.asepstrath.bank.controller.*;
+import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
-import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.*;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.model.dto.InvestorDTO;
+import uk.co.asepstrath.bank.model.dto.PriceDTO;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
@@ -18,10 +22,11 @@ import uk.co.asepstrath.bank.service.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class App extends Jooby {
@@ -36,7 +41,7 @@ public class App extends Jooby {
     private AnalyticsService analyticsService;
     private PriceService priceService;
     private final DataSource ds;
-    private final Logger log;
+    private Logger log;
 
     {
         /*
@@ -53,17 +58,16 @@ public class App extends Jooby {
         investorRepo = new InvestorRepository(ds);
         transRepo = new TransactionRepository(ds);
         investorService = new InvestorService(investorRepo);
+        priceService = new PriceService();
+        transactionService = new TransactionService(transRepo, priceService, api);  // потом transactionService
+        analyticsService = new AnalyticsService(transRepo, priceService, api);
         transactionService = new TransactionService(transRepo);
         priceService = new PriceService();
         analyticsService = new AnalyticsService(transRepo, priceService);
         log = getLog();
 
-        /*
-        This will host any files in src/main/resources/assets on <host>/assets
-        For example in the dice template (dice.hbs) it references "assets/dice.png" which is in resources/assets folder
-         */
         assets("/assets/**", "/assets");
-        assets("/service_worker.js", "/service_worker.js");
+        assets("/service_worker.js","/service_worker.js");
 
 
         error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
@@ -79,7 +83,7 @@ public class App extends Jooby {
         });
 
         try {
-            List<Investor> investors = api.getAllInvestor().getInvestors();
+            List <Investor> investors = api.getAllInvestor().getInvestors();
 
             investorRepo.saveAll(investors);
         } catch (Exception e) {
@@ -90,6 +94,26 @@ public class App extends Jooby {
             List<Transaction> transactions = api.getAllTransaction().getTransactions();
 
             transRepo.saveAll(transactions);
+
+
+            Set<String> tickers = new HashSet<>();
+            for (Transaction t : transactions) {
+                if (t.getTicker() != null && !t.getTicker().isBlank()) {
+                    tickers.add(t.getTicker());
+                }
+            }
+
+            System.out.println("Preloading prices for " + tickers.size() + " tickers...");
+
+
+            tickers.parallelStream().forEach(ticker -> {
+                System.out.println("Caching: " + ticker);
+                api.getPricesForStock(ticker);
+                System.out.println("Done: " + ticker);
+            });
+
+            System.out.println("All prices cached!");
+
         } catch (Exception e) {
             log.warn("Failed to load transactions from API", e);
         }
@@ -97,6 +121,13 @@ public class App extends Jooby {
         mvc(new HomeController_(investorService, ds, transactionService));
         mvc(new CashAccountController_(investorService, ds));
         mvc(new LoginController_());
+        mvc(new TransactionController_(transactionService));
+        mvc(new EtfController_());
+        mvc(new EquitiesController_());
+        //mvc(new PricesController_());
+        mvc(new AnalyticsController_(analyticsService));
+
+
         mvc(new TransactionController_());
         mvc(new EtfController_());
         mvc(new EquitiesController_());
@@ -110,49 +141,6 @@ public class App extends Jooby {
         onStarted(() -> onStart());
         onStop(() -> onStop());
 
-
-        get("/test", ctx -> {
-
-
-            try (Connection conn = ds.getConnection();
-                 Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT 1")) {
-
-                rs.next();
-                return rs.getInt(1);
-            }
-        });
-
-        get("/debug/investors", ctx -> {
-            try (Connection conn = ds.getConnection();
-                 Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT * FROM investor")) {
-
-                List<String> list = new java.util.ArrayList<>();
-
-                while (rs.next()) {
-                    list.add(rs.getString("id") + " - " + rs.getString("name") + " - " + rs.getDouble("cash_balance"));
-                }
-
-                return list;
-            }
-        });
-
-        get("/debug/transactions", ctx -> {
-            try (Connection conn = ds.getConnection();
-                 Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT * FROM transaction")) {
-
-                List<String> list = new java.util.ArrayList<>();
-
-                while (rs.next()) {
-                    list.add(rs.getString("id") + " - " + rs.getString("timestamp")
-                            + " - " + rs.getString("type") + rs.getString("investor_id")
-                            + rs.getString("ticker") + rs.getDouble("total_cash_amount"));
-                }
-                return list;
-            }
-        });
     }
 
     public static void main(final String[] args) {
