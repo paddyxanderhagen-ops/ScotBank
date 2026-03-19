@@ -33,9 +33,11 @@ public class Transaction {
     public void setId(String id) {
         this.id = id;
     }
+
     public String getTimestamp() {
         return timestamp;
     }
+
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }

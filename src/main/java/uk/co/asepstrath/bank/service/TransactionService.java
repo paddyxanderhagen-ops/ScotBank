@@ -1,6 +1,9 @@
 package uk.co.asepstrath.bank.service;
 
+import io.jooby.StatusCode;
 import uk.co.asepstrath.bank.model.Price;
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
@@ -9,6 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
 public class TransactionService {
@@ -95,6 +99,15 @@ public class TransactionService {
     }
 
     public List<Transaction> getTransactionsByInvestor(String id) {
-        return repo.getTransactionsByInvestor(id);
+        try {
+            List<Transaction> transactions = repo.getTransactionsByInvestor(id);
+
+            if (transactions == null) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Transactions not found for investor");
+            }
+            return transactions;
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve transactions");
+        }
     }
 }

@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InvestorDTO {
-    private List<Investor> investors;
+    private final List<Investor> investors;
 
-    public InvestorDTO () {
+    public InvestorDTO() {
         investors = new ArrayList<>();
     }
 
-    public List<Investor> getInvestors () {
+    public List<Investor> getInvestors() {
         return this.investors;
     }
 
-    public void addInvestor (Investor investor) {
+    public void addInvestor(Investor investor) {
         this.investors.add(investor);
     }
 }

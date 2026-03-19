@@ -43,7 +43,6 @@ public class App extends Jooby {
     private PriceService priceService;
     private final DataSource ds;
     private Logger log;
-    private PriceDTO priceDTO;
 
     {
         /*
@@ -56,21 +55,18 @@ public class App extends Jooby {
         setSessionStore(SessionStore.memory(Cookie.session("scotbank")));
 
         ds = require(DataSource.class);
+        api = new APIService();
         investorRepo = new InvestorRepository(ds);
         transRepo = new TransactionRepository(ds);
-        api = new APIService();
         investorService = new InvestorService(investorRepo);
-        priceService = new PriceService();  // сначала priceService
+        priceService = new PriceService();
         transactionService = new TransactionService(transRepo, priceService, api);  // потом transactionService
         analyticsService = new AnalyticsService(transRepo, priceService, api);
         log = getLog();
 
-        /*
-        This will host any files in src/main/resources/assets on <host>/assets
-        For example in the dice template (dice.hbs) it references "assets/dice.png" which is in resources/assets folder
-         */
         assets("/assets/**", "/assets");
         assets("/service_worker.js","/service_worker.js");
+
 
         error(IllegalArgumentException.class, (ctx, cause, statusCode) -> {
             ctx.setResponseType("application/json");
@@ -79,6 +75,10 @@ public class App extends Jooby {
             ctx.render(gson.toJson(cause.getMessage()));
         });
 
+        error((ctx, cause, code) -> {
+            ctx.setResponseCode(code);
+            ctx.render("Error" + code.value() + cause.getMessage());
+        });
 
         try {
             List <Investor> investors = api.getAllInvestor().getInvestors();
@@ -116,7 +116,6 @@ public class App extends Jooby {
             log.warn("Failed to load data from API", e);
         }
 
-
         mvc(new HomeController_(investorService, ds, transactionService));
         mvc(new CashAccountController_(investorService, ds));
         mvc(new LoginController_());
@@ -153,23 +152,22 @@ public class App extends Jooby {
              Statement stmt = conn.createStatement()) {
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS investor (
-            id VARCHAR(36) PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            cash_balance DECIMAL(15,2) NOT NULL
-            )""");
+                    CREATE TABLE IF NOT EXISTS investor (
+                    id VARCHAR(36) PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    cash_balance DECIMAL(15,2) NOT NULL
+                    )""");
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS transaction (
-            id VARCHAR(36) PRIMARY KEY,
-            timestamp VARCHAR(50) NOT NULL,
-            type VARCHAR(50) NOT NULL,
-            investor_id VARCHAR(36) NOT NULL,
-            ticker VARCHAR(20),
-            total_cash_amount DECIMAL(15,2) NOT NULL,
-            FOREIGN KEY (investor_id) REFERENCES investor(id)
-            )""");
-
+                    CREATE TABLE IF NOT EXISTS transaction (
+                    id VARCHAR(36) PRIMARY KEY,
+                    timestamp VARCHAR(50) NOT NULL,
+                    type VARCHAR(50) NOT NULL,
+                    investor_id VARCHAR(36) NOT NULL,
+                    ticker VARCHAR(20),
+                    total_cash_amount DECIMAL(15,2) NOT NULL,
+                    FOREIGN KEY (investor_id) REFERENCES investor(id)
+                    )""");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -178,7 +176,6 @@ public class App extends Jooby {
         org.h2.tools.Server
                 .createWebServer("-web", "-webPort", "8082")
                 .start();
-
     }
 
     /*

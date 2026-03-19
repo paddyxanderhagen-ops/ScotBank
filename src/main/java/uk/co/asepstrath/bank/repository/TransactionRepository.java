@@ -19,16 +19,15 @@ public class TransactionRepository {
         this.ds = ds;
     }
 
-    public void saveAll(List<Transaction> transactions) throws Exception {
-
+    public void saveAll(List<Transaction> transactions) throws SQLException {
         try (var conn = ds.getConnection()) {
             conn.setAutoCommit(false);
 
             try (var stmt = conn.prepareStatement("""
-                MERGE INTO transaction 
-                (id, timestamp, type, investor_id, ticker, total_cash_amount)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """)) {
+                        MERGE INTO transaction 
+                        (id, timestamp, type, investor_id, ticker, total_cash_amount)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """)) {
 
                 for (Transaction t : transactions) {
 
@@ -48,7 +47,7 @@ public class TransactionRepository {
         }
     }
 
-    public TransactionDTO getAll () {
+    public TransactionDTO getAll() throws SQLException {
         TransactionDTO transactionDTO = new TransactionDTO();
         try (Connection conn = ds.getConnection()) {
             conn.setAutoCommit(false);
@@ -73,7 +72,7 @@ public class TransactionRepository {
         return transactionDTO;
     }
 
-    public List<Transaction> getTransactionsByInvestor (String id) {
+    public List<Transaction> getTransactionsByInvestor(String id) throws SQLException {
         List<Transaction> transactions = new ArrayList<>();
         try (Connection conn = ds.getConnection()) {
             String sql = """
@@ -90,7 +89,6 @@ public class TransactionRepository {
                     transaction = new Transaction(resultSet.getString("id"), resultSet.getString("timestamp"), resultSet.getString("type"), resultSet.getString("investor_id"), resultSet.getString("ticker"), resultSet.getDouble("total_cash_amount"));
                     transactions.add(transaction);
                 }
-
             }
         } catch (SQLException e) {
             throw new RuntimeException("Transaction could not be found for investor: " + id, e);

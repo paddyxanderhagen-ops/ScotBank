@@ -3,13 +3,13 @@ package uk.co.asepstrath.bank.controller;
 import uk.co.asepstrath.bank.model.Investor;
 
 public class Authorisation {
-    private Investor investor;
+    private final Investor investor;
 
-    public Authorisation (Investor investor) {
+    public Authorisation(Investor investor) {
         this.investor = investor;
     }
 
-    public boolean isAuthorised () {
+    public boolean isAuthorised() {
         return investor != null;
     }
 }

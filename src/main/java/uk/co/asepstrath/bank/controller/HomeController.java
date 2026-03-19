@@ -14,6 +14,7 @@ import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
 import javax.swing.text.View;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +24,10 @@ public class HomeController {
 
     private final InvestorService investorService;
     private Authorisation authorisation;
-    private DataSource ds;
-    private TransactionService transactionService;
+    private final DataSource ds;
+    private final TransactionService transactionService;
 
-    public HomeController (InvestorService investorService, DataSource ds, TransactionService transactionService) {
+    public HomeController(InvestorService investorService, DataSource ds, TransactionService transactionService) {
         this.investorService = investorService;
         this.ds = ds;
         this.transactionService = transactionService;
@@ -50,7 +51,7 @@ public class HomeController {
     }
 
     @GET("/dashboard")
-    public ModelAndView<Map<String, Object>> dashboardPage (Context ctx) {
+    public ModelAndView<Map<String, Object>> dashboardPage(Context ctx) throws SQLException {
         Session session = null;
         String id = null;
         if (ctx != null) {
