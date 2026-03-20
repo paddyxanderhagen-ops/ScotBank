@@ -184,31 +184,6 @@ public class App extends Jooby {
                 holdings.add(h);
             }
 
-            //test, remove before merge
-            if (holdings.size() <= 1) {
-                java.util.Map<String, Object> mock1 = new java.util.HashMap<>();
-                mock1.put("ticker", "AAPL");
-                mock1.put("shares", 50.0);
-                mock1.put("currentPrice", 150.0);
-                mock1.put("currentValue", 7500.0);
-                holdings.add(mock1);
-
-                java.util.Map<String, Object> mock2 = new java.util.HashMap<>();
-                mock2.put("ticker", "VOD");
-                mock2.put("shares", 200.0);
-                mock2.put("currentPrice", 80.0);
-                mock2.put("currentValue", 16000.0);
-                holdings.add(mock2);
-
-                java.util.Map<String, Object> mock3 = new java.util.HashMap<>();
-                mock3.put("ticker", "BABA");
-                mock3.put("shares", 100.0);
-                mock3.put("currentPrice", 100.0);
-                mock3.put("currentValue", 10000.0);
-                holdings.add(mock3);
-            }
-            //end of test
-
             response.put("holdings", holdings);
 
             Gson gson = new Gson();
