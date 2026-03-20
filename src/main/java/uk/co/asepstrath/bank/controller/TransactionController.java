@@ -34,10 +34,10 @@ public class TransactionController {
         return new ModelAndView("transactions.hbs", model);
     }
 
-    @GET("/Shares")
-    public HashMap<String, BigDecimal> investor(@QueryParam String id){
-        return (transactionService.getNumberOfShares(id));
-    }
+//    @GET("/Shares")
+//    public HashMap<String, BigDecimal> investor(@QueryParam String id){
+//        return (transactionService.getNumberOfShares(id));
+//    }
 
 //    @GET("/Shares/Value")
 //    public BigDecimal value(@QueryParam String id){

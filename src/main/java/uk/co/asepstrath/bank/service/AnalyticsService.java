@@ -5,6 +5,7 @@ import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.repository.PriceRepository;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
 import java.math.BigDecimal;
@@ -12,15 +13,13 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class AnalyticsService {
-    private TransactionRepository repo;
+
+    private TransactionService transactionService;
     private PriceService priceService;
-    private APIService apiService;
 
-
-    public AnalyticsService (TransactionRepository repo, PriceService priceService, APIService api) {
-        this.repo = repo;
+    public AnalyticsService (TransactionService transactionService, PriceService priceService) {
+        this.transactionService = transactionService;
         this.priceService = priceService;
-        this.apiService = api;
     }
 
     private double round(double value) {
@@ -28,40 +27,31 @@ public class AnalyticsService {
     }
 
 
-    public List<Position> getPositions(String investorId) {
-        try {
-            List<Transaction> transactions =
-                    repo.getTransactionsByInvestor(investorId);
+    public List<Position> getPositions(String id) {
 
-            Map<String, List<Transaction>> grouped = new HashMap<>();
 
-            for (Transaction t : transactions) {
+        List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
+        Map<String, List<Transaction>> transactionsByTicker = new HashMap<>();
 
-                if (t == null || t.getTicker() == null || t.getTicker().isBlank())
-                    continue;
-
-                grouped
-                        .computeIfAbsent(t.getTicker(), k -> new ArrayList<>())
-                        .add(t);
+        for (Transaction t : transactions) {
+            if (t == null || t.getTicker() == null || t.getTicker().isBlank()) {
+                continue;
             }
 
-            List<Position> positions = new ArrayList<>();
-
-            for (String ticker : grouped.keySet()) {
-
-                Position position =
-                        calculatePosition(ticker, grouped.get(ticker));
-
-                if (position != null) {
-                    positions.add(position);
-                }
-
-            }
-
-            return positions;
-        } catch (SQLException e) {
-            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve transactions");
+            transactionsByTicker.computeIfAbsent(t.getTicker(), k -> new ArrayList<>()).add(t);
         }
+
+        List<Position> positions = new ArrayList<>();
+
+        for (String ticker : transactionsByTicker.keySet()) {
+            Position position = calculatePosition(ticker, transactionsByTicker.get(ticker));
+
+            if (position != null) {
+                positions.add(position);
+            }
+        }
+
+        return positions;
     }
 
     public Position getPosition(String ticker, String investorId) {
@@ -81,15 +71,13 @@ public class AnalyticsService {
         double realisedPnl = 0;
         double avgBuyPrice = 0;
 
-        List<Price> prices = apiService.getPricesForStock(ticker);
+
 
         for (Transaction t : transactions) {
             if (t == null || t.getTicker() == null) continue;
 
-            BigDecimal p = priceService.getPrice(t.getTimestamp(), prices);
-            if (p == null) continue;
 
-            double price = p.doubleValue();
+            double price = priceService.getPriceAtTimestamp(t.getTimestamp());
             double numberOfShares = t.getTotalCashAmount() / price;
 
             if (t.getType().equals("BUY")) {
@@ -106,7 +94,7 @@ public class AnalyticsService {
 
         if (shares <= 0 && realisedPnl == 0) return null;
 
-        double lastPrice = priceService.getLatestPrice(prices).doubleValue();
+        double lastPrice = priceService.getLatestPrice();
         double currentCash = lastPrice * shares;
 
         return new Position(

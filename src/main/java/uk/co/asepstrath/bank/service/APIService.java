@@ -4,13 +4,21 @@ import com.google.gson.Gson;
 import io.jooby.StatusCode;
 import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.Unirest;
+import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.model.dto.EquitiesDTO;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import uk.co.asepstrath.bank.model.dto.PriceDTO;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
+import uk.co.asepstrath.bank.repository.PriceRepository;
 
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,9 +68,7 @@ public class APIService {
             url = new StringBuilder("https://api.asep-strath.co.uk/api/");
         }
 
-        for (Transaction transaction : transactions) {
-            transactionDTO.addTransaction(transaction);
-        }
+        transactionDTO.setTransactions(transactions);
 
         if (transactionDTO.getTransactions().isEmpty()) {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Could not retrieve transactions");
@@ -71,35 +77,60 @@ public class APIService {
         return transactionDTO;
     }
 
-    public
+    public PriceDTO getAllPrices (String ticker, PriceRepository repo, Equity equity) throws SQLException {
+        List<Price> prices = new ArrayList<>();
+        PriceDTO priceDTO = new PriceDTO();
+        String nextToken = loadToken();
+        String prevTok = "";
 
-    public List<Price> getPricesForStock(String ticker) {
-        if (cache.containsKey(ticker)) {
-            return cache.get(ticker);
+        while (nextToken != null) {
+            prevTok = nextToken;
+            url.append("prices/").append(ticker).append("?nextToken=").append(nextToken);
+            System.out.println(url);
+            String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
+            priceDTO = gson.fromJson(response, PriceDTO.class);
+            repo.saveAll(equity, priceDTO.getPrices());
+            nextToken = priceDTO.getPages().getNextToken();
+
+            url = new StringBuilder("https://api.asep-strath.co.uk/api/");
         }
 
-        String nextToken = null;
-        List<Price> prices = new ArrayList<>();
+        priceDTO.setPrices(prices);
 
-        do {
-            StringBuilder requestUrl = new StringBuilder("https://api.asep-strath.co.uk/api/prices/")
-                    .append(ticker);
+        if (ticker.equals("APM")) {
+            saveToken(prevTok);
+        }
 
-            if (nextToken != null) {
-                requestUrl.append("?nextToken=").append(nextToken);
+        return priceDTO;
+    }
+
+    private void saveToken(String token) {
+        try {
+            Files.writeString(Path.of("./data/token.txt"), token);
+        } catch (IOException e) {
+            System.err.println("Failed to save token: " + e.getMessage());
+        }
+    }
+
+    private String loadToken() {
+        Path path = Path.of("./data/token.txt");
+        try {
+            if (Files.exists(path)) {
+                return Files.readString(path);
             }
+        } catch (IOException e) {
+            System.err.println("Failed to load token: " + e.getMessage());
+        }
+        return "";
+    }
 
-            String response = Unirest.get(requestUrl.toString()).accept("application/json").asString().getBody();
-            PriceDTO priceDTO = gson.fromJson(response, PriceDTO.class);
 
-            if (priceDTO == null || priceDTO.getPriceList() == null) break;
+    public EquitiesDTO getAlEquities () {
+        Gson gson = new Gson();
+        String response = Unirest.get("https://api.asep-strath.co.uk/api/equities").accept("application/json").asString().getBody();
 
-            prices.addAll(priceDTO.getPriceList());
-            nextToken = (priceDTO.getPages() != null) ? priceDTO.getPages().getNextToken() : null;
+        EquitiesDTO equityResponse = gson.fromJson(response, EquitiesDTO.class);
 
-        } while (nextToken != null);
-
-        cache.put(ticker, prices);
-        return prices;
+        return equityResponse;
     }
 }

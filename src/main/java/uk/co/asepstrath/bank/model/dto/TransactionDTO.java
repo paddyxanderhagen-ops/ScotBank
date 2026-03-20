@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionDTO {
-    private final List<Transaction> transactions;
+    private List<Transaction> transactions;
     private Pagination pagination;
 
     public TransactionDTO() {
@@ -21,6 +21,8 @@ public class TransactionDTO {
     public Pagination getPages() {
         return this.pagination;
     }
+
+    public void setTransactions (List<Transaction> transactions) {this.transactions = transactions;}
 
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);

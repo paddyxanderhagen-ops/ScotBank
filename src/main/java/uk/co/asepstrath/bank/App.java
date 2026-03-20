@@ -10,9 +10,13 @@ import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.repository.EquitiesRepository;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
+import uk.co.asepstrath.bank.repository.PriceRepository;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 import uk.co.asepstrath.bank.service.*;
 
@@ -34,6 +38,8 @@ public class App extends Jooby {
     private TransactionService transactionService;
     private AnalyticsService analyticsService;
     private PriceService priceService;
+    private EquitiesRepository equitiesRepo;
+    private PriceRepository priceRepo;
     private final DataSource ds;
     private Logger log;
 
@@ -50,12 +56,13 @@ public class App extends Jooby {
         ds = require(DataSource.class);
         api = new APIService();
         investorRepo = new InvestorRepository(ds);
+        equitiesRepo = new EquitiesRepository(ds);
         transactionRepo = new TransactionRepository(ds);
+        priceRepo = new PriceRepository(ds);
         investorService = new InvestorService(investorRepo);
-        priceService = new PriceService();
+        priceService = new PriceService(priceRepo);
         transactionService = new TransactionService(transactionRepo);
-        analyticsService = new AnalyticsService(transactionRepo, priceService, api);
-        priceService = new PriceService();
+        analyticsService = new AnalyticsService(transactionService, priceService);
         log = getLog();
 
         assets("/assets/**", "/assets");
@@ -67,11 +74,21 @@ public class App extends Jooby {
         });
 
         try {
+            investorRepo.setUp();
+            transactionRepo.setUp();
+            equitiesRepo.setUp();
+            priceRepo.setUp();
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Unable to access server.");
+        }
+
+        try {
             List <Investor> investors = api.getAllInvestor().getInvestors();
 
             investorRepo.saveAll(investors);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             log.warn("Failed to load investors from API", e);
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve transactions");
         }
 
         try {
@@ -87,6 +104,13 @@ public class App extends Jooby {
                 }
             }
 
+            List<Equity> equities = api.getAlEquities().getEquities();
+
+            for (Equity equity : equities) {
+                List<Price> prices = api.getAllPrices(equity.getTicker(), priceRepo, equity).getPrices();
+                equitiesRepo.saveAll(equity);
+            }
+
 //            System.out.println("Preloading prices for " + tickers.size() + " tickers...");
 //
 //
@@ -97,6 +121,8 @@ public class App extends Jooby {
 //            });
 //
 //            System.out.println("All prices cached!");
+
+
 
         } catch (Exception e) {
             log.warn("Failed to load transactions from API", e);
@@ -109,7 +135,7 @@ public class App extends Jooby {
         mvc(new EtfController_());
         mvc(new EquitiesController_());
         //mvc(new PricesController());
-        mvc(new AnalyticsController_(analyticsService));
+        //mvc(new AnalyticsController_(analyticsService));
 
 
         /*
@@ -131,13 +157,6 @@ public class App extends Jooby {
     public void onStart() throws SQLException {
         Logger log = getLog();
         log.info("Starting Up...");
-
-        try {
-            investorRepo.setUp();
-            transactionRepo.setUp();
-        } catch (SQLException e) {
-            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Unable to access server.");
-        }
 
         //view db in browser
         org.h2.tools.Server

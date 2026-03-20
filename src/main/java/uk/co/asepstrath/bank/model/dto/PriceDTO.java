@@ -8,13 +8,13 @@ import java.util.List;
 public class PriceDTO {
     private Pagination pagination;
     private List<Price> prices;
-    public List<Price> getPriceList () {
+
+    public List<Price> getPrices () {
         return this.prices;
     }
-    public Price addPrice (Price price) {
-        this.prices.add(price);
-        return price;
-    }
+
+    public void setPrices (List<Price> prices) {this.prices = prices;}
+
     public Pagination getPages () {
         return this.pagination;
     }

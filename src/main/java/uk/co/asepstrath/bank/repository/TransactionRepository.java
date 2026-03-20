@@ -104,13 +104,11 @@ public class TransactionRepository {
                     transactions.add(transaction);
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Transaction could not be found for investor: " + id, e);
         }
         return transactions;
     }
 
-    public List<Transaction> getStockTransactionsByInvestor(String id) {
+    public List<Transaction> getStockTransactionsByInvestor(String id) throws SQLException{
         List<Transaction> transactions = new ArrayList<>();
         try (Connection conn = ds.getConnection()) {
             String sql = """
@@ -130,8 +128,6 @@ public class TransactionRepository {
                 }
 
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Transaction could not be found for investor: " + id, e);
         }
 
         return transactions;

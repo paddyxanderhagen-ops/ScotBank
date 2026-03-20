@@ -1,39 +1,60 @@
 package uk.co.asepstrath.bank.service;
 
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Price;
+import uk.co.asepstrath.bank.repository.PriceRepository;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Comparator;
+import java.sql.SQLException;
 import java.util.List;
 
 public class PriceService {
 
-    public PriceService() {}
+    private PriceRepository repo;
 
-    public Price getByTimestamp(String timestamp, List<Price> priceList) {
-        LocalDateTime target = LocalDateTime.parse(timestamp);
-
-        return priceList.stream()
-                .filter(p -> !LocalDateTime.parse(p.getTimeStamp()).isAfter(target))
-                .max(Comparator.comparing(p -> LocalDateTime.parse(p.getTimeStamp())))
-                .orElseGet(() -> priceList.stream()
-                        .min(Comparator.comparing(p -> LocalDateTime.parse(p.getTimeStamp())))
-                        .orElseThrow(() -> new RuntimeException("No prices available"))
-                );
+    public PriceService(PriceRepository repo) {
+        this.repo = repo;
     }
 
-    public Price getMostRecent(List<Price> priceList) {
-        return priceList.stream()
-                .max(Comparator.comparing(p -> LocalDateTime.parse(p.getTimeStamp())))
-                .orElseThrow(() -> new RuntimeException("Price list is empty"));
+    public double getLatestPrice() {
+        try {
+            double price = repo.getLatestPrice();
+
+            if (price == Double.MAX_VALUE) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Price not found");
+            }
+
+            return price;
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve price");
+        }
     }
 
-    public BigDecimal getLatestPrice(List<Price> priceList) {
-        return getMostRecent(priceList).getPrice();
+    public double getPriceAtTimestamp(String timestamp) {
+        try {
+            double price = repo.getPriceAtTime(timestamp);
+
+            if (price == Double.MAX_VALUE) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Price not found");
+            }
+
+            return price;
+
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve price");
+        }
     }
 
-    public BigDecimal getPrice(String timestamp, List<Price> priceList) {
-        return getByTimestamp(timestamp, priceList).getPrice();
+    public List<Double> getPrices(String ticker) {
+        try {
+            List<Double> prices = repo.getPricesForStock(ticker);
+
+            if (prices == null || prices.isEmpty()) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Prices not found");
+            }
+            return prices;
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve prices");
+        }
     }
 }
