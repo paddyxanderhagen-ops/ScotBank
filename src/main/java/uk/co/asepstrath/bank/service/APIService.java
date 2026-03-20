@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class APIService {
 
     private StringBuilder url;
-    private final Map<String, List<Price>> cache = new ConcurrentHashMap<>();
     private final Gson gson;
 
     public APIService() {
@@ -68,7 +67,7 @@ public class APIService {
         return transactionDTO;
     }
 
-    public PriceDTO getAllPrices (String ticker, PriceRepository repo, String nextToken) throws SQLException {
+    public PriceDTO getAllPrices (String ticker, PriceRepository repo, String nextToken) {
         List<Price> prices = new ArrayList<>();
         PriceDTO priceDTO = new PriceDTO();
         String prevTok = "";
@@ -78,8 +77,14 @@ public class APIService {
             url.append("prices/").append(ticker).append("?nextToken=").append(nextToken);
             String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
             priceDTO = gson.fromJson(response, PriceDTO.class);
+            prices.addAll(priceDTO.getPrices());
 
-            repo.saveAll(ticker, priceDTO.getPrices());
+            try {
+                repo.saveAll(ticker, priceDTO.getPrices());
+            } catch (SQLException e) {
+                throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to save prices");
+            }
+
             nextToken = priceDTO.getPages().getNextToken();
 
             url = new StringBuilder("https://api.asep-strath.co.uk/api/");
@@ -88,7 +93,6 @@ public class APIService {
         priceDTO.setPrices(prices);
 
         saveToken(prevTok);
-
 
         return priceDTO;
     }
