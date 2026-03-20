@@ -1,7 +1,8 @@
-package uk.co.asepstrath.bank.model;
+package uk.co.asepstrath.bank.unit.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.co.asepstrath.bank.model.Constituents;
 
 import java.math.BigDecimal;
 

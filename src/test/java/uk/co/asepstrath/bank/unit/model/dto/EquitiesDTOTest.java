@@ -1,7 +1,8 @@
-package uk.co.asepstrath.bank.model.dto;
+package uk.co.asepstrath.bank.unit.model.dto;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.co.asepstrath.bank.model.dto.EquitiesDTO;
 
 import static org.junit.jupiter.api.Assertions.*;
 
