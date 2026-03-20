@@ -24,8 +24,6 @@ public class AnalyticsService {
 
 
     public List<Position> getPositions(String id) {
-
-
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
         Map<String, List<Transaction>> transactionsByTicker = new HashMap<>();
 
