@@ -8,9 +8,9 @@ public class Etf {
     private String ticker;
     private String description;
     private String inceptionDate;
-    private List<constituents> constituents;
+    private List<Constituents> constituents;
 
-    public Etf(String name, String ticker, String description, String inceptionDate, List<constituents> constituents) {
+    public Etf(String name, String ticker, String description, String inceptionDate, List<Constituents> constituents) {
         this.name = name;
         this.ticker = ticker;
         this.description = description;
@@ -23,7 +23,7 @@ public class Etf {
         ticker = "";
         description = "";
         inceptionDate = "";
-        constituents = new ArrayList<constituents>();
+        constituents = new ArrayList<Constituents>();
     }
 
     public String getName() {
@@ -58,11 +58,11 @@ public class Etf {
         this.inceptionDate = inceptionDate;
     }
 
-    public List<constituents> getConstituents() {
+    public List<Constituents> getConstituents() {
         return constituents;
     }
 
-    public void setConstituents(List<constituents> constituents) {
+    public void setConstituents(List<Constituents> constituents) {
         this.constituents = constituents;
     }
 }

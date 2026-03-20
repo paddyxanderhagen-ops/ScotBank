@@ -16,12 +16,12 @@ import java.util.Map;
 public class LoginController {
 
     @GET("")
-    public ModelAndView<Map<String, Object>> loginPage () {
+    public ModelAndView<Map<String, Object>> loginPage() {
         return new ModelAndView<>("login.hbs", new HashMap<>());
     }
 
     @POST("")
-    public void postLogin (@FormParam String id, Context ctx) {
+    public void postLogin(@FormParam String id, Context ctx) {
         Session session = ctx.session();
         session.put("id", id);
         ctx.sendRedirect("/dashboard");

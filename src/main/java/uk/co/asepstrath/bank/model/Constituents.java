@@ -2,16 +2,16 @@ package uk.co.asepstrath.bank.model;
 
 import java.math.BigDecimal;
 
-public class constituents {
+public class Constituents {
     private String ticker;
     private BigDecimal weight;
 
-    public constituents(String ticker, BigDecimal weight) {
+    public Constituents(String ticker, BigDecimal weight) {
         this.ticker = ticker;
         this.weight = weight;
     }
 
-    public constituents() {
+    public Constituents() {
         ticker = "";
         weight = BigDecimal.ZERO;
     }

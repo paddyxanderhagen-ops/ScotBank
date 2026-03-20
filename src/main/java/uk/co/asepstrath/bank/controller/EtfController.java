@@ -6,11 +6,8 @@ import io.jooby.annotation.Path;
 import io.jooby.annotation.QueryParam;
 import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.model.Etf;
-import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.EtfDTO;
-import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.service.EtfService;
-import uk.co.asepstrath.bank.service.TransactionService;
 
 import java.util.List;
 

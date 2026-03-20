@@ -5,7 +5,6 @@ import io.jooby.ModelAndView;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.PathParam;
-import io.jooby.annotation.QueryParam;
 import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.service.AnalyticsService;
 

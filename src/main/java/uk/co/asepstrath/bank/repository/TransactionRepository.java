@@ -4,10 +4,7 @@ import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,16 +16,33 @@ public class TransactionRepository {
         this.ds = ds;
     }
 
-    public void saveAll(List<Transaction> transactions) throws Exception {
+    public void setUp() throws SQLException{
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement()) {
 
+            stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS transaction (
+                    id VARCHAR(36) PRIMARY KEY,
+                    timestamp VARCHAR(50) NOT NULL,
+                    type VARCHAR(50) NOT NULL,
+                    investor_id VARCHAR(36) NOT NULL,
+                    ticker VARCHAR(20),
+                    total_cash_amount DECIMAL(15,2) NOT NULL,
+                    FOREIGN KEY (investor_id) REFERENCES investor(id)
+                    )""");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_transaction_investor ON transaction(investor_Id)");
+        }
+    }
+
+    public void saveAll(List<Transaction> transactions) throws SQLException {
         try (var conn = ds.getConnection()) {
             conn.setAutoCommit(false);
 
             try (var stmt = conn.prepareStatement("""
-                MERGE INTO transaction 
-                (id, timestamp, type, investor_id, ticker, total_cash_amount)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """)) {
+                        MERGE INTO transaction 
+                        (id, timestamp, type, investor_id, ticker, total_cash_amount)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """)) {
 
                 for (Transaction t : transactions) {
 
@@ -48,7 +62,7 @@ public class TransactionRepository {
         }
     }
 
-    public TransactionDTO getAll () {
+    public TransactionDTO getAll() throws SQLException {
         TransactionDTO transactionDTO = new TransactionDTO();
         try (Connection conn = ds.getConnection()) {
             conn.setAutoCommit(false);
@@ -73,7 +87,7 @@ public class TransactionRepository {
         return transactionDTO;
     }
 
-    public List<Transaction> getTransactionsByInvestor (String id) {
+    public List<Transaction> getTransactionsByInvestor(String id) throws SQLException {
         List<Transaction> transactions = new ArrayList<>();
         try (Connection conn = ds.getConnection()) {
             String sql = """
@@ -90,11 +104,33 @@ public class TransactionRepository {
                     transaction = new Transaction(resultSet.getString("id"), resultSet.getString("timestamp"), resultSet.getString("type"), resultSet.getString("investor_id"), resultSet.getString("ticker"), resultSet.getDouble("total_cash_amount"));
                     transactions.add(transaction);
                 }
+            }
+        }
+        return transactions;
+    }
+
+    public List<Transaction> getStockTransactionsByInvestor(String id) throws SQLException{
+        List<Transaction> transactions = new ArrayList<>();
+        try (Connection conn = ds.getConnection()) {
+            String sql = """
+                    SELECT *
+                    FROM transaction
+                    WHERE investor_id = ? 
+                    AND ticker IS NOT NULL""";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, id);
+                ResultSet resultSet = stmt.executeQuery();
+                Transaction transaction = null;
+
+                while (resultSet.next()) {
+                    transaction = new Transaction(resultSet.getString("id"), resultSet.getString("timestamp"), resultSet.getString("type"), resultSet.getString("investor_id"), resultSet.getString("ticker"), resultSet.getDouble("total_cash_amount"));
+                    transactions.add(transaction);
+                }
 
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Transaction could not be found for investor: " + id, e);
         }
+
         return transactions;
     }
 }

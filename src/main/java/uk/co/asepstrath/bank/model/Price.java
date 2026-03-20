@@ -1,19 +1,17 @@
 package uk.co.asepstrath.bank.model;
 
-import java.math.BigDecimal;
-
 public class Price {
     private String timestamp;
-    private BigDecimal price;
+    private double price;
 
-    public Price(String timestamp, BigDecimal price) {
+    public Price(String timestamp, double price) {
         this.timestamp = timestamp;
         this.price = price;
     }
 
     public Price() {
         this.timestamp = "";
-        this.price = BigDecimal.valueOf(0);
+        this.price = 0;
     }
 
     public String getTimeStamp() {
@@ -24,11 +22,11 @@ public class Price {
         this.timestamp = timestamp;
     }
 
-    public BigDecimal getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 }

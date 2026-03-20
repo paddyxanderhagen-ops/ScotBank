@@ -1,24 +1,21 @@
 package uk.co.asepstrath.bank.service;
 
-import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Position;
-import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.repository.TransactionRepository;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AnalyticsService {
-    private TransactionRepository repo;
+
+    private TransactionService transactionService;
     private PriceService priceService;
-    private PricesController pricesController;
 
-
-    public AnalyticsService (TransactionRepository repo, PriceService priceService) {
-        this.repo = repo;
+    public AnalyticsService (TransactionService transactionService, PriceService priceService) {
+        this.transactionService = transactionService;
         this.priceService = priceService;
-        pricesController = new PricesController();
     }
 
     private double round(double value) {
@@ -26,34 +23,26 @@ public class AnalyticsService {
     }
 
 
-    public List<Position> getPositions(String investorId) {
-
-        List<Transaction> transactions =
-                repo.getTransactionsByInvestor(investorId);
-
-        Map<String, List<Transaction>> grouped = new HashMap<>();
+    public List<Position> getPositions(String id) {
+        List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
+        Map<String, List<Transaction>> transactionsByTicker = new HashMap<>();
 
         for (Transaction t : transactions) {
-
-            if (t==null || t.getTicker() == null || t.getTicker().isBlank())
+            if (t == null || t.getTicker() == null || t.getTicker().isBlank()) {
                 continue;
+            }
 
-            grouped
-                    .computeIfAbsent(t.getTicker(), k -> new ArrayList<>())
-                    .add(t);
+            transactionsByTicker.computeIfAbsent(t.getTicker(), k -> new ArrayList<>()).add(t);
         }
 
         List<Position> positions = new ArrayList<>();
 
-        for (String ticker : grouped.keySet()) {
-
-            Position position =
-                    calculatePosition(ticker, grouped.get(ticker));
+        for (String ticker : transactionsByTicker.keySet()) {
+            Position position = calculatePosition(ticker, transactionsByTicker.get(ticker));
 
             if (position != null) {
                 positions.add(position);
             }
-
         }
 
         return positions;
@@ -70,48 +59,36 @@ public class AnalyticsService {
     }
 
     private Position calculatePosition(String ticker, List<Transaction> transactions) {
-
         double shares = 0;
         double buyShares = 0;
-        double buyCash = 0;
+        double totalBuyCash = 0;
+        double realisedPnl = 0;
+        double avgBuyPrice = 0;
 
-        List<Price> prices = pricesController.Prices(ticker);
+
 
         for (Transaction t : transactions) {
+            if (t == null || t.getTicker() == null) continue;
 
-            if (t == null || t.getTicker() == null)
-                continue;
 
-            BigDecimal p = priceService.getPrice(t.getTimestamp(), prices);
-            if (p == null)
-                continue;
-
-            double price = p.doubleValue();
+            double price = priceService.getPriceAtTimestamp(t.getTimestamp(), t.getTicker());
             double numberOfShares = t.getTotalCashAmount() / price;
 
             if (t.getType().equals("BUY")) {
-
                 shares += numberOfShares;
                 buyShares += numberOfShares;
-                buyCash += t.getTotalCashAmount();
+                totalBuyCash += t.getTotalCashAmount();
+                avgBuyPrice = totalBuyCash / buyShares;
 
             } else if (t.getType().equals("SELL")) {
-
+                realisedPnl += (price - avgBuyPrice) * numberOfShares;
                 shares -= numberOfShares;
-
             }
         }
 
-        if (shares <= 0)
-            return null;
+        if (shares <= 0 && realisedPnl == 0) return null;
 
-        double avgBuyPrice = buyCash / buyShares;
-
-        double lastPrice =
-                priceService
-                        .getLatestPrice(prices)
-                        .doubleValue();
-
+        double lastPrice = priceService.getLatestPrice(ticker);
         double currentCash = lastPrice * shares;
 
         return new Position(
@@ -119,9 +96,10 @@ public class AnalyticsService {
                 round(shares),
                 round(avgBuyPrice),
                 round(lastPrice),
-                round(buyCash),
-                round(currentCash)
-        );
+                round(avgBuyPrice * shares),
+                round(currentCash),
+                round(realisedPnl),
+                round(totalBuyCash));
     }
 
 }
