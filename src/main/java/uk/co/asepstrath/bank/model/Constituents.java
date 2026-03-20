@@ -4,16 +4,16 @@ import java.math.BigDecimal;
 
 public class Constituents {
     private String ticker;
-    private BigDecimal weight;
+    private double weight;
 
-    public Constituents(String ticker, BigDecimal weight) {
+    public Constituents(String ticker, double weight) {
         this.ticker = ticker;
         this.weight = weight;
     }
 
     public Constituents() {
         ticker = "";
-        weight = BigDecimal.ZERO;
+        weight = 0;
     }
     public String getTicker() {
         return ticker;
@@ -21,10 +21,10 @@ public class Constituents {
     public void setTicker(String ticker) {
         this.ticker = ticker;
     }
-    public BigDecimal getWeight() {
+    public double getWeight() {
         return weight;
     }
-    public void setWeight(BigDecimal weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }
 }
