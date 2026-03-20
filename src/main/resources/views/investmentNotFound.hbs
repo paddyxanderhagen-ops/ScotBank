@@ -58,7 +58,27 @@
             font-weight:700;
             font-size:18px;
         }
-
+        .login-btn{
+            align-items:left;
+            maximum-width:200px;
+            background:var(--blue);
+            border:none;
+            border-radius:12px;
+            padding:14px;
+            font-weight:700;
+            color:white;
+        }
+        .login-btn:hover{
+            align-items:center;
+            background:var(--blue-dark);
+            color:(--blue-dark);
+        }
+        .button-wrapper{
+            display:inline-block;
+            padding:10px;
+            max-width:400px;
+            margin:auto;
+        }
     </style>
 
 </head>
@@ -66,6 +86,16 @@
 <body>
 
 {{>partials/navbar.hbs}}
+<div class="button-wrapper">
+<form class="login-card" action="/Investments" method="get">
+<button
+                type="submit"
+                class="btn login-btn w-100">
+
+            Return
+  </button>
+
+</div>
 <main class="page-wrapper">
 
     <h3 class="mb-4">Investment not found</h3>
