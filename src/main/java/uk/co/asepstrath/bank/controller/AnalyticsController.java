@@ -24,10 +24,16 @@ public class AnalyticsController {
 
     @GET
     public ModelAndView<Map<String,Object>> positions(Context ctx) {
-
         String investorId = ctx.session().get("id").value();
+
         List<Position> positions =
                 analyticsService.getPositions(investorId);
+
+        System.out.println("analytics");
+
+        for (Position position : positions) {
+            System.out.println(position);
+        }
 
 
         Map<String,Object> map = new HashMap<>();

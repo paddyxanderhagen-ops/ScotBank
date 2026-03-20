@@ -40,7 +40,7 @@ public class PriceRepositoryTest {
 
     @Test
     void saveAll () throws SQLException{
-        repository.saveAll(new Equity("Apple", "AAPL", "Tech"), List.of(new Price("10.00", 150.0), new Price("10.15", 100.0)));
+        repository.saveAll("AAPL", List.of(new Price("10.00", 150.0), new Price("10.15", 100.0)));
         verify(ps, times(2)).setString(1, "AAPL");
         verify(ps, times(1)).setString(2, "10.00");
         verify(ps, times(1)).setDouble(3, 150.0);
