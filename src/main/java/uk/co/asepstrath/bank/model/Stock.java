@@ -7,7 +7,7 @@ public class Stock {
     private double bookPrice;
     private boolean isBuy;
 
-    public Stock (String ticker, int amount, double bookPrice, boolean isBuy) {
+    public Stock(String ticker, int amount, double bookPrice, boolean isBuy) {
         this.ticker = ticker;
         this.amount = amount;
         this.bookPrice = bookPrice;
@@ -24,19 +24,21 @@ public class Stock {
     public String getTicker() {
         return ticker;
     }
-    public int getAmount() {
-        return amount;
-    }
-    public double getPrice() {
-        return bookPrice;
-    }
 
     public void setTicker(String ticker) {
         this.ticker = ticker;
     }
 
+    public int getAmount() {
+        return amount;
+    }
+
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public double getPrice() {
+        return bookPrice;
     }
 
     public void setPrice(double price) {

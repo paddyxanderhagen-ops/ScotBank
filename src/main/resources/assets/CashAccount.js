@@ -3,8 +3,8 @@ $(document).ready(function () {
     let amount = $('#amount').val();
     let form = $('#transactionForm');
 
-    form.on('submit',function (e) {
-       e.preventDefault();
+    form.on('submit', function (e) {
+        e.preventDefault();
         type = $('#transaction-type').val();
         amount = $('#amount').val();
 
@@ -22,30 +22,30 @@ function deposit() {
             amount: $("#amount").val()
         }, function (data, response) {
             if (response === "success") {
-                window.location.href=`/dashboard`;
+                window.location.href = `/dashboard`;
             }
         }
     );
 
-    posting.fail(function(xhr) {
+    posting.fail(function (xhr) {
         $('#amount-error').html(xhr.responseJSON).show();
     });
 }
 
-function withdraw () {
+function withdraw() {
     let posting = $.post(`dashboard/withdraw`,
         {
             amount: $("#amount").val()
         }, function (data, status) {
-            window.location.href=`dashboard`;
+            window.location.href = `dashboard`;
         }
     );
 
-    posting.fail(function(xhr) {
+    posting.fail(function (xhr) {
         $('#amount-error').html(xhr.responseJSON).show();
     });
 }
 
-function openCloseForm () {
+function openCloseForm() {
     $('#transactionForm').toggleClass("d-none");
 }

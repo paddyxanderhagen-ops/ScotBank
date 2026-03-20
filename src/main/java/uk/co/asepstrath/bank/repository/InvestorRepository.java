@@ -6,10 +6,7 @@ import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 
@@ -21,14 +18,26 @@ public class InvestorRepository {
         this.ds = ds;
     }
 
-    public void saveAll(List<Investor> investors) throws Exception {
+    public void setUp() throws SQLException {
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS investor (
+                    id VARCHAR(36) PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    cash_balance DECIMAL(15,2) NOT NULL
+                    )""");
+        }
+    }
+
+    public void saveAll(List<Investor> investors) throws SQLException {
         try (var conn = ds.getConnection()) {
             conn.setAutoCommit(false);
 
             try (var stmt = conn.prepareStatement("""
-                MERGE INTO investor (id, name, cash_balance)
-                VALUES (?, ?, ?);
-            """)) {
+                        MERGE INTO investor (id, name, cash_balance)
+                        VALUES (?, ?, ?);
+                    """)) {
 
                 for (Investor i : investors) {
                     stmt.setString(1, i.getId());
@@ -49,7 +58,7 @@ public class InvestorRepository {
         }
     }
 
-    public InvestorDTO getAll () {
+    public InvestorDTO getAll() throws SQLException {
         InvestorDTO investorDTO = new InvestorDTO();
         try (Connection conn = ds.getConnection()) {
             conn.setAutoCommit(false);
@@ -57,7 +66,6 @@ public class InvestorRepository {
             String sql = """
                     SELECT *
                     FROM investor;""";
-
 
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -68,14 +76,11 @@ public class InvestorRepository {
                     investorDTO.addInvestor(investor);
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException();
         }
-
         return investorDTO;
     }
 
-    public Investor getInvestor (String id) {
+    public Investor getInvestor(String id) throws SQLException {
         Investor investor = null;
 
         try (Connection conn = ds.getConnection()) {
@@ -92,11 +97,24 @@ public class InvestorRepository {
                     investor = new Investor(resultSet.getString("id"), resultSet.getString("name"), resultSet.getDouble("cash_balance"));
                 }
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to get investor with id: " + id, e);
         }
 
         return investor;
+    }
+
+    public void transaction(String investorId, double updatedBalance) throws SQLException {
+        String sql = """
+                UPDATE investor
+                SET cash_balance = ?
+                WHERE id = ?;""";
+
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDouble(1, updatedBalance);
+            ps.setString(2, investorId);
+
+            ps.execute();
+        }
     }
 }

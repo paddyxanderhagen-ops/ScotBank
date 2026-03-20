@@ -1,82 +1,59 @@
 package uk.co.asepstrath.bank.service;
 
-import uk.co.asepstrath.bank.model.Price;
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
+import uk.co.asepstrath.bank.repository.PriceRepository;
 
-import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 
 public class PriceService {
-    public Price getByTimestamp(String timestamp, List<Price> priceList) {
-        for (Price price : priceList) {
-            if (price.getTimeStamp().equals(timestamp)) {
-                return price;
+
+    private PriceRepository repo;
+
+    public PriceService(PriceRepository repo) {
+        this.repo = repo;
+    }
+
+    public double getLatestPrice(String ticker) {
+        try {
+            double price = repo.getLatestPrice(ticker);
+
+            if (price == Double.MAX_VALUE) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Price not found");
             }
+
+            return price;
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve price");
         }
-        return null;
     }
 
-    public Price getMostRecent(List<Price> priceList) {
-        Price max = priceList.get(0);
-        for (Price price : priceList) {
-            char[] currentChars = price.getTimeStamp().toCharArray();
-            char[] maxChars = max.getTimeStamp().toCharArray();
-            String current = "";
-            String stringMax = "";
-            for (int i = 0; i < 4; i++) {
-                current = current.concat(String.valueOf(currentChars[i]));
-                stringMax = stringMax.concat(String.valueOf(maxChars[i]));
+    public double getPriceAtTimestamp(String timestamp, String ticker) {
+        try {
+            double price = repo.getPriceAtTime(timestamp, ticker);
+
+            if (price == Double.MAX_VALUE) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Price not found");
             }
-            if (Integer.parseInt(current) > Integer.parseInt(stringMax)) {
-                max = price;
-            } else {
-                current = "";
-                stringMax = "";
-                for (int i = 5; i < 7; i++){
-                    current = current.concat(String.valueOf(currentChars[i]));
-                    stringMax = stringMax.concat(String.valueOf(maxChars[i]));
-                }
-                if (Integer.parseInt(current) > Integer.parseInt(stringMax)) {
-                    max = price;
-                } else {
-                    current = "";
-                    stringMax = "";
-                    for (int i = 8; i < 10; i++){
-                        current = current.concat(String.valueOf(currentChars[i]));
-                        stringMax = stringMax.concat(String.valueOf(maxChars[i]));
-                    }
-                    if (Integer.parseInt(current) > Integer.parseInt(stringMax)) {
-                        max = price;
-                    } else {
-                        current = "";
-                        stringMax = "";
-                        for (int i = 11; i < currentChars.length; i++){
-                            current = current.concat(String.valueOf(currentChars[i]));
-                            stringMax = stringMax.concat(String.valueOf(maxChars[i]));
-                        }
-                        current = current.replaceAll(":", "");
-                        stringMax = stringMax.replaceAll(":", "");
-                        if (Integer.parseInt(current) > Integer.parseInt(stringMax)) {
-                            max = price;
-                        }
-                    }
-                }
+
+            return price;
+
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve price");
+        }
+    }
+
+    public List<Double> getPrices(String ticker) {
+        try {
+            List<Double> prices = repo.getPricesForStock(ticker);
+
+            if (prices == null || prices.isEmpty()) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Prices not found");
             }
+            return prices;
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve prices");
         }
-        return max;
     }
-
-    public BigDecimal getLatestPrice(List<Price> priceList) {
-        return getMostRecent(priceList).getPrice();
-    }
-
-    public BigDecimal getPrice(String timestamp, List<Price> priceList) {
-        Price price = getByTimestamp(timestamp, priceList);
-
-        if (price == null) {
-            throw new IllegalArgumentException("Price not found for timestamp: " + timestamp);
-        }
-
-        return price.getPrice();
-    }
-
 }

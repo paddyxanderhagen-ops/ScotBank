@@ -9,22 +9,17 @@ public class Position {
     private double currentCashAmount;
     private double pnl;
     private double pnlPercentage;
-
-    public Position() {
-    }
-
-    public Position(String ticker, double numberOfShares, double buyPrice) {
-        this.ticker = ticker;
-        this.numberOfShares = numberOfShares;
-        this.buyPrice = buyPrice;
-    }
+    private double realisedPnl;
+    private double totalInvested;
 
     public Position(String ticker,
-        double numberOfShares,
-        double buyPrice,
-        double lastPrice,
-        double buyCashAmount,
-        double currentCashAmount)
+                    double numberOfShares,
+                    double buyPrice,
+                    double lastPrice,
+                    double buyCashAmount,
+                    double currentCashAmount,
+                    double realisedPnl,
+                    double totalInvested)
     {
         this.ticker = ticker;
         this.numberOfShares = numberOfShares;
@@ -32,10 +27,18 @@ public class Position {
         this.lastPrice = lastPrice;
         this.buyCashAmount = buyCashAmount;
         this.currentCashAmount = currentCashAmount;
-        this.pnl = Math.round((currentCashAmount - buyCashAmount) * 100.0) / 100.0;
-        this.pnlPercentage = Math.round(-(100 - (currentCashAmount / buyCashAmount) * 100) * 100.0) / 100.0;
+        this.realisedPnl = Math.round(realisedPnl * 100.0) / 100.0;
+        this.totalInvested = Math.round(totalInvested * 100.0) / 100.0;
 
+        double unrealised = currentCashAmount - buyCashAmount;
+        this.pnl = Math.round(unrealised * 100.0) / 100.0;
+        this.pnlPercentage = buyCashAmount > 0
+                ? Math.round((unrealised / buyCashAmount * 100) * 100.0) / 100.0
+                : 0;
     }
+
+    public double getTotalInvested() { return totalInvested; }
+    public double getRealisedPnl() { return realisedPnl; }
 
     public double getCurrentCashAmount() {
         return currentCashAmount;
