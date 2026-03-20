@@ -1,17 +1,11 @@
 package uk.co.asepstrath.bank.controller;
 
 import com.google.gson.Gson;
-import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
-import io.jooby.annotation.QueryParam;
-import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.model.dto.PriceDTO;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
-import uk.co.asepstrath.bank.service.PriceService;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

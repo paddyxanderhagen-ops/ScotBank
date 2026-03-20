@@ -1,29 +1,25 @@
 package uk.co.asepstrath.bank;
 
-import com.google.gson.Gson;
 import io.jooby.*;
 import io.jooby.exception.StatusCodeException;
-import io.jooby.netty.NettyServer;
-import uk.co.asepstrath.bank.controller.*;
-import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
+import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.repository.EquitiesRepository;
+import uk.co.asepstrath.bank.repository.EquityRepository;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 import uk.co.asepstrath.bank.service.*;
+import uk.co.asepstrath.bank.controller.*;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,14 +28,21 @@ import java.util.Set;
 public class App extends Jooby {
 
     private final APIService api;
+
     private InvestorRepository investorRepo;
     private InvestorService investorService;
+
     private TransactionRepository transactionRepo;
     private TransactionService transactionService;
+
     private AnalyticsService analyticsService;
-    private PriceService priceService;
-    private EquitiesRepository equitiesRepo;
+
     private PriceRepository priceRepo;
+    private PriceService priceService;
+
+    private EquityRepository equitiesRepo;
+    private EquityService equityService;
+
     private final DataSource ds;
     private Logger log;
 
@@ -55,14 +58,18 @@ public class App extends Jooby {
 
         ds = require(DataSource.class);
         api = new APIService();
+
         investorRepo = new InvestorRepository(ds);
-        equitiesRepo = new EquitiesRepository(ds);
+        equitiesRepo = new EquityRepository(ds);
         transactionRepo = new TransactionRepository(ds);
         priceRepo = new PriceRepository(ds);
+
         investorService = new InvestorService(investorRepo);
         priceService = new PriceService(priceRepo);
         transactionService = new TransactionService(transactionRepo);
         analyticsService = new AnalyticsService(transactionService, priceService);
+        equityService = new EquityService(equitiesRepo);
+
         log = getLog();
 
         assets("/assets/**", "/assets");
@@ -73,13 +80,21 @@ public class App extends Jooby {
             ctx.render("Error" + code.value() + cause.getMessage());
         });
 
+        mvc(new HomeController_(investorService, ds, transactionService));
+        mvc(new CashAccountController_(investorService, ds));
+        mvc(new EquitiesController_(equityService));
+        mvc(new EtfController_());
+        mvc(new AnalyticsController_(analyticsService));
+        mvc(new LoginController_());
+
+
         try {
             investorRepo.setUp();
             transactionRepo.setUp();
             equitiesRepo.setUp();
             priceRepo.setUp();
         } catch (SQLException e) {
-            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Unable to access server.");
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Unable to access server. " + e);
         }
 
         try {
@@ -104,38 +119,18 @@ public class App extends Jooby {
                 }
             }
 
-            List<Equity> equities = api.getAlEquities().getEquities();
+            List<Equity> equities = api.getAllEquities().getEquities();
 
             for (Equity equity : equities) {
                 List<Price> prices = api.getAllPrices(equity.getTicker(), priceRepo, equity).getPrices();
                 equitiesRepo.saveAll(equity);
             }
 
-//            System.out.println("Preloading prices for " + tickers.size() + " tickers...");
-//
-//
-//            tickers.parallelStream().forEach(ticker -> {
-//                System.out.println("Caching: " + ticker);
-//                api.getPricesForStock(ticker);
-//                System.out.println("Done: " + ticker);
-//            });
-//
-//            System.out.println("All prices cached!");
-
 
 
         } catch (Exception e) {
             log.warn("Failed to load transactions from API", e);
         }
-
-        mvc(new HomeController_(investorService, ds, transactionService));
-        mvc(new CashAccountController_(investorService, ds));
-        mvc(new LoginController_());
-        mvc(new TransactionController_(transactionService));
-        mvc(new EtfController_());
-        mvc(new EquitiesController_());
-        //mvc(new PricesController());
-        //mvc(new AnalyticsController_(analyticsService));
 
 
         /*

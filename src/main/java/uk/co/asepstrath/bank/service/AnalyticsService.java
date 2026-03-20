@@ -1,16 +1,12 @@
 package uk.co.asepstrath.bank.service;
 
-import io.jooby.StatusCode;
-import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Position;
-import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.repository.PriceRepository;
-import uk.co.asepstrath.bank.repository.TransactionRepository;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AnalyticsService {
 
@@ -77,7 +73,7 @@ public class AnalyticsService {
             if (t == null || t.getTicker() == null) continue;
 
 
-            double price = priceService.getPriceAtTimestamp(t.getTimestamp());
+            double price = priceService.getPriceAtTimestamp(t.getTimestamp(), t.getTicker());
             double numberOfShares = t.getTotalCashAmount() / price;
 
             if (t.getType().equals("BUY")) {
@@ -94,7 +90,7 @@ public class AnalyticsService {
 
         if (shares <= 0 && realisedPnl == 0) return null;
 
-        double lastPrice = priceService.getLatestPrice();
+        double lastPrice = priceService.getLatestPrice(ticker);
         double currentCash = lastPrice * shares;
 
         return new Position(

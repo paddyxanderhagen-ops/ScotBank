@@ -7,26 +7,20 @@ import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.EquitiesDTO;
 import uk.co.asepstrath.bank.model.dto.InvestorDTO;
 import uk.co.asepstrath.bank.model.dto.PriceDTO;
 import uk.co.asepstrath.bank.model.dto.TransactionDTO;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class APIService {
 
@@ -125,7 +119,7 @@ public class APIService {
     }
 
 
-    public EquitiesDTO getAlEquities () {
+    public EquitiesDTO getAllEquities() {
         Gson gson = new Gson();
         String response = Unirest.get("https://api.asep-strath.co.uk/api/equities").accept("application/json").asString().getBody();
 

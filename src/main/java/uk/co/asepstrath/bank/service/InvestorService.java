@@ -19,7 +19,7 @@ public class InvestorService {
         try {
             Investor investor = repo.getInvestor(id);
             if (investor == null) {
-                throw new StatusCodeException(StatusCode.NOT_FOUND, "Investor not found: " + id);
+                return null;
             }
             return investor;
         } catch (SQLException e) {

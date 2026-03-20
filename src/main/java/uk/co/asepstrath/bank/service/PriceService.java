@@ -2,7 +2,6 @@ package uk.co.asepstrath.bank.service;
 
 import io.jooby.StatusCode;
 import io.jooby.exception.StatusCodeException;
-import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 
 import java.sql.SQLException;
@@ -16,9 +15,9 @@ public class PriceService {
         this.repo = repo;
     }
 
-    public double getLatestPrice() {
+    public double getLatestPrice(String ticker) {
         try {
-            double price = repo.getLatestPrice();
+            double price = repo.getLatestPrice(ticker);
 
             if (price == Double.MAX_VALUE) {
                 throw new StatusCodeException(StatusCode.NOT_FOUND, "Price not found");
@@ -30,9 +29,9 @@ public class PriceService {
         }
     }
 
-    public double getPriceAtTimestamp(String timestamp) {
+    public double getPriceAtTimestamp(String timestamp, String ticker) {
         try {
-            double price = repo.getPriceAtTime(timestamp);
+            double price = repo.getPriceAtTime(timestamp, ticker);
 
             if (price == Double.MAX_VALUE) {
                 throw new StatusCodeException(StatusCode.NOT_FOUND, "Price not found");

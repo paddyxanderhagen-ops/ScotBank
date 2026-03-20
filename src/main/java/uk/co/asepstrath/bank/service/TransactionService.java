@@ -1,14 +1,10 @@
 package uk.co.asepstrath.bank.service;
 
 import io.jooby.StatusCode;
-import uk.co.asepstrath.bank.model.Price;
 import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.HashMap;
 import java.sql.SQLException;
 import java.util.List;
 

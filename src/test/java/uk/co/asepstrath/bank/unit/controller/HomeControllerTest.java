@@ -46,7 +46,7 @@ class HomeControllerTest {
 
     @Test
     void landingPageNoIDReturnsView() {
-        ModelAndView<Map<String, Object>> result = hc.landingPage(null, ctx);
+        ModelAndView<Map<String, Object>> result = hc.landingPage(ctx);
         verify(sess).put("id", "");
         assertEquals("landing.hbs", result.getView());
     }

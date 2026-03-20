@@ -157,6 +157,7 @@
                     </dependenciesToScan>
                 </configuration>
             </plugin>
+
             <!-- jooby:run -->
             <plugin>
                 <groupId>io.jooby</groupId>

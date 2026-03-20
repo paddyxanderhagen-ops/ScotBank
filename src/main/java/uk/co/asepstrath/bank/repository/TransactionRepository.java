@@ -30,6 +30,7 @@ public class TransactionRepository {
                     total_cash_amount DECIMAL(15,2) NOT NULL,
                     FOREIGN KEY (investor_id) REFERENCES investor(id)
                     )""");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_transaction_investor ON transaction(investor_Id)");
         }
     }
 

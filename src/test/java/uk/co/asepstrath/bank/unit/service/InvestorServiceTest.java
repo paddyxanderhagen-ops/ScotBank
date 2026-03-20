@@ -10,8 +10,7 @@ import uk.co.asepstrath.bank.service.InvestorService;
 
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -38,8 +37,7 @@ class InvestorServiceTest {
     @Test
     void getInvestor_throws404 () throws SQLException {
         when(repository.getInvestor(anyString())).thenReturn(null);
-        StatusCodeException ex = assertThrows(StatusCodeException.class, () -> service.getInvestor("x"));
-        assertEquals(StatusCode.NOT_FOUND, ex.getStatusCode());
+        assertNull(service.getInvestor("x"));
     }
 
     @Test

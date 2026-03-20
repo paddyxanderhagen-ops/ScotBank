@@ -20,20 +20,22 @@ public class PriceRepository {
         try (Connection conn = ds.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute("""
-                        CREATE TABLE IF NOT EXISTS price (
-                            id INT AUTO_INCREMENT PRIMARY KEY,
-                            ticker VARCHAR(20),
-                            timestamp VARCHAR(30),
-                            price DOUBLE,
-                            FOREIGN KEY (ticker) REFERENCES equity(ticker)
-                        )
-                    """);
+                CREATE TABLE IF NOT EXISTS price (
+                    ticker VARCHAR(20),
+                    timestamp VARCHAR(30),
+                    price DOUBLE,
+                    PRIMARY KEY (ticker, timestamp),
+                    FOREIGN KEY (ticker) REFERENCES equity(ticker)
+                )
+                """);
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_price_ticker ON price(ticker)");
         }
     }
 
     public void saveAll(Equity equity, List<Price> prices) throws SQLException {
         String sql = """
-                INSERT INTO price (ticker, timestamp, price)
+                MERGE INTO price (ticker, timestamp, price)
+                KEY(ticker, timestamp)
                 VALUES (?, ?, ?)
                 """;
 
@@ -70,9 +72,9 @@ public class PriceRepository {
         }
     }
 
-    public double getPriceAtTime (String timestamp) throws SQLException{
+    public double getPriceAtTime (String timestamp, String ticker) throws SQLException{
         String sql = """
-                SELECT price FROM price WHERE timestamp = ?
+                SELECT price FROM price WHERE timestamp = ? AND ticker = ?
                 """;
         double price = Double.MAX_VALUE;
 
@@ -80,6 +82,7 @@ public class PriceRepository {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, timestamp);
+            ps.setString(2, ticker);
 
             ResultSet rs = ps.executeQuery();
 
@@ -91,15 +94,17 @@ public class PriceRepository {
         }
     }
 
-    public double getLatestPrice () throws SQLException {
+    public double getLatestPrice (String ticker) throws SQLException {
         String sql = """
-                SELECT price FROM price ORDER BY timestamp DESC 
+                SELECT price FROM price WHERE ticker = ? ORDER BY timestamp DESC LIMIT 1
                 """;
 
         double price = Double.MAX_VALUE;
 
         try (Connection conn = ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, ticker);
+
             ResultSet rs = ps.executeQuery();
             rs.next();
 

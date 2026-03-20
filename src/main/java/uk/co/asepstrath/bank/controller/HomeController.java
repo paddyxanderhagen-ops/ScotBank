@@ -13,7 +13,6 @@ import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
-import javax.swing.text.View;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -34,15 +33,12 @@ public class HomeController {
     }
 
     @GET("/")
-    public ModelAndView<Map<String, Object>> landingPage (@PathParam String id, Context ctx) {
+    public ModelAndView<Map<String, Object>> landingPage (Context ctx) {
         if (ctx != null) {
             Session session = ctx.session();
             session.put("id", "");
         }
-        if (id == null || id.isEmpty()) {
-            return new ModelAndView<>("landing.hbs", new HashMap<>());
-        }
-        return null;
+        return new ModelAndView<>("landing.hbs", new HashMap<>());
     }
 
     @GET("/contact")
@@ -65,6 +61,7 @@ public class HomeController {
         authorisation = new Authorisation(investor);
 
         if (!authorisation.isAuthorised()) {
+            System.out.println("test");
             ctx.sendRedirect("/login");
             return null;
         }
