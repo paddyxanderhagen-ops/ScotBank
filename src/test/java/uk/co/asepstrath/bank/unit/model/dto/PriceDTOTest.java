@@ -26,14 +26,17 @@ class PriceDTOTest {
     @Test
     void setPrices() {
         ArrayList<Price> a = new ArrayList<>();
-        a.add(new Price());
+        a.add(new Price("14:30",2.30));
         a.add(new Price());
         pDTO.setPrices(a);
         assertEquals(2, pDTO.getPrices().size());
+        assertEquals("14:30",pDTO.getPrices().get(0).getTimeStamp());
+        assertEquals(2.30,pDTO.getPrices().get(0).getPrice());
+
     }
 
     @Test
     void getPages() {
-        assertEquals(null,pDTO.getPages());
+        assertNull(pDTO.getPages());
     }
 }
