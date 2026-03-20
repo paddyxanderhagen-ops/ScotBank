@@ -5,12 +5,12 @@ import uk.co.asepstrath.bank.model.Stock;
 import uk.co.scotbank.InvestmentAccount;
 
 public class InvestmentAccountImplementation implements InvestmentAccount {
-    //private Stock stock;
-    private Investor investor;
+    private final Investor investor;
 
     public InvestmentAccountImplementation(Investor investor) {
         this.investor = investor;
     }
+
     public InvestmentAccountImplementation() {
         this.investor = new Investor();
     }
@@ -21,7 +21,7 @@ public class InvestmentAccountImplementation implements InvestmentAccount {
 
         checkDecimals(price);
 
-        Stock stock = new Stock(ticker,amount,price*amount, true);
+        Stock stock = new Stock(ticker, amount, price * amount, true);
         investor.setStocks(stock);
     }
 
@@ -59,7 +59,7 @@ public class InvestmentAccountImplementation implements InvestmentAccount {
 
         for (Stock stock : investor.getStocks()) {
             if (stock.getTicker().equals(ticker) && stock.isBuy()) {
-                bookPrice+=stock.getPrice();
+                bookPrice += stock.getPrice();
                 shares += stock.getAmount();
             }
         }
@@ -69,7 +69,7 @@ public class InvestmentAccountImplementation implements InvestmentAccount {
         } else return 0;
     }
 
-    private void checkDecimals (double value) {
+    private void checkDecimals(double value) {
         String stringV = Double.toString(Math.abs(value));
         int integerPlaces = stringV.indexOf('.');
         int decimalPlaces = stringV.length() - integerPlaces - 1;

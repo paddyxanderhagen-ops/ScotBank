@@ -1,33 +1,29 @@
 package uk.co.asepstrath.bank.service;
 
+import io.jooby.StatusCode;
+import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Investor;
-import uk.co.asepstrath.bank.model.dto.InvestorDTO;
+import uk.co.asepstrath.bank.repository.InvestorRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
 
 public class InvestorService {
 
-    private List<Investor> investors;
+    private final InvestorRepository repo;
 
-    public InvestorService () {
-        investors = new ArrayList<>();
+    public InvestorService(InvestorRepository repo) {
+        this.repo = repo;
     }
 
-    public InvestorService (InvestorDTO investorDTO) {
-        investors = investorDTO.getInvestors();
-    }
-
-    public  Investor getInvestor (String id) {
-        for (Investor investor : investors) {
-            if (investor.getId().equals(id)) {
-                return investor;
+    public Investor getInvestor(String id) {
+        try {
+            Investor investor = repo.getInvestor(id);
+            if (investor == null) {
+                return null;
             }
+            return investor;
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve investor: " + id);
         }
-        return null;
-    }
-
-    public List<Investor> getAll () {
-        return investors;
     }
 }

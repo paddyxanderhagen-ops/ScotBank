@@ -2,12 +2,21 @@ package uk.co.asepstrath.bank.model.dto;
 
 import uk.co.asepstrath.bank.model.Investor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InvestorDTO {
-    private List<Investor> investors;
+    private final List<Investor> investors;
 
-    public List<Investor> getInvestors () {
+    public InvestorDTO() {
+        investors = new ArrayList<>();
+    }
+
+    public List<Investor> getInvestors() {
         return this.investors;
+    }
+
+    public void addInvestor(Investor investor) {
+        this.investors.add(investor);
     }
 }
