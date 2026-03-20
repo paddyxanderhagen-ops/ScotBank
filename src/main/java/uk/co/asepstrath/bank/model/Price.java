@@ -4,7 +4,7 @@ public class Price {
     private String timestamp;
     private double price;
 
-    public Price(String timestamp, double price, String ticker) {
+    public Price(String timestamp, double price) {
         this.timestamp = timestamp;
         this.price = price;
     }
