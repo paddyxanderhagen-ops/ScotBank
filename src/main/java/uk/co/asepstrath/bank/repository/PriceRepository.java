@@ -32,7 +32,7 @@ public class PriceRepository {
         }
     }
 
-    public void saveAll(Equity equity, List<Price> prices) throws SQLException {
+    public void saveAll(String ticker, List<Price> prices) throws SQLException {
         String sql = """
                 MERGE INTO price (ticker, timestamp, price)
                 KEY(ticker, timestamp)
@@ -43,7 +43,7 @@ public class PriceRepository {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false);
             for (Price price : prices) {
-                ps.setString(1, equity.getTicker());
+                ps.setString(1, ticker);
                 ps.setString(2, price.getTimeStamp());
                 ps.setDouble(3, price.getPrice());
                 ps.addBatch();
