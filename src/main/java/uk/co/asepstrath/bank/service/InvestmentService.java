@@ -5,23 +5,19 @@ import uk.co.asepstrath.bank.controller.EtfController;
 import uk.co.asepstrath.bank.controller.PricesController;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
+import uk.co.asepstrath.bank.repository.EquityRepository;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
 import java.util.List;
 
 public class InvestmentService {
     private EquityService equityService;
-    private EquitiesController equitiesController;
-    private EtfService etfService;
-    private EtfController etfController;
-    private PriceService priceService;
-    private PricesController pricesController;
+    public InvestmentService(EquityService equityService) {
+        this.equityService = equityService;
+    }
 
-    public Equity getEquity(String ticker){
-        EquitiesController equitiesController = new EquitiesController();
-        List<Equity> equityList = equitiesController.home("id");
-        EquityService equityService = new EquityService();
-        return equityService.getByTicker(ticker, equityList);
+    public Equity getEquity(String ticker){;
+        return equityService.getEquity(ticker);
     }
 
     public Etf getEtf(String ticker){
