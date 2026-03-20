@@ -1,20 +1,13 @@
 package uk.co.asepstrath.bank.controller;
 
-import io.jooby.Context;
 import io.jooby.ModelAndView;
 import io.jooby.annotation.*;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
-import uk.co.asepstrath.bank.model.Price;
-import uk.co.asepstrath.bank.repository.PriceRepository;
 import uk.co.asepstrath.bank.service.EquityService;
-import uk.co.asepstrath.bank.service.EtfService;
 import uk.co.asepstrath.bank.service.InvestmentService;
 import uk.co.asepstrath.bank.service.PriceService;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Path("/Investments")
