@@ -1,6 +1,7 @@
 package uk.co.asepstrath.bank.repository;
 
 import uk.co.asepstrath.bank.model.Equity;
+import uk.co.asepstrath.bank.model.Etf;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -28,7 +29,7 @@ public class EquityRepository {
         }
     }
 
-    public void saveAll(Equity equity) throws SQLException {
+    public void saveAll(List<Equity> equities, List<Etf> etfs) throws SQLException {
         String sql = """
                 MERGE INTO equity (ticker, name, sector)
                 VALUES (?, ?, ?)
@@ -37,14 +38,26 @@ public class EquityRepository {
 
         try (Connection conn = ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            List<Double> pricePerTicker = new ArrayList<>();
-            List<String> timestampPerTicker = new ArrayList<>();
+
+            if (equities != null) {
+                for (Equity equity : equities) {
+                        ps.setString(1, equity.getTicker());
+                        ps.setString(2, equity.getName());
+                        ps.setString(3, equity.getSector());
+                        ps.addBatch();
+                }
+            }
 
 
-            ps.setString(1, equity.getTicker());
-            ps.setString(2, equity.getName());
-            ps.setString(3, equity.getSector());
-            ps.executeUpdate();
+            if (etfs != null) {
+                for (Etf etf : etfs) {
+                    ps.setString(1, etf.getTicker());
+                    ps.setString(2, etf.getName());
+                    ps.setString(3, null);
+                    ps.addBatch();
+                }
+            }
+            ps.executeBatch();
         }
     }
 
