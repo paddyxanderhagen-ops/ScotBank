@@ -1,6 +1,5 @@
 package uk.co.asepstrath.bank;
 
-import com.google.gson.Gson;
 import io.jooby.*;
 import io.jooby.exception.StatusCodeException;
 import io.jooby.handlebars.HandlebarsModule;
@@ -88,7 +87,7 @@ public class App extends Jooby {
         mvc(new AnalyticsController_(analyticsService));
         mvc(new LoginController_());
         mvc(new TransactionController_(transactionService));
-        mvc(new PortfolioCategorisationController_());
+        mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds));
 
 
         try {
@@ -142,52 +141,6 @@ public class App extends Jooby {
         onStarted(() -> onStart());
         onStop(() -> onStop());
 
-// api data for piechart
-        get("/api/portfolio", ctx -> {
-            io.jooby.Session session = ctx.session();
-            if (session.get("id").isMissing()) {
-                ctx.setResponseCode(io.jooby.StatusCode.UNAUTHORIZED);
-            }
-            String id = session.get("id").value();
-
-            uk.co.asepstrath.bank.model.Investor investor = investorService.getInvestor(id);
-            uk.co.asepstrath.bank.implementation.CashAccountImplementation account =
-                    new uk.co.asepstrath.bank.implementation.CashAccountImplementation(investor, ds);
-
-            double cash = account.getBalance();
-            List<uk.co.asepstrath.bank.model.Position> positions = analyticsService.getPositions(id);
-
-            java.util.Map<String, Object> response = new java.util.HashMap<>();
-            response.put("cash", cash);
-
-            List<java.util.Map<String, Object>> holdings = new java.util.ArrayList<>();
-            for (uk.co.asepstrath.bank.model.Position p : positions) {
-                java.util.Map<String, Object> h = new java.util.HashMap<>();
-                h.put("ticker", p.getTicker());
-                h.put("shares", p.getNumberOfShares());
-                h.put("currentPrice", p.getLastPrice());
-                h.put("currentValue", p.getCurrentCashAmount());
-                holdings.add(h);
-            }
-
-            response.put("holdings", holdings);
-
-            Gson gson = new Gson();
-            ctx.setResponseType("application/json");
-            return gson.toJson(response);
-        });
-
-        get("/api/equities/metadata", ctx -> {
-            String tickerName = ctx.query("tickers").value("");
-
-            String response = kong.unirest.core.Unirest.get("https://api.asep-strath.co.uk/api/equities/metadata")
-                    .queryString("tickers", tickerName)
-                    .accept("application/json")
-                    .asString().getBody();
-
-            ctx.setResponseType("application/json");
-            return response;
-        });
     }
 
     public static void main(final String[] args) {
