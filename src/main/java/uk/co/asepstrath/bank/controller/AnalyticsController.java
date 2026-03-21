@@ -3,23 +3,29 @@ package uk.co.asepstrath.bank.controller;
 import io.jooby.Context;
 import io.jooby.ModelAndView;
 import io.jooby.annotation.GET;
+import io.jooby.annotation.POST;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.PathParam;
 import uk.co.asepstrath.bank.model.Position;
+import uk.co.asepstrath.bank.repository.PriceRepository;
+import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.AnalyticsService;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Path("/analytics")
 public class AnalyticsController {
 
     private AnalyticsService analyticsService;
+    private APIService apiService;
+    private PriceRepository priceRepository;
 
-    public AnalyticsController(AnalyticsService analyticsService) {
+    public AnalyticsController(AnalyticsService analyticsService, APIService aPIService, PriceRepository priceRepository) {
         this.analyticsService = analyticsService;
+        this.apiService = aPIService;
+        this.priceRepository = priceRepository;
+
     }
 
 
@@ -54,6 +60,26 @@ public class AnalyticsController {
         Map<String,Object> map = new HashMap<>();
         map.put("position", position);
         return new ModelAndView<>("position.hbs",map);
+    }
+
+    @POST("/refresh")
+    public void refreshPrices(Context ctx) {
+        String investorId = ctx.session().get("id").value();
+
+        List<Position> positions = analyticsService.getPositions(investorId);
+        Set<String> tickers = positions.stream()
+                .map(Position::getTicker)
+                .collect(Collectors.toSet());
+
+        String token = apiService.loadToken();
+
+        tickers.parallelStream().forEach(ticker -> {
+            try {
+                apiService.getAllPrices(ticker, priceRepository, token);
+            } catch (Exception e) {
+                System.err.println("Failed: " + ticker);
+            }
+        });
     }
 
 }

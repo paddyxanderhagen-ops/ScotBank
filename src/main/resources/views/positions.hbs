@@ -65,7 +65,15 @@
 
 <main class="page-wrapper px-3">
 
-    <h3 class="fw-bold mb-4">Your Positions</h3>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <h3 class="fw-bold m-0">Your Positions</h3>
+        <form method="post" action="/analytics/refresh">
+            <button class="btn-refresh" id="refresh-btn" onclick="refreshPrices()">
+                Refresh Prices
+            </button>
+        </form>
+    </div>
 
     <div class="summary-grid">
         <div class="stat-card">
@@ -114,7 +122,47 @@
     </div>
 
 </main>
+<style>
+    .btn-refresh {
+        padding: 8px 20px;
+        border-radius: 20px;
+        border: 1px solid #1a73e8;
+        background: white;
+        color: #1a73e8;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-refresh:hover {
+        background: #1a73e8;
+        color: white;
+    }
+    .btn-refresh.loading {
+        background: #f0f4f8;
+        color: #6c7b93;
+        border-color: #6c7b93;
+        cursor: not-allowed;
+    }
+</style>
 
+<script>
+    async function refreshPrices() {
+        const btn = document.getElementById('refresh-btn');
+        btn.textContent = 'Updating...';
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        try {
+            await fetch('/analytics/refresh', { method: 'POST' });
+            window.location.reload();
+        } catch (e) {
+            btn.textContent = 'Failed — try again';
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+</script>
 <script>
     document.querySelectorAll('.pnl-value').forEach(el => {
         const val = parseFloat(el.textContent.replace('£', ''));
