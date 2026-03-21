@@ -7,10 +7,7 @@ import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
-import uk.co.asepstrath.bank.model.Equity;
-import uk.co.asepstrath.bank.model.Investor;
-import uk.co.asepstrath.bank.model.Price;
-import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.model.*;
 import uk.co.asepstrath.bank.repository.EquityRepository;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 import uk.co.asepstrath.bank.repository.PriceRepository;
@@ -113,7 +110,6 @@ public class App extends Jooby {
 
             transactionRepo.saveAll(transactions);
 
-
             Set<String> tickers = new HashSet<>();
             for (Transaction t : transactions) {
                 if (t.getTicker() != null && !t.getTicker().isBlank()) {
@@ -122,10 +118,19 @@ public class App extends Jooby {
             }
 
             List<Equity> equities = api.getAllEquities().getEquities();
+            List<Etf> etfs = api.getAllEtf().getEtfs();
+
+            String token = api.loadToken();
+
+            equitiesRepo.saveAll(equities, etfs);
+
 
             for (Equity equity : equities) {
-                List<Price> prices = api.getAllPrices(equity.getTicker(), priceRepo, equity).getPrices();
-                equitiesRepo.saveAll(equity);
+                List<Price> prices = api.getAllPrices(equity.getTicker(), priceRepo, token).getPrices();
+            }
+
+            for (Etf etf : etfs) {
+                List<Price> prices = api.getAllPrices(etf.getTicker(), priceRepo, token).getPrices();
             }
 
 

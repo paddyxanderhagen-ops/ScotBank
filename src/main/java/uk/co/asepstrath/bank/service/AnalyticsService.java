@@ -70,6 +70,8 @@ public class AnalyticsService {
         for (Transaction t : transactions) {
             if (t == null || t.getTicker() == null) continue;
 
+            System.out.println(t.getTicker());
+
 
             double price = priceService.getPriceAtTimestamp(t.getTimestamp(), t.getTicker());
             double numberOfShares = t.getTotalCashAmount() / price;
