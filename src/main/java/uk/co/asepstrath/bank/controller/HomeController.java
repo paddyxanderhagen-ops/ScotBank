@@ -68,7 +68,7 @@ public class HomeController {
 
         CashAccountImplementation account = new CashAccountImplementation(investor, ds);
 
-        List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(3).toList();
+        List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(5).toList();
 
         Map<String, Object> map = new HashMap<>();
         map.put("id", investor.getId());
