@@ -3,14 +3,10 @@ package uk.co.asepstrath.bank.unit.service;
 import io.jooby.StatusCode;
 import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.GetRequest;
-import kong.unirest.core.HttpRequestWithBody;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import uk.co.asepstrath.bank.model.Constituents;
-import uk.co.asepstrath.bank.model.Investor;
-import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.dto.*;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 import uk.co.asepstrath.bank.service.APIService;
@@ -373,7 +369,7 @@ public class APIServiceTest {
             when(response.getBody()).thenReturn(json);
 
             APIService service = new APIService();
-            EquitiesDTO result = service.getAllEquities();
+            EquityDTO result = service.getAllEquities();
 
             assertNotNull(result);
             assertEquals("Apple", result.getEquities().getFirst().getName());

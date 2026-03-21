@@ -101,19 +101,19 @@ public class APIService {
         return priceDTO;
     }
 
-    public EquitiesDTO getAllEquities() {
+    public EquityDTO getAllEquities() {
         url.append("equities");
         String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
 
-        EquitiesDTO equitiesDTO = gson.fromJson(response, EquitiesDTO.class);
+        EquityDTO equityDTO = gson.fromJson(response, EquityDTO.class);
 
         url = new StringBuilder("https://api.asep-strath.co.uk/api/");
 
-        if (equitiesDTO == null ||equitiesDTO.getEquities().isEmpty()) {
+        if (equityDTO == null || equityDTO.getEquities().isEmpty()) {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve equities");
         }
 
-        return equitiesDTO;
+        return equityDTO;
     }
 
     public EtfDTO getAllEtf() {

@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank.repository;
 
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
+import uk.co.asepstrath.bank.model.dto.EquityDTO;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -62,6 +63,7 @@ public class EquityRepository {
     }
 
     public List<Equity> getAll() throws SQLException {
+        EquityDTO equityDTO = new EquityDTO();
         String sql = """
                 SELECT * FROM equity
                 """;
@@ -73,7 +75,7 @@ public class EquityRepository {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                equities.add(new Equity(rs.getString("ticker"), rs.getString("name"), rs.getString("sector")));
+                equities.add(new Equity(rs.getString("name"), rs.getString("ticker"), rs.getString("sector")));
             }
 
             return equities;
@@ -95,7 +97,7 @@ public class EquityRepository {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                equity = new Equity(rs.getString("ticker"), rs.getString("name"), rs.getString("sector"));
+                equity = new Equity(rs.getString("name"), rs.getString("ticker"), rs.getString("sector"));
             }
 
             return equity;

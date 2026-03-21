@@ -4,7 +4,7 @@ import uk.co.asepstrath.bank.model.Equity;
 
 import java.util.List;
 
-public class EquitiesDTO {
+public class EquityDTO {
     private List<Equity> assets;
 
     public List<Equity> getEquities () {
