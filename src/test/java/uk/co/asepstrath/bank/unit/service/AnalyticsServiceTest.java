@@ -25,7 +25,7 @@ public class AnalyticsServiceTest {
     private AnalyticsService analyticsService;
 
     @BeforeEach
-    void setUp () {
+    void setUp() {
         transactionRepository = mock(TransactionRepository.class);
         priceRepository = mock(PriceRepository.class);
         transactionService = new TransactionService(transactionRepository);
@@ -34,8 +34,8 @@ public class AnalyticsServiceTest {
     }
 
     @Test
-    void getPositionOneTransaction () {
-        when(transactionService.getTransactionsByInvestor("1")).thenReturn(List.of (new Transaction("1", "10.00", "BUY", "1", "AAPL", 1500.99)));
+    void getPositionOneTransaction() {
+        when(transactionService.getTransactionsByInvestor("1")).thenReturn(List.of(new Transaction("1", "10.00", "BUY", "1", "AAPL", 1500.99)));
         when(priceService.getPriceAtTimestamp("10.00", "AAPL")).thenReturn(150.0);
         when(priceService.getLatestPrice("AAPL")).thenReturn(150.0);
         List<Position> positions = analyticsService.getPositions("1");
@@ -51,8 +51,8 @@ public class AnalyticsServiceTest {
     }
 
     @Test
-    void getPositionMultipleTransactions () {
-        when(transactionService.getTransactionsByInvestor("1")).thenReturn(List.of (new Transaction("1", "10.00", "BUY", "1", "AAPL", 1500.99), new Transaction("2", "10.15", "BUY", "1", "AAPL", 100.0)));
+    void getPositionMultipleTransactions() {
+        when(transactionService.getTransactionsByInvestor("1")).thenReturn(List.of(new Transaction("1", "10.00", "BUY", "1", "AAPL", 1500.99), new Transaction("2", "10.15", "BUY", "1", "AAPL", 100.0)));
         when(priceService.getPriceAtTimestamp("10.00", "AAPL")).thenReturn(150.0);
         when(priceService.getPriceAtTimestamp("10.15", "AAPL")).thenReturn(100.0);
         when(priceService.getLatestPrice("AAPL")).thenReturn(100.0);
@@ -69,8 +69,8 @@ public class AnalyticsServiceTest {
     }
 
     @Test
-    void getPositionBuySell () {
-        when(transactionService.getTransactionsByInvestor("1")).thenReturn(List.of (new Transaction("1", "10.00", "BUY", "1", "AAPL", 1500.99), new Transaction("2", "10.15", "SELL", "1", "AAPL", 100.0)));
+    void getPositionBuySell() {
+        when(transactionService.getTransactionsByInvestor("1")).thenReturn(List.of(new Transaction("1", "10.00", "BUY", "1", "AAPL", 1500.99), new Transaction("2", "10.15", "SELL", "1", "AAPL", 100.0)));
         when(priceService.getPriceAtTimestamp("10.00", "AAPL")).thenReturn(150.0);
         when(priceService.getPriceAtTimestamp("10.15", "AAPL")).thenReturn(100.0);
         when(priceService.getLatestPrice("AAPL")).thenReturn(100.0);
@@ -84,5 +84,38 @@ public class AnalyticsServiceTest {
         assertEquals(-33.33, positions.get(0).getPnlPercentage());
         assertEquals(-50, positions.get(0).getRealisedPnl());
         assertEquals(1500.99, positions.get(0).getTotalInvested());
+    }
+
+    @Test
+    void getPositionNoTransactions() {
+        when(transactionService.getTransactionsByInvestor("1")).thenReturn(List.of());
+
+        List<Position> positions = analyticsService.getPositions("1");
+
+        assertEquals(0, positions.size());
+    }
+
+
+    @Test
+    void getPositionWithInvalidTransaction() {
+        when(transactionService.getTransactionsByInvestor("1")).thenReturn(List.of(
+                new Transaction("1", "10.00", "BUY", "1", null, 1500.99),
+                new Transaction("2", "10.15", "BUY", "1", "", 100.0)
+        ));
+        List<Position> positions = analyticsService.getPositions("1");
+        assertEquals(0, positions.size());
+    }
+
+    @Test
+    void getPositionEmptyAfterBuyAndSell() {
+        when(transactionService.getTransactionsByInvestor("1")).thenReturn(List.of(
+                new Transaction("1", "10.00", "BUY", "1", "AAPL", 1500.99),
+                new Transaction("2", "10.15", "SELL", "1", "AAPL", 1500.99)
+        ));
+        when(priceService.getPriceAtTimestamp("10.00", "AAPL")).thenReturn(150.0);
+        when(priceService.getPriceAtTimestamp("10.15", "AAPL")).thenReturn(150.0);
+        when(priceService.getLatestPrice("AAPL")).thenReturn(150.0);
+        List<Position> positions = analyticsService.getPositions("1");
+        assertEquals(0, positions.size());
     }
 }
