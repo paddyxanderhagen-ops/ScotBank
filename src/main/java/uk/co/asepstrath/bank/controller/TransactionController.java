@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
 import io.jooby.ModelAndView;
+import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.QueryParam;
@@ -15,13 +16,29 @@ import java.util.stream.Collectors;
 public class TransactionController {
 
     private TransactionService transactionService;
+    private Authorisation authorisation;
 
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, Authorisation authorisation) {
         this.transactionService = transactionService;
+        this.authorisation = authorisation;
     }
 
     @GET("/ViewAll")
-    public ModelAndView<Map<String, Object>> getTransactionsForInvestor(@QueryParam String id, Context ctx) {
+    public ModelAndView getTransactionsForInvestor(Context ctx) {
+        String id = null;
+        Session session = null;
+        if (ctx != null) {
+            session = ctx.session();
+        }
+        if (session != null && !session.get("id").isMissing()) {
+            id = session.get("id").value();
+        }
+        if (!authorisation.isAuthorised(id)) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
+
+
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
 
         List<Transaction> sorted = transactions.stream()
@@ -60,7 +77,6 @@ public class TransactionController {
         model.put("totalDeposits", Math.round(totalDeposits * 100.0) / 100.0);
         model.put("totalWithdrawals", Math.round(totalWithdrawals * 100.0) / 100.0);
         model.put("investorId", id);
-
-        return new ModelAndView("transactions.hbs", model);
+        return new ModelAndView<>("transactions.hbs", model);
     }
 }

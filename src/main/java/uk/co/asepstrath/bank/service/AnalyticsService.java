@@ -60,8 +60,8 @@ public class AnalyticsService {
 
     private Position calculatePosition(String ticker, List<Transaction> transactions) {
         double shares = 0;
+        double totalBuyValue = 0;
         double buyShares = 0;
-        double totalBuyCash = 0;
         double realisedPnl = 0;
         double avgBuyPrice = 0;
 
@@ -70,38 +70,37 @@ public class AnalyticsService {
         for (Transaction t : transactions) {
             if (t == null || t.getTicker() == null) continue;
 
-            System.out.println(t.getTicker());
-
-
             double price = priceService.getPriceAtTimestamp(t.getTimestamp(), t.getTicker());
             double numberOfShares = t.getTotalCashAmount() / price;
 
             if (t.getType().equals("BUY")) {
                 shares += numberOfShares;
                 buyShares += numberOfShares;
-                totalBuyCash += t.getTotalCashAmount();
-                avgBuyPrice = totalBuyCash / buyShares;
-
+                totalBuyValue += t.getTotalCashAmount();
+                avgBuyPrice = totalBuyValue / buyShares;
             } else if (t.getType().equals("SELL")) {
                 realisedPnl += (price - avgBuyPrice) * numberOfShares;
                 shares -= numberOfShares;
+                buyShares -= numberOfShares;
             }
         }
 
         if (shares <= 0 && realisedPnl == 0) return null;
 
-        double lastPrice = priceService.getLatestPrice(ticker);
-        double currentCash = lastPrice * shares;
+        double currPrice = priceService.getLatestPrice(ticker);
+        double costBasis = avgBuyPrice * shares;
+        double currentValue = currPrice * shares;
 
-        return new Position(
+        return new Position (
                 ticker,
-                round(shares),
-                round(avgBuyPrice),
-                round(lastPrice),
-                round(avgBuyPrice * shares),
-                round(currentCash),
-                round(realisedPnl),
-                round(totalBuyCash));
+                shares,
+                currPrice,
+                costBasis,
+                currentValue,
+                realisedPnl,
+                avgBuyPrice,
+                totalBuyValue
+        );
     }
     public TaxReport getTaxReport(String investorId, int year) {
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(investorId);

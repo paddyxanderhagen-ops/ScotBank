@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
 import io.jooby.ModelAndView;
+import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.POST;
 import io.jooby.annotation.Path;
@@ -10,6 +11,7 @@ import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.AnalyticsService;
+import uk.co.asepstrath.bank.service.PriceService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,12 +20,14 @@ import java.util.stream.Collectors;
 public class AnalyticsController {
 
     private AnalyticsService analyticsService;
+    private Authorisation authorisation;
     private APIService apiService;
     private PriceRepository priceRepository;
 
-    public AnalyticsController(AnalyticsService analyticsService, APIService aPIService, PriceRepository priceRepository) {
+    public AnalyticsController(AnalyticsService analyticsService, Authorisation authorisation, APIService apiService, PriceRepository priceRepository) {
         this.analyticsService = analyticsService;
-        this.apiService = aPIService;
+        this.authorisation = authorisation;
+        this.apiService = apiService;
         this.priceRepository = priceRepository;
 
     }
@@ -31,13 +35,25 @@ public class AnalyticsController {
 
     @GET
     public ModelAndView<Map<String,Object>> positions(Context ctx) {
-        String investorId = ctx.session().get("id").value();
+        String id = null;
+        Session session = null;
+        if (ctx != null) {
+            session = ctx.session();
+        }
+        if (session != null && !session.get("id").isMissing()) {
+            id = session.get("id").value();
+        }
+        if (!authorisation.isAuthorised(id)) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
 
-        List<Position> positions = analyticsService.getPositions(investorId);
+        List<Position> positions =
+                analyticsService.getPositions(id);
 
         positions.sort(Comparator.comparingDouble(Position::getPnl).reversed());
 
-        double totalValue = positions.stream().mapToDouble(Position::getCurrentCashAmount).sum();
+        double totalValue = positions.stream().mapToDouble(Position::getCurrentValue).sum();
         double totalPnl = positions.stream().mapToDouble(Position::getPnl).sum();
         double totalRealisedPnl = positions.stream().mapToDouble(Position::getRealisedPnl).sum();
         double totalInvested = positions.stream().mapToDouble(Position::getTotalInvested).sum();
@@ -51,11 +67,22 @@ public class AnalyticsController {
 
         return new ModelAndView<>("positions.hbs", map);
     }
-
-
     @GET("/{ticker}")
-    public ModelAndView<Map<String,Object>> position(Context context, @PathParam String ticker) {
-        String investorId = context.session().get("id").value();
+    public ModelAndView<Map<String,Object>> position(Context ctx, @PathParam String ticker) {
+        String id = null;
+        Session session = null;
+        if (ctx != null) {
+            session = ctx.session();
+        }
+        if (session != null && !session.get("id").isMissing()) {
+            id = session.get("id").value();
+        }
+        if (!authorisation.isAuthorised(id)) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
+
+        String investorId = ctx.session().get("id").value();
         Position position = analyticsService.getPosition(ticker, investorId);
         Map<String,Object> map = new HashMap<>();
         map.put("position", position);

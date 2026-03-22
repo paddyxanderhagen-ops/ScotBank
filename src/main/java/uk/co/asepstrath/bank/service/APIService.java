@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import io.jooby.StatusCode;
 import io.jooby.exception.StatusCodeException;
 import kong.unirest.core.Unirest;
-import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.model.dto.*;
@@ -16,8 +15,6 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class APIService {
 
@@ -37,7 +34,7 @@ public class APIService {
 
         url = new StringBuilder("https://api.asep-strath.co.uk/api/");
 
-        if (investorDTO.getInvestors().isEmpty()) {
+        if (investorDTO == null || investorDTO.getInvestors().isEmpty()) {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Could not retrieve investors");
         }
 
@@ -53,16 +50,17 @@ public class APIService {
             url.append("transactions?nextToken=").append(nextToken);
             String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
             transactionDTO = gson.fromJson(response, TransactionDTO.class);
+
+            if (transactionDTO == null || transactionDTO.getTransactions().isEmpty()) {
+                throw new StatusCodeException(StatusCode.SERVER_ERROR, "Could not retrieve transactions");
+            }
+
             transactions.addAll(transactionDTO.getTransactions());
             nextToken = transactionDTO.getPages().getNextToken();
             url = new StringBuilder("https://api.asep-strath.co.uk/api/");
         }
 
         transactionDTO.setTransactions(transactions);
-
-        if (transactionDTO.getTransactions().isEmpty()) {
-            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Could not retrieve transactions");
-        }
 
         return transactionDTO;
     }
@@ -77,6 +75,11 @@ public class APIService {
             url.append("prices/").append(ticker).append("?nextToken=").append(nextToken);
             String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
             priceDTO = gson.fromJson(response, PriceDTO.class);
+
+            if (priceDTO == null || priceDTO.getPrices().isEmpty()) {
+                throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve prices");
+            }
+
             prices.addAll(priceDTO.getPrices());
 
             try {
@@ -84,6 +87,7 @@ public class APIService {
             } catch (SQLException e) {
                 throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to save prices");
             }
+
 
             nextToken = priceDTO.getPages().getNextToken();
 
@@ -95,6 +99,36 @@ public class APIService {
         saveToken(prevTok);
 
         return priceDTO;
+    }
+
+    public EquityDTO getAllEquities() {
+        url.append("equities");
+        String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
+
+        EquityDTO equityDTO = gson.fromJson(response, EquityDTO.class);
+
+        url = new StringBuilder("https://api.asep-strath.co.uk/api/");
+
+        if (equityDTO == null || equityDTO.getEquities().isEmpty()) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve equities");
+        }
+
+        return equityDTO;
+    }
+
+    public EtfDTO getAllEtf() {
+        url.append("etfs");
+        String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
+
+        EtfDTO etfDTO = gson.fromJson(response, EtfDTO.class);
+
+        url = new StringBuilder("https://api.asep-strath.co.uk/api/");
+
+        if (etfDTO == null || etfDTO.getEtfs().isEmpty()) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve etfs");
+        }
+
+        return etfDTO;
     }
 
     private void saveToken(String token) {
@@ -115,28 +149,5 @@ public class APIService {
             System.err.println("Failed to load token: " + e.getMessage());
         }
         return "";
-    }
-
-
-    public EquitiesDTO getAllEquities() {
-        url.append("equities");
-        String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
-
-        EquitiesDTO equityResponse = gson.fromJson(response, EquitiesDTO.class);
-
-        url = new StringBuilder("https://api.asep-strath.co.uk/api/");
-
-        return equityResponse;
-    }
-
-    public EtfDTO getAllEtf() {
-        url.append("etfs");
-        String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
-
-        EtfDTO etfDTO = gson.fromJson(response, EtfDTO.class);
-
-        url = new StringBuilder("https://api.asep-strath.co.uk/api/");
-
-        return etfDTO;
     }
 }

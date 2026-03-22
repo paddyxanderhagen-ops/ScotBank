@@ -15,4 +15,5 @@ Welcome to your-bank!!
 - Mykhailo Shalavin
 - Patrick Hagen
 - Jack Burnett
+- Finlay Glen
 
