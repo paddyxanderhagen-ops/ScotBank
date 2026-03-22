@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
 import io.jooby.ModelAndView;
+import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.QueryParam;
@@ -23,13 +24,20 @@ public class TaxReportController {
 
     @GET
     public ModelAndView<Map<String, Object>> taxReport(Context ctx, @QueryParam Integer year) {
-        String investorId = ctx.session().get("id").value();
+        Session session = null;
+        String id = null;
+        if (ctx != null) {
+            session = ctx.session();
+        }
+        if (session != null && !session.get("id").isMissing()) {
+            id = session.get("id").value();
+        }
 
-        List<Integer> years = analyticsService.getAvailableYears(investorId);
+        List<Integer> years = analyticsService.getAvailableYears(id);
 
         int selectedYear = (year != null) ? year : (years.isEmpty() ? 2025 : years.get(years.size() - 1));
 
-        TaxReport report = analyticsService.getTaxReport(investorId, selectedYear);
+        TaxReport report = analyticsService.getTaxReport(id, selectedYear);
 
         Map<String, Object> map = new HashMap<>();
         map.put("report", report);

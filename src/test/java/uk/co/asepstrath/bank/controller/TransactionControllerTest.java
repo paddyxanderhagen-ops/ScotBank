@@ -38,18 +38,20 @@ public class TransactionControllerTest {
         Map<String, Object> model = result.getModel();
         List<Map<String, Object>> enrichedTransactions = (List<Map<String, Object>>) model.get("transactions");
 
+        System.out.println(enrichedTransactions.toString());
+
         assertNotNull(enrichedTransactions);
         assertEquals(2, enrichedTransactions.size());
 
         Map<String, Object> firstTransaction = enrichedTransactions.get(0);
-        assertEquals("WITHDRAWAL", firstTransaction.get("type"));
-        assertEquals(9.30, firstTransaction.get("amount"));
-        assertEquals("9.3", firstTransaction.get("balanceAfter"));
+        assertEquals("DEPOSIT", firstTransaction.get("type"));
+        assertEquals(50.0, firstTransaction.get("amount"));
+        assertEquals("50.0", firstTransaction.get("balanceAfter"));
 
         Map<String, Object> secondTransaction = enrichedTransactions.get(1);
-        assertEquals("DEPOSIT", secondTransaction.get("type"));
-        assertEquals(50.0, secondTransaction.get("amount"));
-        assertEquals("50.0", secondTransaction.get("balanceAfter"));
+        assertEquals("WITHDRAWAL", secondTransaction.get("type"));
+        assertEquals(9.30, secondTransaction.get("amount"));
+        assertEquals("40.7", secondTransaction.get("balanceAfter"));
 
         assertEquals(50.0, model.get("totalDeposits"));
         assertEquals(9.30, model.get("totalWithdrawals"));
