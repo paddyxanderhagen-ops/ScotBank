@@ -32,7 +32,7 @@ public class TransactionService {
     }
 
 
-//    public HashMap<String, BigDecimal> getNumberOfShares(String id) {
+//    public HashMap<String, BigDecimal> getShares(String id) {
 //        HashMap<String, BigDecimal> shares = new HashMap<>();
 //
 //        try{
@@ -69,7 +69,7 @@ public class TransactionService {
 //    }
 
 //    public BigDecimal getValueOfShares(String investorId, List<Transaction> transactionList) {
-//        HashMap<String, BigDecimal> shares = getNumberOfShares(investorId, transactionList);
+//        HashMap<String, BigDecimal> shares = getShares(investorId, transactionList);
 //        BigDecimal value = BigDecimal.ZERO;
 //
 //        for (String ticker : shares.keySet()) {
@@ -81,7 +81,7 @@ public class TransactionService {
 //    }
 //
 //    public BigDecimal getValueOfSharesByTicker(String investorId, List<Transaction> transactionList, String shareTicker) {
-//        HashMap<String, BigDecimal> shares = getNumberOfShares(investorId, transactionList);
+//        HashMap<String, BigDecimal> shares = getShares(investorId, transactionList);
 //        BigDecimal value = BigDecimal.ZERO;
 //
 //        for (String ticker : shares.keySet()) {

@@ -2,17 +2,17 @@ package uk.co.asepstrath.bank.unit.model.dto;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.dto.EquitiesDTO;
+import uk.co.asepstrath.bank.model.dto.EquityDTO;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class EquitiesDTOTest {
 
-    EquitiesDTO eDTO;
+    EquityDTO eDTO;
 
     @BeforeEach
     void setup(){
-        eDTO = new EquitiesDTO();
+        eDTO = new EquityDTO();
     }
 
     @Test
