@@ -17,9 +17,6 @@ public class InvestmentService {
     }
 
     public Etf getEtf(String ticker){
-        EtfController etfController = new EtfController();
-        List<Etf> etfList = etfController.Etfs();
-        EtfService etfService = new EtfService();
-        return etfService.getByTicker(ticker, etfList);
+        return equityService.getEtf(ticker);
     }
 }

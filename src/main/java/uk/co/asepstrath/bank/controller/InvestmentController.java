@@ -27,15 +27,15 @@ public class InvestmentController {
     }
 
     @GET("/Search")
-    public ModelAndView<Map<String, Object>> investmentPage (@QueryParam String id) {
+    public ModelAndView<Map<String, Object>> investmentPage (@QueryParam String ticker) {
         InvestmentService investmentService = new InvestmentService(equityService);
         ModelAndView<Map<String, Object>> model;
             try {
-                Equity equity = investmentService.getEquity(id);
+                Equity equity = investmentService.getEquity(ticker);
                 Map<String, Object> investment = new HashMap<>();
                 investment.put("equity", equity);
                 try {
-                    investment.put("price", priceService.getLatestPrice(id));
+                    investment.put("price", priceService.getLatestPrice(ticker));
                 }
                     catch (Exception e1) {
                     investment.put("price", "price not avialable");
@@ -43,17 +43,15 @@ public class InvestmentController {
                 model = new ModelAndView<>("EquityInvestment.hbs", investment);
             }
             catch (Exception e) {
-                Etf etf = investmentService.getEtf(id);
+                Etf etf = investmentService.getEtf(ticker);
                 if (etf == null) {
                     Map<String, Object> modelMap = new HashMap<>();
                     model = new ModelAndView<>("investmentNotFound.hbs", modelMap);
                 } else {
                     Map<String, Object> investment = new HashMap<>();
-                    //Etf always has price not available
-                    //because price Repository never reads in prices for etfs
                     investment.put("etf", etf);
                     try {
-                        investment.put("price", priceService.getLatestPrice(id));
+                        investment.put("price", priceService.getLatestPrice(ticker));
                     }
                     catch (Exception e1) {
                         investment.put("price", "price not avialable");
