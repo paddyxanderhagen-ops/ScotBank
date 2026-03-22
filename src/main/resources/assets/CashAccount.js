@@ -1,7 +1,7 @@
 $(document).ready(function () {
     let type = $('#transaction-type').val();
     let amount = $('#amount').val();
-    let form = $('#transactionForm');
+    let form = $('#transaction-form');
 
     form.on('submit', function (e) {
         e.preventDefault();
@@ -17,35 +17,53 @@ $(document).ready(function () {
 });
 
 function deposit() {
-    let posting = $.post(`dashboard/deposit`,
-        {
+    $.ajax({
+        url: 'dashboard/transaction/deposit',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json'
+        },
+        data: {
             amount: $("#amount").val()
-        }, function (data, response) {
-            if (response === "success") {
-                window.location.href = `/dashboard`;
+        },
+        success: function (data,status) {
+            if (status === "success") {
+                window.location.href='/dashboard';
             }
+        },
+        error: function (xhr) {
+            renderError(xhr);
         }
-    );
-
-    posting.fail(function (xhr) {
-        $('#amount-error').html(xhr.responseJSON).show();
     });
 }
 
 function withdraw() {
-    let posting = $.post(`dashboard/withdraw`,
-        {
+    $.ajax({
+        url: 'dashboard/transaction/withdraw',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json'
+        },
+        data: {
             amount: $("#amount").val()
-        }, function (data, status) {
-            window.location.href = `dashboard`;
+        },
+        success: function (data,status) {
+            if (status === "success") {
+                window.location.href='/dashboard';
+            }
+        },
+        error: function (xhr) {
+            renderError(xhr);
         }
-    );
-
-    posting.fail(function (xhr) {
-        $('#amount-error').html(xhr.responseJSON).show();
     });
 }
 
-function openCloseForm() {
-    $('#transactionForm').toggleClass("d-none");
+function renderError(xhr) {
+    const { error, message } = xhr.responseJSON;
+    $("#error").html(`
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `);
 }

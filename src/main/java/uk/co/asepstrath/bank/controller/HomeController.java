@@ -47,7 +47,7 @@ public class HomeController {
     }
 
     @GET("/dashboard")
-    public ModelAndView<Map<String, Object>> dashboardPage(Context ctx) throws SQLException {
+    public ModelAndView<Map<String, Object>> dashboardPage(Context ctx) {
         Session session = null;
         String id = null;
         if (ctx != null) {
@@ -61,7 +61,6 @@ public class HomeController {
         authorisation = new Authorisation(investor);
 
         if (!authorisation.isAuthorised()) {
-            System.out.println("test");
             ctx.sendRedirect("/login");
             return null;
         }
@@ -77,5 +76,32 @@ public class HomeController {
         map.put("transactions", transactions);
 
         return new ModelAndView<>("index.hbs", map);
+    }
+
+    @GET("/cash-management")
+    public ModelAndView<Map<String, Object>> cashManagement(Context ctx) {
+        Session session = null;
+        String id = null;
+        if (ctx != null) {
+            session = ctx.session();
+        }
+        if (session != null && !session.get("id").isMissing()) {
+            id = session.get("id").value();
+        }
+
+        Investor investor = investorService.getInvestor(id);
+        authorisation = new Authorisation(investor);
+
+        if (!authorisation.isAuthorised()) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
+
+        Map<String, Object> model = new HashMap<>();
+
+        model.put("name", investor.getName());
+        model.put("balance", investor.getCashBalance());
+
+        return new ModelAndView<>("cash-management.hbs", model);
     }
 }

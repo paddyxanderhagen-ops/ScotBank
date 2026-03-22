@@ -17,9 +17,7 @@ import uk.co.asepstrath.bank.controller.*;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class App extends Jooby {
@@ -74,11 +72,20 @@ public class App extends Jooby {
 
         error((ctx, cause, code) -> {
             ctx.setResponseCode(code);
-            ctx.render("Error" + code.value() + cause.getMessage());
+            if (ctx.header("Accept").value("").contains("application/json")) {
+                ctx.setResponseType(MediaType.json);
+                ctx.render("{\"error\": " + code.value() + ", \"message\": \"" + cause.getMessage() + "\"}");
+            } else {
+                Map<String, Object> model = new HashMap<>();
+                model.put("code", code.value());
+                model.put("message", cause.getMessage());
+                ctx.render(new ModelAndView("error.hbs", model)
+                );
+            }
         });
 
         mvc(new HomeController_(investorService, ds, transactionService));
-        mvc(new CashAccountController_(investorService, ds));
+        mvc(new CashAccountController_(investorService, ds, transactionService));
         mvc(new EquitiesController_(equityService));
         mvc(new EtfController_());
         mvc(new AnalyticsController_(analyticsService));

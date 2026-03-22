@@ -26,7 +26,7 @@ public class TransactionController {
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
         Map<String, Object> model = new HashMap<>();
         model.put("transactions", transactions);
-        model.put("investorId", id);
+        model.put("id", id);
         return new ModelAndView("transactions.hbs", model);
     }
 

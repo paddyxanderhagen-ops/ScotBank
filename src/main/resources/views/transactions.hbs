@@ -172,6 +172,8 @@
     function getBadge(type) {
         if (type === 'BUY') return `<span class="badge badge-buy">BUY</span>`;
         if (type === 'SELL') return `<span class="badge badge-sell">SELL</span>`;
+        if (type === 'DEPOSIT') return `<span class="badge badge-buy">DEPOSIT</span>`;
+        if (type === 'WITHDRAWAL') return `<span class="badge badge-sell">WITHDRAWAL</span>`;
         return `<span class="badge badge-other">${type}</span>`;
     }
 
