@@ -7,10 +7,7 @@ import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.model.Transaction;
-import uk.co.asepstrath.bank.model.dto.EquitiesDTO;
-import uk.co.asepstrath.bank.model.dto.InvestorDTO;
-import uk.co.asepstrath.bank.model.dto.PriceDTO;
-import uk.co.asepstrath.bank.model.dto.TransactionDTO;
+import uk.co.asepstrath.bank.model.dto.*;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 
 import java.io.IOException;
@@ -25,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class APIService {
 
     private StringBuilder url;
-    private final Map<String, List<Price>> cache = new ConcurrentHashMap<>();
     private final Gson gson;
 
     public APIService() {
@@ -71,19 +67,24 @@ public class APIService {
         return transactionDTO;
     }
 
-    public PriceDTO getAllPrices (String ticker, PriceRepository repo, Equity equity) throws SQLException {
+    public PriceDTO getAllPrices (String ticker, PriceRepository repo, String nextToken) {
         List<Price> prices = new ArrayList<>();
         PriceDTO priceDTO = new PriceDTO();
-        String nextToken = loadToken();
         String prevTok = "";
 
         while (nextToken != null) {
             prevTok = nextToken;
             url.append("prices/").append(ticker).append("?nextToken=").append(nextToken);
-            System.out.println(url);
             String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
             priceDTO = gson.fromJson(response, PriceDTO.class);
-            repo.saveAll(equity, priceDTO.getPrices());
+            prices.addAll(priceDTO.getPrices());
+
+            try {
+                repo.saveAll(ticker, priceDTO.getPrices());
+            } catch (SQLException e) {
+                throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to save prices");
+            }
+
             nextToken = priceDTO.getPages().getNextToken();
 
             url = new StringBuilder("https://api.asep-strath.co.uk/api/");
@@ -91,9 +92,7 @@ public class APIService {
 
         priceDTO.setPrices(prices);
 
-        if (ticker.equals("APM")) {
-            saveToken(prevTok);
-        }
+        saveToken(prevTok);
 
         return priceDTO;
     }
@@ -106,7 +105,7 @@ public class APIService {
         }
     }
 
-    private String loadToken() {
+    public String loadToken() {
         Path path = Path.of("./data/token.txt");
         try {
             if (Files.exists(path)) {
@@ -120,11 +119,24 @@ public class APIService {
 
 
     public EquitiesDTO getAllEquities() {
-        Gson gson = new Gson();
-        String response = Unirest.get("https://api.asep-strath.co.uk/api/equities").accept("application/json").asString().getBody();
+        url.append("equities");
+        String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
 
         EquitiesDTO equityResponse = gson.fromJson(response, EquitiesDTO.class);
 
+        url = new StringBuilder("https://api.asep-strath.co.uk/api/");
+
         return equityResponse;
+    }
+
+    public EtfDTO getAllEtf() {
+        url.append("etfs");
+        String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
+
+        EtfDTO etfDTO = gson.fromJson(response, EtfDTO.class);
+
+        url = new StringBuilder("https://api.asep-strath.co.uk/api/");
+
+        return etfDTO;
     }
 }
