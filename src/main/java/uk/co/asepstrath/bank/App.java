@@ -25,6 +25,7 @@ import java.util.Set;
 public class App extends Jooby {
 
     private final APIService api;
+    private Authorisation authorisation;
 
     private InvestorRepository investorRepo;
     private InvestorService investorService;
@@ -66,6 +67,7 @@ public class App extends Jooby {
         transactionService = new TransactionService(transactionRepo);
         analyticsService = new AnalyticsService(transactionService, priceService);
         equityService = new EquityService(equitiesRepo);
+        authorisation = new Authorisation(investorRepo);
 
         log = getLog();
 
@@ -77,13 +79,12 @@ public class App extends Jooby {
             ctx.render("Error" + code.value() + cause.getMessage());
         });
 
-        mvc(new HomeController_(investorService, ds, transactionService));
+        mvc(new HomeController_(investorService, ds, transactionService, authorisation));
         mvc(new CashAccountController_(investorService, ds));
-        mvc(new EquitiesController_(equityService));
-        mvc(new EtfController_());
-        mvc(new AnalyticsController_(analyticsService));
+        mvc(new EquitiesController_(equityService, authorisation));
+        mvc(new AnalyticsController_(analyticsService, authorisation));
         mvc(new LoginController_());
-        mvc(new TransactionController_(transactionService));
+        mvc(new TransactionController_(transactionService, authorisation));
         mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds));
 
 

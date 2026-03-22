@@ -64,9 +64,9 @@ public class PortfolioCategorisationController {
             for (Position p : positions) {
                 Map<String, Object> h = new HashMap<>();
                 h.put("ticker", p.getTicker());
-                h.put("shares", p.getNumberOfShares());
-                h.put("currentPrice", p.getLastPrice());
-                h.put("currentValue", p.getCurrentCashAmount());
+                h.put("shares", p.getShares());
+                h.put("currentPrice", p.getCurrPrice());
+                h.put("currentValue", p.getCurrentValue());
                 holdings.add(h);
             }
         }
