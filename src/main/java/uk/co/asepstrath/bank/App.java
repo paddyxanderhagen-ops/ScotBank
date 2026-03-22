@@ -85,6 +85,7 @@ public class App extends Jooby {
         mvc(new AnalyticsController_(analyticsService, authorisation));
         mvc(new LoginController_());
         mvc(new TransactionController_(transactionService, authorisation));
+        mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds));
 
 
         try {
