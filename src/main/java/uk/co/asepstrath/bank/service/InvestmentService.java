@@ -12,11 +12,12 @@ public class InvestmentService {
         this.equityService = equityService;
     }
 
-    public Equity getEquity(String ticker){;
+    public Equity getEquity(String ticker){
         return equityService.getEquity(ticker);
     }
 
     public Etf getEtf(String ticker){
-        return equityService.getEtf(ticker);
+        EtfController etfController = new EtfController();
+        return etfController.Etf(ticker);
     }
 }
