@@ -33,10 +33,6 @@ public class PriceService {
         try {
             double price = repo.getPriceAtTime(timestamp, ticker);
 
-            if (price == Double.MAX_VALUE) {
-                throw new StatusCodeException(StatusCode.NOT_FOUND, "Price not found");
-            }
-
             return price;
 
         } catch (SQLException e) {

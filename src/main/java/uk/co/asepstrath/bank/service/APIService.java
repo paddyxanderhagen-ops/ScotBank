@@ -85,7 +85,7 @@ public class APIService {
             try {
                 repo.saveAll(ticker, priceDTO.getPrices());
             } catch (SQLException e) {
-                throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to save prices");
+                throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to save prices" + e);
             }
 
 

@@ -46,9 +46,10 @@ public class AnalyticsController {
             ctx.sendRedirect("/login");
             return null;
         }
+        Map<String, Object> map = new HashMap<>();
+        List<Position> positions = analyticsService.getPositions(id);
 
-        List<Position> positions =
-                analyticsService.getPositions(id);
+
 
         positions.sort(Comparator.comparingDouble(Position::getPnl).reversed());
 
@@ -57,12 +58,21 @@ public class AnalyticsController {
         double totalRealisedPnl = positions.stream().mapToDouble(Position::getRealisedPnl).sum();
         double totalInvested = positions.stream().mapToDouble(Position::getTotalInvested).sum();
 
-        Map<String, Object> map = new HashMap<>();
         map.put("positions", positions);
         map.put("totalValue", Math.round(totalValue * 100.0) / 100.0);
         map.put("totalPnl", Math.round(totalPnl * 100.0) / 100.0);
         map.put("totalRealisedPnl", Math.round(totalRealisedPnl * 100.0) / 100.0);
         map.put("totalInvested", Math.round(totalInvested * 100.0) / 100.0);
+
+//        for (Position position : positions) {
+//            if (position.getShares() == 0) {
+//                map.put("positions", "Prices Unavailable");
+//                map.put("totalValue", "Prices Unavailable");
+//                map.put("totalPnl", "Prices Unavailable");
+//                map.put("totalRealisedPnl", "Prices Unavailable");
+//                map.put("totalInvested", "Prices Unavailable");
+//            }
+//        }
 
         return new ModelAndView<>("positions.hbs", map);
     }
@@ -83,9 +93,12 @@ public class AnalyticsController {
         }
 
         String investorId = ctx.session().get("id").value();
-        Position position = analyticsService.getPosition(ticker, investorId);
         Map<String, Object> map = new HashMap<>();
+
+        Position position = analyticsService.getPosition(ticker, investorId);
+
         map.put("position", position);
+
         return new ModelAndView<>("position.hbs", map);
     }
 

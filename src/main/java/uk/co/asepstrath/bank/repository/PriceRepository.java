@@ -24,7 +24,7 @@ public class PriceRepository {
                         timestamp VARCHAR(30),
                         price DOUBLE,
                         PRIMARY KEY (ticker, timestamp),
-                        FOREIGN KEY (ticker) REFERENCES equity(ticker)
+                        FOREIGN KEY (ticker) REFERENCES instrument(ticker)
                     )
                     """);
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_price_ticker ON price(ticker)");
@@ -84,6 +84,7 @@ public class PriceRepository {
             ps.setString(2, ticker);
 
             ResultSet rs = ps.executeQuery();
+
 
             while (rs.next()) {
                 price = rs.getDouble("price");

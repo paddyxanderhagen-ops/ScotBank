@@ -29,10 +29,8 @@ public class App extends Jooby {
     private final AnalyticsService analyticsService;
     private final PriceRepository priceRepo;
     private final PriceService priceService;
-    private final EquityRepository equitiesRepo;
-    private final EquityService equityService;
-    private final EtfService etfService;
-    private final EtfRepository etfRepo;
+    private final InstrumentService instrumentService;
+    private final InstrumentRepository instrumentRepo;
     private final ConstituentRepository constituentRepository;
     private final Logger log;
 
@@ -50,18 +48,16 @@ public class App extends Jooby {
         api = new APIService();
 
         investorRepo = new InvestorRepository(ds);
-        equitiesRepo = new EquityRepository(ds);
         transactionRepo = new TransactionRepository(ds);
-        etfRepo = new EtfRepository(ds);
         constituentRepository = new ConstituentRepository(ds);
         priceRepo = new PriceRepository(ds);
+        instrumentRepo = new InstrumentRepository(ds);
 
         investorService = new InvestorService(investorRepo);
         priceService = new PriceService(priceRepo);
         transactionService = new TransactionService(transactionRepo);
         analyticsService = new AnalyticsService(transactionService, priceService);
-        equityService = new EquityService(equitiesRepo);
-        etfService = new EtfService(etfRepo);
+        instrumentService = new InstrumentService(instrumentRepo);
         authorisation = new Authorisation(investorRepo);
 
         log = getLog();
@@ -88,16 +84,15 @@ public class App extends Jooby {
         mvc(new AnalyticsController_(analyticsService, authorisation, api, priceRepo));
         mvc(new LoginController_());
         mvc(new TransactionController_(transactionService, authorisation));
-        mvc(new InvestmentController_(equityService, priceService, etfService));
+        mvc(new InvestmentController_(instrumentService, priceService));
         mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds));
         mvc(new TaxReportController_(analyticsService));
 
         try {
             investorRepo.setUp();
             transactionRepo.setUp();
-            equitiesRepo.setUp();
+            instrumentRepo.setUp();
             priceRepo.setUp();
-            etfRepo.setUp();
             constituentRepository.setUp();
         } catch (SQLException e) {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Unable to access server. " + e);
@@ -129,8 +124,8 @@ public class App extends Jooby {
 
             String token = api.loadToken();
 
-            equitiesRepo.saveAll(equities);
-            etfRepo.saveAll(etfs);
+            instrumentRepo.saveAll(equities, etfs);
+
             constituentRepository.saveAll(etfs);
 
 

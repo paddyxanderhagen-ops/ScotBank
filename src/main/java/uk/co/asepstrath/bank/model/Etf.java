@@ -3,43 +3,23 @@ package uk.co.asepstrath.bank.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Etf {
-    private String name;
-    private String ticker;
+public class Etf extends Instrument{
     private String description;
     private String inceptionDate;
     private List<Constituent> constituents;
 
-    public Etf(String name, String ticker, String description, String inceptionDate, List<Constituent> constituents) {
-        this.name = name;
-        this.ticker = ticker;
+    public Etf(String ticker, String name, String description, String inceptionDate, List<Constituent> constituents) {
+        super(ticker, name);
         this.description = description;
         this.inceptionDate = inceptionDate;
         this.constituents = constituents;
     }
 
     public Etf() {
-        name = "";
-        ticker = "";
+        super("", "");
         description = "";
         inceptionDate = "";
         constituents = new ArrayList<Constituent>();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTicker() {
-        return ticker;
-    }
-
-    public void setTicker(String ticker) {
-        this.ticker = ticker;
     }
 
     public String getDescription() {
