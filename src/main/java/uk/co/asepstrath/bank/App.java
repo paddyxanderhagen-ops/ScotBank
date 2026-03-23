@@ -74,7 +74,6 @@ public class App extends Jooby {
         etfService = new EtfService(etfRepo);
         authorisation = new Authorisation(investorRepo);
 
-
         log = getLog();
 
         assets("/assets/**", "/assets");
@@ -92,7 +91,7 @@ public class App extends Jooby {
         mvc(new TransactionController_(transactionService, authorisation));
         mvc(new InvestmentController_(equityService, priceService, etfService));
         mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds));
-
+        mvc(new TaxReportController_(analyticsService));
 
         try {
             investorRepo.setUp();
