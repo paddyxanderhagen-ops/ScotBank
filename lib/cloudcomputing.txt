@@ -1,0 +1,18 @@
+Cloud Computing
+
+We think that an ideal platform for our app to be hosted on is Amazon Web Services (AWS). Amazon are widely regarded as the leading company in cloud computing and are the appropriate choice for a few reasons.
+
+ - Databases: Amazon RDS is AWS's own distributed SQL database service which focuses on simplifying setup and scaling. It also automates time consuming tasks such as backups and recovery.
+ - Storage: Amazon offer a storage service called "Amazon Simple Storage Service" also known as "S3". This is simply a secure service which stores data securely and durably with easy scalability on demand. Since our app is a new service scalability may be a large focus as our membership increases.
+ - Authentication: Amazon Cognito provides functionality to authenticate user details using social media logins such as Google and Facebook. This may be a good feature to implement in the future.
+ - Scaling: AWS Auto Scaling is a service of AWS which specifically focuses on scaling applications based on demand.
+ 
+How we would deploy:
+ - We should be able to easily deploy our app to AWS using their PaaS software "AWS Elastic Beanstalk". It is designed to simplify the deployment of web applications including those using Java. Beanstalk also supports direct deploy from Git which is particularly convenient for our app as it exists on Gitlab. There is also no additional cost to this service if you are paying for the AWS resources themselves.
+ 
+Cloud services to improve our app"
+ - AWS CodeGuru is a service which improves helps to improve code quality by using machine learning to provide suggestions for code reviews, security analysis and bug fixes.
+ - AWS CodePipeline and AWS CodeBuild are Amazon's in house CI/CD services. CodeBuild can run unit tests on the code every time a commit is made. CodePipeline gives the user information to try to determine where issues will arise in the pipeline.
+
+
+
