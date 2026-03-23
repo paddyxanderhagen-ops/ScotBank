@@ -2,7 +2,7 @@ package uk.co.asepstrath.bank.unit.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.Constituents;
+import uk.co.asepstrath.bank.model.Constituent;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
 import uk.co.asepstrath.bank.repository.EquityRepository;
@@ -42,51 +42,32 @@ public class EquityRepositoryTest {
 
     @Test
     void saveAll() throws SQLException {
-        repo.saveAll(List.of(new Equity("Apple", "AAPL", "Technology")), List.of(new Etf("Apples", "AAPLS", "Apple but plural", "20-03-2026", List.of(new Constituents("AAPL", 0.5), new Constituents("BBPL", 0.5)))));
+        repo.saveAll(List.of(new Equity("Apple", "AAPL", "Technology")));
         verify(ps, times(1)).setString(1, "AAPL");
         verify(ps, times(1)).setString(2, "Apple");
         verify(ps, times(1)).setString(3, "Technology");
-        verify(ps, times(1)).setString(1, "AAPLS");
-        verify(ps, times(1)).setString(2, "Apples");
-        verify(ps, times(1)).setString(3, null);
 
-        verify(ps, times(2)).addBatch();
+        verify(ps, times(1)).addBatch();
     }
 
     @Test
     void saveAll_connectionFails() throws SQLException {
         when(ds.getConnection()).thenThrow(new SQLException("Connection Failed"));
-        assertThrows(SQLException.class, () -> repo.saveAll(List.of(new Equity("Apple", "AAPL", "Technology")), List.of(new Etf("Apples", "AAPLS", "Apple but plural", "20-03-2026", List.of(new Constituents("AAPL", 0.5), new Constituents("BBPL", 0.5))))));
+        assertThrows(SQLException.class, () -> repo.saveAll(List.of(new Equity("Apple", "AAPL", "Technology"))));
     }
 
     @Test
     void saveAll_equitiesNull() throws SQLException {
-        repo.saveAll(null, List.of(new Etf("Apples", "AAPLS", "Apple but plural", "20-03-2026", List.of(new Constituents("AAPL", 0.5), new Constituents("BBPL", 0.5)))));
+        repo.saveAll(null);
 
         verify(ps, never()).setString(1, "AAPL");
         verify(ps, never()).setString(1, "BBPL");
 
 
-        verify(ps, times(1)).setString(1, "AAPLS");
-        verify(ps, times(1)).setString(2, "Apples");
-        verify(ps, times(1)).setString(3, null);
-
-        verify(ps, times(1)).addBatch();
+        verify(ps, times(0)).addBatch();
     }
 
-    @Test
-    void saveAll_etfsNull() throws SQLException {
-        repo.saveAll(List.of(new Equity("Apple", "AAPL", "Technology")), null);
 
-        verify(ps, never()).setString(3, null);
-
-
-        verify(ps, times(1)).setString(1, "AAPL");
-        verify(ps, times(1)).setString(2, "Apple");
-        verify(ps, times(1)).setString(3, "Technology");
-
-        verify(ps, times(1)).addBatch();
-    }
 
     @Test
     void getAll() throws SQLException {

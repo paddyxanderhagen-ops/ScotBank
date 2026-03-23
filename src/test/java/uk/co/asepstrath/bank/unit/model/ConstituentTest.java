@@ -2,24 +2,22 @@ package uk.co.asepstrath.bank.unit.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.Constituents;
-
-import java.math.BigDecimal;
+import uk.co.asepstrath.bank.model.Constituent;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ConstituentsTest {
+class ConstituentTest {
 
-    Constituents c;
+    Constituent c;
 
     @BeforeEach
     void setup(){
-        c = new Constituents("META", 2.35);
+        c = new Constituent("META", 2.35);
     }
 
     @Test
     void constructorParamless(){
-        c = new Constituents();
+        c = new Constituent();
         assertEquals("",c.getTicker());
         assertEquals(0 ,c.getWeight());
     }

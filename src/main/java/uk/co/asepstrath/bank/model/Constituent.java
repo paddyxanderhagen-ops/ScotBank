@@ -1,17 +1,15 @@
 package uk.co.asepstrath.bank.model;
 
-import java.math.BigDecimal;
-
-public class Constituents {
+public class Constituent {
     private String ticker;
     private double weight;
 
-    public Constituents(String ticker, double weight) {
+    public Constituent(String ticker, double weight) {
         this.ticker = ticker;
         this.weight = weight;
     }
 
-    public Constituents() {
+    public Constituent() {
         ticker = "";
         weight = 0;
     }
