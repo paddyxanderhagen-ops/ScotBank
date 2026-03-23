@@ -14,45 +14,54 @@
     <link rel="stylesheet" href="/assets/styles.css">
 
     <style>
-
-        .page-wrapper{
-            max-width:900px;
-            margin:auto;
-            padding-top:20px;
+        .page-wrapper {
+            max-width: 900px;
+            margin: auto;
+            padding-top: 20px;
         }
-
-        .position-row{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:16px;
-            border-bottom:1px solid var(--border);
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
         }
-        .position-header{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:16px;
-            border-bottom:1px solid var(--border);
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
         }
-
-        .position-row:hover{
-            background:#f8fbff;
-            cursor:pointer;
+        .stat-label {
+            font-size: 12px; color: #6c7b93;
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 6px;
         }
-
-        .ticker{
-            font-weight:700;
-            font-size:18px;
+        .stat-value { font-size: 22px; font-weight: 800; }
+        .positive { color: #1e7e34; }
+        .negative { color: #c0392b; }
+        .position-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
         }
-
-        .shares{
-            color:#6c7b93;
-            font-size:14px;
+        .position-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
         }
-
-        .value{
-            font-weight:700;
+        .position-row:hover { background: #f8fbff; cursor: pointer; }
+        .ticker { font-weight: 700; font-size: 18px; }
+        .shares { color: #6c7b93; font-size: 14px; }
+        .value { font-weight: 700; }
+        .table-header { font-weight: 700; font-size: 15px; color: #6c7b93; }
+        .section-label {
+            font-size: 12px; font-weight: 700; color: #6c7b93;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 12px; margin-top: 8px;
         }
         .table-header{
             font-weight:700;
@@ -60,21 +69,49 @@
         }
 
     </style>
-
 </head>
 
 <body>
-
 {{>partials/navbar.hbs}}
-<main class="page-wrapper">
 
-    <h3 class="mb-4">Your Positions</h3>
+<main class="page-wrapper px-3">
+
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <h3 class="fw-bold m-0">Your Positions</h3>
+        <form method="post" action="/analytics/refresh">
+            <button class="btn-refresh" id="refresh-btn" onclick="refreshPrices()">
+                Refresh Prices
+            </button>
+        </form>
+    </div>
+
+    <div class="summary-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Value</div>
+            <div class="stat-value">£{{totalValue}}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Invested</div>
+            <div class="stat-value">£{{totalInvested}}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Unrealised P&L</div>
+            <div class="stat-value" id="total-pnl">£{{totalPnl}}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Realised P&L</div>
+            <div class="stat-value" id="total-realised">£{{totalRealisedPnl}}</div>
+        </div>
+    </div>
 
     <div class="card-soft">
         <div class="position-header">
-            <div class="table-header">Ticker</div>
-            <div class="table-header">Shares</div>
-            <div class="table-header">Value</div>
+            <div class="table-header" style="flex:2">Ticker</div>
+            <div class="table-header" style="flex:1;text-align:right">Shares</div>
+            <div class="table-header" style="flex:1;text-align:right">Value</div>
+            <div class="table-header" style="flex:1;text-align:right">Unrealised P&L</div>
+            <div class="table-header" style="flex:1;text-align:right">Realised P&L</div>
         </div>
 
         {{#if positions}}
@@ -84,27 +121,81 @@
                 <a href="/analytics/{{ticker}}" style="text-decoration:none;color:inherit;">
 
                     <div class="position-row">
-
-
-                        <div class="ticker"> {{ticker}}</div>
-                        <div class="shares">{{numberOfShares}}</div>
-                        <div class="value">£{{currentCashAmount}}</div>
-
+                        <div style="flex:2" class="ticker">{{ticker}}</div>
+                        <div style="flex:1;text-align:right" class="shares">{{shares}}</div>
+                        <div style="flex:1;text-align:right" class="value">£{{currentValue}}</div>
+                        <div style="flex:1;text-align:right" class="pnl-value">£{{pnl}} ({{pnlPercentage}}%)</div>
+                        <div style="flex:1;text-align:right" class="realised-value">£{{realisedPnl}}</div>
                     </div>
-
                 </a>
-
             {{/each}}
-
         {{else}}
-
-            <p class="text-muted">No investments yet</p>
-
+            <p class="text-muted p-3">No investments yet</p>
         {{/if}}
 
     </div>
 
 </main>
+<style>
+    .btn-refresh {
+        padding: 8px 20px;
+        border-radius: 20px;
+        border: 1px solid #1a73e8;
+        background: white;
+        color: #1a73e8;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-refresh:hover {
+        background: #1a73e8;
+        color: white;
+    }
+    .btn-refresh.loading {
+        background: #f0f4f8;
+        color: #6c7b93;
+        border-color: #6c7b93;
+        cursor: not-allowed;
+    }
+</style>
+
+<script>
+    async function refreshPrices() {
+        const btn = document.getElementById('refresh-btn');
+        btn.textContent = 'Updating...';
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        try {
+            await fetch('/analytics/refresh', { method: 'POST' });
+            window.location.reload();
+        } catch (e) {
+            btn.textContent = 'Failed — try again';
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+</script>
+<script>
+    document.querySelectorAll('.pnl-value').forEach(el => {
+        const val = parseFloat(el.textContent.replace('£', ''));
+        el.classList.add(val >= 0 ? 'positive' : 'negative');
+    });
+
+    document.querySelectorAll('.realised-value').forEach(el => {
+        const val = parseFloat(el.textContent.replace('£', ''));
+        el.classList.add(val >= 0 ? 'positive' : 'negative');
+    });
+
+    ['total-pnl', 'total-realised'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            const val = parseFloat(el.textContent.replace('£', ''));
+            el.classList.add(val >= 0 ? 'positive' : 'negative');
+        }
+    });
+</script>
 
 </body>
 </html>

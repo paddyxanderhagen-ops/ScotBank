@@ -8,10 +8,7 @@ import io.jooby.hikari.HikariModule;
 import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.model.*;
-import uk.co.asepstrath.bank.repository.EquityRepository;
-import uk.co.asepstrath.bank.repository.InvestorRepository;
-import uk.co.asepstrath.bank.repository.PriceRepository;
-import uk.co.asepstrath.bank.repository.TransactionRepository;
+import uk.co.asepstrath.bank.repository.*;
 import uk.co.asepstrath.bank.service.*;
 import uk.co.asepstrath.bank.controller.*;
 
@@ -23,6 +20,7 @@ import java.util.*;
 public class App extends Jooby {
 
     private final APIService api;
+    private Authorisation authorisation;
 
     private InvestorRepository investorRepo;
     private InvestorService investorService;
@@ -37,6 +35,11 @@ public class App extends Jooby {
 
     private EquityRepository equitiesRepo;
     private EquityService equityService;
+
+    private EtfService etfService;
+    private EtfRepository etfRepo;
+
+    private ConstituentRepository constituentRepository;
 
     private final DataSource ds;
     private Logger log;
@@ -57,6 +60,8 @@ public class App extends Jooby {
         investorRepo = new InvestorRepository(ds);
         equitiesRepo = new EquityRepository(ds);
         transactionRepo = new TransactionRepository(ds);
+        etfRepo = new EtfRepository(ds);
+        constituentRepository = new ConstituentRepository(ds);
         priceRepo = new PriceRepository(ds);
 
         investorService = new InvestorService(investorRepo);
@@ -64,6 +69,8 @@ public class App extends Jooby {
         transactionService = new TransactionService(transactionRepo);
         analyticsService = new AnalyticsService(transactionService, priceService);
         equityService = new EquityService(equitiesRepo);
+        etfService = new EtfService(etfRepo);
+        authorisation = new Authorisation(investorRepo);
 
         log = getLog();
 
@@ -84,21 +91,22 @@ public class App extends Jooby {
             }
         });
 
-        mvc(new HomeController_(investorService, ds, transactionService));
-        mvc(new CashAccountController_(investorService, ds, transactionService));
-        mvc(new EquitiesController_(equityService));
-        mvc(new EtfController_());
-        mvc(new AnalyticsController_(analyticsService));
+        mvc(new HomeController_(investorService, ds, transactionService, authorisation));
+        mvc(new CashAccountController_(investorService, ds));
+        mvc(new AnalyticsController_(analyticsService, authorisation, api, priceRepo));
         mvc(new LoginController_());
-        mvc(new TransactionController_(transactionService));
+        mvc(new TransactionController_(transactionService, authorisation));
+        mvc(new InvestmentController_(equityService, priceService, etfService));
         mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds));
-
+        mvc(new TaxReportController_(analyticsService));
 
         try {
             investorRepo.setUp();
             transactionRepo.setUp();
             equitiesRepo.setUp();
             priceRepo.setUp();
+            etfRepo.setUp();
+            constituentRepository.setUp();
         } catch (SQLException e) {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Unable to access server. " + e);
         }
@@ -129,7 +137,9 @@ public class App extends Jooby {
 
             String token = api.loadToken();
 
-            equitiesRepo.saveAll(equities, etfs);
+            equitiesRepo.saveAll(equities);
+            etfRepo.saveAll(etfs);
+            constituentRepository.saveAll(etfs);
 
 
             for (Equity equity : equities) {
@@ -143,7 +153,7 @@ public class App extends Jooby {
 
 
         } catch (Exception e) {
-            log.warn("Failed to load transactions from API", e);
+            log.warn("Issue loading assets" + e);
         }
 
 

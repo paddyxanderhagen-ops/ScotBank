@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tax Report</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/styles.css">
+    <style>
+        .page-wrapper {
+            max-width: 800px;
+            margin: auto;
+            padding-top: 30px;
+            padding-bottom: 60px;
+        }
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #6c7b93;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            margin-top: 28px;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6c7b93;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .positive { color: #1e7e34; }
+        .negative { color: #c0392b; }
+        .sale-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        .sale-row:last-child { border-bottom: none; }
+        .sale-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 700;
+            color: #6c7b93;
+            text-transform: uppercase;
+        }
+        .ticker-badge {
+            font-weight: 700;
+            font-size: 15px;
+        }
+        .meta {
+            color: #6c7b93;
+            font-size: 13px;
+        }
+        .tax-breakdown {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .tax-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
+        }
+        .tax-line:last-child { border-bottom: none; }
+        .tax-line.total {
+            font-weight: 800;
+            font-size: 17px;
+        }
+        .progress-bar-wrapper {
+            background: #f0f4f8;
+            border-radius: 20px;
+            height: 12px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 20px;
+            background: #1a73e8;
+        }
+        .year-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .year-btn {
+            padding: 6px 18px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            color: inherit;
+        }
+        .year-btn.active {
+            background: #1a73e8;
+            color: white;
+            border-color: #1a73e8;
+        }
+    </style>
+</head>
+
+<body>
+
+{{>partials/navbar.hbs}}
+
+<main class="page-wrapper px-3">
+
+    <h3 class="fw-bold mb-2">Tax Report</h3>
+    <p class="text-muted mb-4">Capital gains summary and estimated tax liability</p>
+
+    <div class="year-selector" id="year-selector"></div>
+
+    {{#with report}}
+
+        <div class="section-label">Summary</div>
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Gains</div>
+                <div class="stat-value positive">£{{totalGains}}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Losses</div>
+                <div class="stat-value negative">£{{totalLosses}}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Net Capital Gains</div>
+                <div class="stat-value" id="net-value">£{{netGains}}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Estimated Tax Owed</div>
+                <div class="stat-value" id="tax-value">£{{taxOwed}}</div>
+            </div>
+        </div>
+
+        <div class="section-label">Allowance Tracker</div>
+        <div class="stat-card">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span class="stat-label" style="margin:0">Used: £{{allowanceUsed}}</span>
+                <span class="stat-label" style="margin:0">Remaining: £{{allowanceRemaining}}</span>
+            </div>
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar-fill" id="allowance-bar"></div>
+            </div>
+            <div class="meta" style="margin-top:8px">Annual allowance: £{{allowance}}</div>
+        </div>
+
+        <div class="section-label">Tax Calculation</div>
+        <div class="tax-breakdown">
+            <div class="tax-line">
+                <span>Net Capital Gains</span>
+                <span>£{{netGains}}</span>
+            </div>
+            <div class="tax-line">
+                <span>Capital Gains Allowance</span>
+                <span>£{{allowance}}</span>
+            </div>
+            <div class="tax-line">
+                <span>Taxable Gains</span>
+                <span>£{{taxableGains}}</span>
+            </div>
+            <div class="tax-line">
+                <span>Tax Rate</span>
+                <span>24%</span>
+            </div>
+            <div class="tax-line total" id="tax-total">
+                <span>Estimated Tax Owed</span>
+                <span>£{{taxOwed}}</span>
+            </div>
+        </div>
+
+        <div class="section-label">Sales This Year</div>
+        <div class="card-soft" style="padding:0">
+            <div class="sale-header">
+                <span style="flex:2">Ticker</span>
+                <span style="flex:2">Date</span>
+                <span style="flex:1;text-align:right">Proceeds</span>
+                <span style="flex:1;text-align:right">Cost Basis</span>
+                <span style="flex:1;text-align:right">Gain / Loss</span>
+            </div>
+
+            {{#if sales}}
+                {{#each sales}}
+                    <div class="sale-row">
+                        <span style="flex:2" class="ticker-badge">{{ticker}}</span>
+                        <span style="flex:2" class="meta">{{timestamp}}</span>
+                        <span style="flex:1;text-align:right">£{{proceeds}}</span>
+                        <span style="flex:1;text-align:right">£{{costBasis}}</span>
+                        <span style="flex:1;text-align:right" class="gain-loss">£{{gainLoss}}</span>
+                    </div>
+                {{/each}}
+            {{else}}
+                <p class="text-muted p-3">No sales recorded for this year</p>
+            {{/if}}
+        </div>
+
+    {{/with}}
+
+</main>
+
+<script>
+    const years = [{{#each years}}{{this}}{{#unless @last}},{{/unless}}{{/each}}];
+    const selected = {{selectedYear}};
+    const container = document.getElementById('year-selector');
+    years.forEach(y => {
+        const a = document.createElement('a');
+        a.href = '/taxreport?year=' + y;
+        a.className = 'year-btn' + (y === selected ? ' active' : '');
+        a.textContent = y;
+        container.appendChild(a);
+    });
+
+    const netEl = document.getElementById('net-value');
+    if (netEl) {
+        const val = parseFloat(netEl.textContent.replace('£', ''));
+        netEl.classList.add(val >= 0 ? 'positive' : 'negative');
+    }
+
+    const taxEl = document.getElementById('tax-value');
+    const taxTotal = document.getElementById('tax-total');
+    if (taxEl) {
+        const val = parseFloat(taxEl.textContent.replace('£', ''));
+        taxEl.classList.add(val <= 0 ? 'positive' : 'negative');
+        if (taxTotal) taxTotal.classList.add(val <= 0 ? 'positive' : 'negative');
+    }
+
+    document.querySelectorAll('.gain-loss').forEach(el => {
+        const val = parseFloat(el.textContent.replace('£', ''));
+        el.classList.add(val >= 0 ? 'positive' : 'negative');
+    });
+
+    const bar = document.getElementById('allowance-bar');
+    if (bar) {
+        const used = {{report.allowanceUsed}};
+        const total = {{report.allowance}};
+        const pct = Math.min((used / total) * 100, 100);
+        bar.style.width = pct + '%';
+        if (pct >= 100) bar.style.background = '#c0392b';
+        else if (pct >= 75) bar.style.background = '#e67e00';
+    }
+</script>
+
+</body>
+</html>

@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank.repository;
 
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
+import uk.co.asepstrath.bank.model.dto.EquityDTO;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -19,6 +20,7 @@ public class EquityRepository {
     public void setUp() throws SQLException {
         try (Connection conn = ds.getConnection();
              Statement stmt = conn.createStatement()) {
+
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS equity (
                             ticker VARCHAR(20) PRIMARY KEY,
@@ -29,7 +31,7 @@ public class EquityRepository {
         }
     }
 
-    public void saveAll(List<Equity> equities, List<Etf> etfs) throws SQLException {
+    public void saveAll(List<Equity> equities) throws SQLException {
         String sql = """
                 MERGE INTO equity (ticker, name, sector)
                 VALUES (?, ?, ?)
@@ -47,21 +49,12 @@ public class EquityRepository {
                         ps.addBatch();
                 }
             }
-
-
-            if (etfs != null) {
-                for (Etf etf : etfs) {
-                    ps.setString(1, etf.getTicker());
-                    ps.setString(2, etf.getName());
-                    ps.setString(3, null);
-                    ps.addBatch();
-                }
-            }
             ps.executeBatch();
         }
     }
 
     public List<Equity> getAll() throws SQLException {
+        EquityDTO equityDTO = new EquityDTO();
         String sql = """
                 SELECT * FROM equity
                 """;
@@ -73,7 +66,7 @@ public class EquityRepository {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                equities.add(new Equity(rs.getString("ticker"), rs.getString("name"), rs.getString("sector")));
+                equities.add(new Equity(rs.getString("name"), rs.getString("ticker"), rs.getString("sector")));
             }
 
             return equities;
@@ -95,7 +88,7 @@ public class EquityRepository {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                equity = new Equity(rs.getString("ticker"), rs.getString("name"), rs.getString("sector"));
+                equity = new Equity(rs.getString("name"), rs.getString("ticker"), rs.getString("sector"));
             }
 
             return equity;

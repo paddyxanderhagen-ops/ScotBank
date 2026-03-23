@@ -26,10 +26,11 @@ public class HomeController {
     private final DataSource ds;
     private final TransactionService transactionService;
 
-    public HomeController(InvestorService investorService, DataSource ds, TransactionService transactionService) {
+    public HomeController(InvestorService investorService, DataSource ds, TransactionService transactionService, Authorisation authorisation) {
         this.investorService = investorService;
         this.ds = ds;
         this.transactionService = transactionService;
+        this.authorisation = authorisation;
     }
 
     @GET("/")
@@ -47,7 +48,7 @@ public class HomeController {
     }
 
     @GET("/dashboard")
-    public ModelAndView<Map<String, Object>> dashboardPage(Context ctx) {
+    public ModelAndView<Map<String, Object>> dashboardPage(Context ctx) throws SQLException {
         Session session = null;
         String id = null;
         if (ctx != null) {
@@ -57,17 +58,17 @@ public class HomeController {
             id = session.get("id").value();
         }
 
-        Investor investor = investorService.getInvestor(id);
-        authorisation = new Authorisation(investor);
-
-        if (!authorisation.isAuthorised()) {
+        if (!authorisation.isAuthorised(id)) {
             ctx.sendRedirect("/login");
             return null;
         }
 
+        Investor investor = investorService.getInvestor(id);
+
+
         CashAccountImplementation account = new CashAccountImplementation(investor, ds);
 
-        List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(3).toList();
+        List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(5).toList();
 
         Map<String, Object> map = new HashMap<>();
         map.put("id", investor.getId());

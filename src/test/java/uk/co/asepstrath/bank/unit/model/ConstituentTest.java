@@ -2,26 +2,24 @@ package uk.co.asepstrath.bank.unit.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.Constituents;
-
-import java.math.BigDecimal;
+import uk.co.asepstrath.bank.model.Constituent;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ConstituentsTest {
+class ConstituentTest {
 
-    Constituents c;
+    Constituent c;
 
     @BeforeEach
     void setup(){
-        c = new Constituents("META", BigDecimal.valueOf(2.35));
+        c = new Constituent("META", 2.35);
     }
 
     @Test
     void constructorParamless(){
-        c = new Constituents();
+        c = new Constituent();
         assertEquals("",c.getTicker());
-        assertEquals(BigDecimal.ZERO,c.getWeight());
+        assertEquals(0 ,c.getWeight());
     }
 
     @Test
@@ -37,12 +35,12 @@ class ConstituentsTest {
 
     @Test
     void getWeight() {
-        assertEquals(BigDecimal.valueOf(2.35),c.getWeight());
+        assertEquals(2.35,c.getWeight());
     }
 
     @Test
     void setWeight() {
-        c.setWeight(BigDecimal.valueOf(33333.33));
-        assertEquals(BigDecimal.valueOf(33333.33),c.getWeight());
+        c.setWeight(33333.33);
+        assertEquals(33333.33,c.getWeight());
     }
 }

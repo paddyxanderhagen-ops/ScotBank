@@ -13,6 +13,26 @@
             margin: auto;
             padding-top: 20px;
         }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+        }
+        .stat-label {
+            font-size: 12px; color: #6c7b93;
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 6px;
+        }
+        .stat-value { font-size: 22px; font-weight: 800; }
+        .positive { color: #1e7e34; }
+        .negative { color: #c0392b; }
         .position-row {
             display: flex;
             justify-content: space-between;
@@ -28,109 +48,74 @@
             border-bottom: 1px solid var(--border);
             background: #f8fbff;
         }
-        .position-row:hover {
-            background: #f8fbff;
-        }
-        .ticker {
-            font-weight: 700;
-            font-size: 16px;
-        }
-        .meta {
-            color: #6c7b93;
-            font-size: 14px;
-        }
-        .value {
-            font-weight: 700;
-        }
+        .position-row:hover { background: #f8fbff; }
+        .ticker { font-weight: 700; font-size: 16px; }
+        .meta { color: #6c7b93; font-size: 14px; }
+        .value { font-weight: 700; }
         .table-header {
-            font-weight: 700;
-            font-size: 15px;
-            color: #6c7b93;
-            cursor: pointer;
-            user-select: none;
+            font-weight: 700; font-size: 15px;
+            color: #6c7b93; cursor: pointer; user-select: none;
         }
-        .table-header:hover {
-            color: #1a73e8;
-        }
-        .table-header .sort-icon {
-            font-size: 11px;
-            margin-left: 4px;
-        }
-        .badge {
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .badge-buy {
-            background: #e6f4ea;
-            color: #1e7e34;
-        }
-        .badge-sell {
-            background: #fdecea;
-            color: #c0392b;
-        }
-        .badge-other {
-            background: #e8f0fe;
-            color: #1a73e8;
-        }
-        .filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
+        .table-header:hover { color: #1a73e8; }
+        .sort-icon { font-size: 11px; margin-left: 4px; }
+        .badge { padding: 3px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+        .badge-buy { background: #e6f4ea; color: #1e7e34; }
+        .badge-sell { background: #fdecea; color: #c0392b; }
+        .badge-deposit { background: #e8f0fe; color: #1a73e8; }
+        .badge-withdrawal { background: #fff3e0; color: #e67e00; }
+        .badge-other { background: #f0f0f0; color: #6c7b93; }
+        .filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
         .filter-btn {
-            padding: 6px 16px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: white;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 6px 16px; border-radius: 20px;
+            border: 1px solid var(--border); background: white;
+            cursor: pointer; font-size: 14px; font-weight: 500;
         }
-        .filter-btn.active {
-            background: #1a73e8;
-            color: white;
-            border-color: #1a73e8;
-        }
+        .filter-btn.active { background: #1a73e8; color: white; border-color: #1a73e8; }
         .search-box {
-            padding: 8px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            font-size: 14px;
-            outline: none;
-            width: 200px;
+            padding: 8px 14px; border-radius: 20px;
+            border: 1px solid var(--border); font-size: 14px;
+            outline: none; width: 200px;
         }
-        .search-box:focus {
-            border-color: #1a73e8;
-        }
-        .no-results {
-            text-align: center;
-            padding: 32px;
-            color: #6c7b93;
+        .search-box:focus { border-color: #1a73e8; }
+        .no-results { text-align: center; padding: 32px; color: #6c7b93; }
+        .section-label {
+            font-size: 12px; font-weight: 700; color: #6c7b93;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 12px; margin-top: 8px;
         }
     </style>
 </head>
 
 <body>
-
 {{>partials/navbar.hbs}}
 
-<main class="page-wrapper">
+<main class="page-wrapper px-3">
 
     <h3 class="mb-4">Transaction History</h3>
 
+    <div class="summary-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Deposits</div>
+            <div class="stat-value positive">£{{totalDeposits}}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Withdrawals</div>
+            <div class="stat-value negative">£{{totalWithdrawals}}</div>
+        </div>
+    </div>
+
+    <div class="section-label">All Transactions</div>
+
     <div class="filters">
-        <button class="filter-btn active" onclick="setFilter('ALL')">All</button>
-        <button class="filter-btn" onclick="setFilter('BUY')">Buy</button>
-        <button class="filter-btn" onclick="setFilter('SELL')">Sell</button>
-        <button class="filter-btn" onclick="setFilter('OTHER')">Other</button>
+        <button class="filter-btn active" onclick="setFilter('ALL', event)">All</button>
+        <button class="filter-btn" onclick="setFilter('BUY', event)">Buy</button>
+        <button class="filter-btn" onclick="setFilter('SELL', event)">Sell</button>
+        <button class="filter-btn" onclick="setFilter('DEPOSIT', event)">Deposit</button>
+        <button class="filter-btn" onclick="setFilter('WITHDRAWAL', event)">Withdrawal</button>
         <input class="search-box" type="text" placeholder="Search ticker..." oninput="setSearch(this.value)">
     </div>
 
-    <div class="card-soft">
-
+    <div class="card-soft" style="padding:0">
         <div class="position-header">
             <div class="table-header" style="flex:2" onclick="sortBy('type')">
                 Type <span class="sort-icon" id="sort-type">↕</span>
@@ -139,15 +124,16 @@
                 Ticker <span class="sort-icon" id="sort-ticker">↕</span>
             </div>
             <div class="table-header" style="flex:2" onclick="sortBy('timestamp')">
-                Date <span class="sort-icon" id="sort-timestamp">↕</span>
+                Date <span class="sort-icon" id="sort-timestamp">↑</span>
             </div>
             <div class="table-header" style="flex:1;text-align:right" onclick="sortBy('amount')">
                 Amount <span class="sort-icon" id="sort-amount">↕</span>
             </div>
+            <div class="table-header" style="flex:1;text-align:right" onclick="sortBy('balanceAfter')">
+                Cash Balance After <span class="sort-icon" id="sort-balanceAfter">↕</span>
+            </div>
         </div>
-
         <div id="transaction-list"></div>
-
     </div>
 
 </main>
@@ -157,9 +143,10 @@
         {{#each transactions}}
             {
                 type: "{{type}}",
-                ticker: "{{#if ticker}}{{ticker}}{{else}}{{/if}}",
+                ticker: "{{ticker}}",
                 timestamp: "{{timestamp}}",
-                amount: {{totalCashAmount}}
+                amount: {{amount}},
+                balanceAfter: "{{balanceAfter}}"
             }{{#unless @last}},{{/unless}}
         {{/each}}
     ];
@@ -167,17 +154,17 @@
     let currentFilter = 'ALL';
     let currentSearch = '';
     let sortKey = 'timestamp';
-    let sortDir = -1;
+    let sortDir = 1;
 
     function getBadge(type) {
-        if (type === 'BUY') return `<span class="badge badge-buy">BUY</span>`;
-        if (type === 'SELL') return `<span class="badge badge-sell">SELL</span>`;
-        if (type === 'DEPOSIT') return `<span class="badge badge-buy">DEPOSIT</span>`;
-        if (type === 'WITHDRAWAL') return `<span class="badge badge-sell">WITHDRAWAL</span>`;
+        if (type === 'BUY')        return `<span class="badge badge-buy">BUY</span>`;
+        if (type === 'SELL')       return `<span class="badge badge-sell">SELL</span>`;
+        if (type === 'DEPOSIT')    return `<span class="badge badge-deposit">DEPOSIT</span>`;
+        if (type === 'WITHDRAWAL') return `<span class="badge badge-withdrawal">WITHDRAWAL</span>`;
         return `<span class="badge badge-other">${type}</span>`;
     }
 
-    function setFilter(f) {
+    function setFilter(f, event) {
         currentFilter = f;
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
@@ -190,12 +177,8 @@
     }
 
     function sortBy(key) {
-        if (sortKey === key) {
-            sortDir *= -1;
-        } else {
-            sortKey = key;
-            sortDir = 1;
-        }
+        if (sortKey === key) sortDir *= -1;
+        else { sortKey = key; sortDir = 1; }
         document.querySelectorAll('.sort-icon').forEach(i => i.textContent = '↕');
         document.getElementById('sort-' + key).textContent = sortDir === 1 ? '↑' : '↓';
         render();
@@ -205,11 +188,7 @@
         let data = [...raw];
 
         if (currentFilter !== 'ALL') {
-            if (currentFilter === 'OTHER') {
-                data = data.filter(t => t.type !== 'BUY' && t.type !== 'SELL');
-            } else {
-                data = data.filter(t => t.type === currentFilter);
-            }
+            data = data.filter(t => t.type === currentFilter);
         }
 
         if (currentSearch) {
@@ -217,8 +196,15 @@
         }
 
         data.sort((a, b) => {
-            let va = sortKey === 'amount' ? a.amount : (a[sortKey] || '');
-            let vb = sortKey === 'amount' ? b.amount : (b[sortKey] || '');
+            let va, vb;
+            if (sortKey === 'amount') {
+                va = a.amount; vb = b.amount;
+            } else if (sortKey === 'balanceAfter') {
+                va = a.balanceAfter === '—' ? -Infinity : parseFloat(a.balanceAfter);
+                vb = b.balanceAfter === '—' ? -Infinity : parseFloat(b.balanceAfter);
+            } else {
+                va = a[sortKey] || ''; vb = b[sortKey] || '';
+            }
             if (va < vb) return -1 * sortDir;
             if (va > vb) return 1 * sortDir;
             return 0;
@@ -237,6 +223,9 @@
                 <div style="flex:2"><span class="ticker">${t.ticker || '—'}</span></div>
                 <div style="flex:2"><span class="meta">${t.timestamp}</span></div>
                 <div style="flex:1;text-align:right"><span class="value">£${t.amount.toFixed(2)}</span></div>
+                <div style="flex:1;text-align:right">
+                    <span class="meta">${t.balanceAfter === '—' ? '—' : '£' + parseFloat(t.balanceAfter).toFixed(2)}</span>
+                </div>
             </div>
         `).join('');
     }
