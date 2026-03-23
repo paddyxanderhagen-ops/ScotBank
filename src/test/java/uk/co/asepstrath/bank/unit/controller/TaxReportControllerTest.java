@@ -1,4 +1,4 @@
-package uk.co.asepstrath.bank.controller;
+package uk.co.asepstrath.bank.unit.controller;
 
 import io.jooby.Context;
 import io.jooby.ModelAndView;
@@ -7,6 +7,7 @@ import io.jooby.value.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import uk.co.asepstrath.bank.controller.TaxReportController;
 import uk.co.asepstrath.bank.model.TaxReport;
 import uk.co.asepstrath.bank.service.AnalyticsService;
 

@@ -8,13 +8,18 @@ import io.jooby.hikari.HikariModule;
 import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
 import uk.co.asepstrath.bank.controller.*;
-import uk.co.asepstrath.bank.model.*;
+import uk.co.asepstrath.bank.model.Equity;
+import uk.co.asepstrath.bank.model.Etf;
+import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.repository.*;
 import uk.co.asepstrath.bank.service.*;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class App extends Jooby {
@@ -84,7 +89,7 @@ public class App extends Jooby {
         mvc(new AnalyticsController_(analyticsService, authorisation, api, priceRepo));
         mvc(new LoginController_());
         mvc(new TransactionController_(transactionService, authorisation));
-        mvc(new InvestmentController_(instrumentService, priceService));
+        mvc(new InstrumentController_(instrumentService, priceService));
         mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds));
         mvc(new TaxReportController_(analyticsService));
 
@@ -112,13 +117,6 @@ public class App extends Jooby {
 
             transactionRepo.saveAll(transactions);
 
-            Set<String> tickers = new HashSet<>();
-            for (Transaction t : transactions) {
-                if (t.getTicker() != null && !t.getTicker().isBlank()) {
-                    tickers.add(t.getTicker());
-                }
-            }
-
             List<Equity> equities = api.getAllEquities().getEquities();
             List<Etf> etfs = api.getAllEtf().getEtfs();
 
@@ -130,11 +128,11 @@ public class App extends Jooby {
 
 
             for (Equity equity : equities) {
-                List<Price> prices = api.getAllPrices(equity.getTicker(), priceRepo, token).getPrices();
+                api.getAllPrices(equity.getTicker(), priceRepo, token);
             }
 
             for (Etf etf : etfs) {
-                List<Price> prices = api.getAllPrices(etf.getTicker(), priceRepo, token).getPrices();
+                api.getAllPrices(etf.getTicker(), priceRepo, token);
             }
 
 

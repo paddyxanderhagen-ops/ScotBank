@@ -16,26 +16,26 @@ public class InstrumentRepository {
 
     private DataSource ds;
 
-    public InstrumentRepository (DataSource ds) {
+    public InstrumentRepository(DataSource ds) {
         this.ds = ds;
     }
 
     public void setUp() throws SQLException {
         try (Connection conn = ds.getConnection();
-             Statement stmt = conn.createStatement())  {
+             Statement stmt = conn.createStatement()) {
 
             stmt.execute("""
-                CREATE TABLE IF NOT EXISTS instrument (
-                    ticker VARCHAR(20) PRIMARY KEY,
-                    name VARCHAR(100),
-                    type VARCHAR(10),
+                        CREATE TABLE IF NOT EXISTS instrument (
+                            ticker VARCHAR(20) PRIMARY KEY,
+                            name VARCHAR(100),
+                            type VARCHAR(10),
                     
-                    sector VARCHAR(50),
+                            sector VARCHAR(50),
                     
-                    description VARCHAR(500),
-                    inception_date VARCHAR(20)
-                )
-            """);
+                            description VARCHAR(500),
+                            inception_date VARCHAR(20)
+                        )
+                    """);
 
         }
     }
@@ -79,7 +79,7 @@ public class InstrumentRepository {
         }
     }
 
-    public Instrument getInstrument(String ticker) throws SQLException{
+    public Instrument getInstrument(String ticker) throws SQLException {
         String sql = """
                 SELECT i.*, c.equity_ticker as constituent_ticker, c.weight
                 FROM instrument i
@@ -98,7 +98,7 @@ public class InstrumentRepository {
             ResultSet rs = ps.executeQuery();
             List<Constituent> constituents = new ArrayList<>();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 String type = rs.getString("type");
 
                 if (type.equalsIgnoreCase("equity")) {
@@ -115,7 +115,7 @@ public class InstrumentRepository {
         return instrument;
     }
 
-    public List<Instrument> getAll() throws SQLException{
+    public List<Instrument> getAll() throws SQLException {
         String sql = """
                 SELECT i.*, c.equity_ticker as constituent_ticker, c.weight
                 FROM instrument i
@@ -129,7 +129,7 @@ public class InstrumentRepository {
 
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 Instrument instrument = null;
                 String type = rs.getString("type");
                 if (type.equalsIgnoreCase("equity")) {

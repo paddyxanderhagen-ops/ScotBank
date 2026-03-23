@@ -13,8 +13,8 @@ import javax.sql.DataSource;
 public class CashAccountController {
     private final InvestorService investorService;
     private final DataSource ds;
-    private CashAccountImplementation account;
     private final TransactionService transactionService;
+    private CashAccountImplementation account;
 
     public CashAccountController(InvestorService investorService, DataSource ds, TransactionService transactionService) {
         this.investorService = investorService;

@@ -50,7 +50,6 @@ public class AnalyticsController {
         List<Position> positions = analyticsService.getPositions(id);
 
 
-
         positions.sort(Comparator.comparingDouble(Position::getPnl).reversed());
 
         double totalValue = positions.stream().mapToDouble(Position::getCurrentValue).sum();

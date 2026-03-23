@@ -16,7 +16,7 @@ class EtfTest {
 
     @BeforeEach
     void setup() {
-        e = new Etf("Penguin", "PNGN", "Booksellers", "20-04-26", a);
+        e = new Etf("PNGN", "Penguin", "Booksellers", "20-04-26", a);
     }
 
     @Test

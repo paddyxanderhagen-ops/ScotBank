@@ -12,7 +12,7 @@ class EquityTest {
 
     @BeforeEach
     void setup() {
-        e = new Equity("Mocha Joes", "MCJO", "COFFEE");
+        e = new Equity("MCJO", "Mocha Joes", "COFFEE");
     }
 
     @Test

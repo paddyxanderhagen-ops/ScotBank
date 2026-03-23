@@ -13,20 +13,20 @@ import uk.co.asepstrath.bank.service.PriceService;
 import java.util.HashMap;
 import java.util.Map;
 
-@Path("/investments")
-public class InvestmentController {
+@Path("/instruments")
+public class InstrumentController {
 
     private final PriceService priceService;
     private final InstrumentService instrumentService;
 
-    public InvestmentController(InstrumentService instrumentService, PriceService priceService) {
+    public InstrumentController(InstrumentService instrumentService, PriceService priceService) {
         this.instrumentService = instrumentService;
         this.priceService = priceService;
     }
 
     @GET("")
     public ModelAndView<Map<String, Object>> investmentPage() {
-        return new ModelAndView<>("investments.hbs", new HashMap<>());
+        return new ModelAndView<>("instruments.hbs", new HashMap<>());
     }
 
     @GET("/search")

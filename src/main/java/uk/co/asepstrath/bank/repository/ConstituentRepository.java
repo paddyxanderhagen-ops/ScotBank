@@ -4,8 +4,10 @@ import uk.co.asepstrath.bank.model.Constituent;
 import uk.co.asepstrath.bank.model.Etf;
 
 import javax.sql.DataSource;
-import java.sql.*;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public class ConstituentRepository {
@@ -56,29 +58,6 @@ public class ConstituentRepository {
 
             ps.executeBatch();
             conn.commit();
-        }
-    }
-
-    public List<Constituent> getByEtf(String ticker) throws SQLException {
-        String sql = """
-                SELECT equity_ticker, weight FROM constituents
-                WHERE etf_ticker = ?
-                """;
-
-        try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, ticker);
-
-            ResultSet rs = ps.executeQuery();
-
-            List<Constituent> constituents = new ArrayList<>();
-
-            while (rs.next()) {
-                constituents.add(new Constituent(rs.getString("equity_ticker"), rs.getDouble("weight")));
-            }
-
-            return constituents;
         }
     }
 }

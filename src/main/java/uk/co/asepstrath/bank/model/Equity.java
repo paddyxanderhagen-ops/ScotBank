@@ -1,6 +1,6 @@
 package uk.co.asepstrath.bank.model;
 
-public class Equity extends Instrument{
+public class Equity extends Instrument {
     private String sector;
 
     public Equity(String ticker, String name, String sector) {

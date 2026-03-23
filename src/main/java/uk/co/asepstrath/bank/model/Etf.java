@@ -3,7 +3,7 @@ package uk.co.asepstrath.bank.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Etf extends Instrument{
+public class Etf extends Instrument {
     private String description;
     private String inceptionDate;
     private List<Constituent> constituents;

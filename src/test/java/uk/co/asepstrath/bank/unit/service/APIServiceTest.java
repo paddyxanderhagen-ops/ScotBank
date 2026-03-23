@@ -196,7 +196,9 @@ public class APIServiceTest {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
             PriceRepository repo = mock(PriceRepository.class);
+            APIService service = new APIService();
 
+            String token = service.loadToken();
 
             String page1 = """
                     {
@@ -209,10 +211,10 @@ public class APIServiceTest {
                         "pagination": {
                             "pageSize": 1,
                             "returnedCount": 1,
-                            "nextToken": "1"
+                            "nextToken": "%s"
                         }
                     }
-                    """;
+                    """.formatted(token);
 
             String page2 = """
                     {
@@ -235,7 +237,6 @@ public class APIServiceTest {
             when(request.asString()).thenReturn(response);
             when(response.getBody()).thenReturn(page1, page2);
 
-            APIService service = new APIService();
             PriceDTO results = service.getAllPrices("AAPL", repo, "0");
 
 
@@ -312,6 +313,10 @@ public class APIServiceTest {
             HttpResponse<String> response = mock(HttpResponse.class);
             PriceRepository repo = mock(PriceRepository.class);
 
+            APIService service = new APIService();
+
+            String token = service.loadToken();
+
 
             String json = """
                     {
@@ -324,10 +329,10 @@ public class APIServiceTest {
                         "pagination": {
                             "pageSize": 1,
                             "returnedCount": 1,
-                            "nextToken": "1"
+                            "nextToken": "%s"
                         }
                     }
-                    """;
+                    """.formatted(token);
 
             unirest.when(() -> Unirest.get(anyString())).thenReturn(request);
             when(request.accept("application/json")).thenReturn(request);
@@ -335,7 +340,6 @@ public class APIServiceTest {
             when(response.getBody()).thenReturn(json);
             doThrow(new SQLException()).when(repo).saveAll(anyString(), anyList());
 
-            APIService service = new APIService();
 
             StatusCodeException ex = assertThrows(StatusCodeException.class, () -> service.getAllPrices("x", repo, "1"));
 

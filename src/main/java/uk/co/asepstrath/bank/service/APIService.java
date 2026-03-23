@@ -88,16 +88,15 @@ public class APIService {
                 throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to save prices" + e);
             }
 
-
             nextToken = priceDTO.getPages().getNextToken();
 
             url = new StringBuilder("https://api.asep-strath.co.uk/api/");
         }
 
+
         priceDTO.setPrices(prices);
 
         saveToken(prevTok);
-
         return priceDTO;
     }
 

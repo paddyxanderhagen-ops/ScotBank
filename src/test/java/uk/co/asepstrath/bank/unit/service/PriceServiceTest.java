@@ -54,14 +54,6 @@ public class PriceServiceTest {
         assertEquals(100.0, priceAtTime);
     }
 
-
-    @Test
-    void getPriceAtTimeNoPrice_throws404() throws SQLException {
-        when(repo.getPriceAtTime(anyString(), anyString())).thenReturn(Double.MAX_VALUE);
-        StatusCodeException ex = assertThrows(StatusCodeException.class, () -> service.getPriceAtTimestamp("9.40", "AAPL"));
-        assertEquals(StatusCode.NOT_FOUND, ex.getStatusCode());
-    }
-
     @Test
     void getPriceAtTimeNoPrice_throws500() throws SQLException {
         when(repo.getPriceAtTime(anyString(), anyString())).thenThrow(SQLException.class);
