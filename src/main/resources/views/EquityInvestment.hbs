@@ -68,7 +68,7 @@
         }
         .login-btn:hover{
             background:var(--blue-dark);
-            color:(--blue-dark);
+            color: white;
         }
         .button-wrapper{
             display:inline-block;
@@ -84,28 +84,29 @@
 
 {{>partials/navbar.hbs}}
 <div class="button-wrapper">
-<form class="login-card" action="/Investments" method="get">
-<button
+    <form class="login-card" action="/investments" method="get">
+        <button
                 type="submit"
                 class="btn login-btn w-100">
 
             Return
-  </button>
-
+        </button>
+    </form>
 </div>
 <main class="page-wrapper">
 
-    <h3 class="mb-4">Information for investment {{ticker}}</h3>
+    <div class="bg-white border rounded-4 p-4">
+        <h3 class="mb-4">Information for equity {{ticker}}</h3>
 
-    {{#with equity}}
+        {{#with equity}}
 
-    <p>name: {{name}}</p>
-    <p>ticker: {{ticker}}</p>
-    <p>sector: {{sector}}</p>
-    <p>latest price: {{price}}</p>
+            <p>Name: {{name}}</p>
+            <p>Ticker: {{ticker}}</p>
+            <p>Sector: {{sector}}</p>
+            <p>Latest price: {{price}}</p>
 
-    {{/with}}
-
+        {{/with}}
+    </div>
 </main>
 
 </body>

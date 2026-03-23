@@ -87,33 +87,32 @@
 
 {{>partials/navbar.hbs}}
 <div class="button-wrapper">
-<form class="login-card" action="/Investments" method="get">
-<button
-                type="submit"
-                class="btn login-btn w-100">
+        <button
+                type="button"
+                class="btn login-btn w-100" onclick="window.location.href = '/investments'">
 
             Return
-  </button>
-
+        </button>
 </div>
 <main class="page-wrapper">
 
-    <h3 class="mb-4">Information for investment {{ticker}}</h3>
+    <div class="bg-white border rounded-4 p-4">
+        <h3 class="mb-4">Information for ETF {{ticker}}</h3>
 
-    {{#with etf}}
 
-    <p>name: {{name}}</p>
-    <p>ticker: {{ticker}}</p>
-    <p>description: {{description}}</p>
-    <p>inception Date: {{inceptionDate}}</p>
-    <p>latest price: {{price}}</p>
-    <p>constituents: </p>
-    {{#each constituents}}
-    <li class = "list">ticker: {{ticker}}</li>
-    <li class = "list">weight: {{weight}}</li>
-    {{/each}}
-    {{/with}}
+        {{#with etf}}
 
+            <p>Name: {{name}}</p>
+            <p>Ticker: {{ticker}}</p>
+            <p>Description: {{description}}</p>
+            <p>Inception Date: {{inceptionDate}}</p>
+            <p>Latest price: {{price}}</p>
+            <p>Constituents: </p>
+            {{#each constituents}}
+                <li class="list">Ticker: {{ticker}} Weight: {{weight}}</li>
+            {{/each}}
+        {{/with}}
+    </div>
 </main>
 
 </body>

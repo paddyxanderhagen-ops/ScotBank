@@ -1,6 +1,5 @@
 package uk.co.asepstrath.bank.service;
 
-import uk.co.asepstrath.bank.controller.EtfController;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
 
@@ -8,8 +7,10 @@ import java.util.List;
 
 public class InvestmentService {
     private EquityService equityService;
-    public InvestmentService(EquityService equityService) {
+    private EtfService etfService;
+    public InvestmentService(EquityService equityService, EtfService etfService) {
         this.equityService = equityService;
+        this.etfService = etfService;
     }
 
     public Equity getEquity(String ticker){
@@ -17,7 +18,6 @@ public class InvestmentService {
     }
 
     public Etf getEtf(String ticker){
-        EtfController etfController = new EtfController();
-        return etfController.Etf(ticker);
+        return etfService.getEtf(ticker);
     }
 }

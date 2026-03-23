@@ -2,7 +2,7 @@ package uk.co.asepstrath.bank.unit.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.Constituents;
+import uk.co.asepstrath.bank.model.Constituent;
 import uk.co.asepstrath.bank.model.Etf;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EtfTest {
 
     Etf e;
-    ArrayList<Constituents> a = new ArrayList<Constituents>();
+    ArrayList<Constituent> a = new ArrayList<Constituent>();
 
     @BeforeEach
     void setup(){
@@ -89,7 +89,7 @@ class EtfTest {
 
     @Test
     void setConstituents() {
-        a.add(new Constituents());
+        a.add(new Constituent());
         e.setConstituents(a);
         assertEquals(1,e.getConstituents().size());
     }

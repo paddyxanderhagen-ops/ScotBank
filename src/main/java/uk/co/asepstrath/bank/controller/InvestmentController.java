@@ -5,19 +5,22 @@ import io.jooby.annotation.*;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
 import uk.co.asepstrath.bank.service.EquityService;
+import uk.co.asepstrath.bank.service.EtfService;
 import uk.co.asepstrath.bank.service.InvestmentService;
 import uk.co.asepstrath.bank.service.PriceService;
 import java.util.HashMap;
 import java.util.Map;
 
-@Path("/Investments")
+@Path("/investments")
 public class InvestmentController {
 
     private PriceService priceService;
     private EquityService equityService;
+    private EtfService etfService;
 
-    public InvestmentController(EquityService equityService, PriceService priceService) {
+    public InvestmentController(EquityService equityService, PriceService priceService, EtfService etfService) {
         this.equityService = equityService;
+        this.etfService = etfService;
         this.priceService = priceService;
     }
 
@@ -26,9 +29,9 @@ public class InvestmentController {
         return new ModelAndView<>("investments.hbs", new HashMap<>());
     }
 
-    @GET("/Search")
+    @GET("/search")
     public ModelAndView<Map<String, Object>> investmentPage (@QueryParam String ticker) {
-        InvestmentService investmentService = new InvestmentService(equityService);
+        InvestmentService investmentService = new InvestmentService(equityService, etfService);
         ModelAndView<Map<String, Object>> model;
             try {
                 Equity equity = investmentService.getEquity(ticker);

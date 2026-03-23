@@ -2,7 +2,7 @@ package uk.co.asepstrath.bank.unit.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.Constituents;
+import uk.co.asepstrath.bank.model.Constituent;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
 import uk.co.asepstrath.bank.repository.EquityRepository;
@@ -42,7 +42,7 @@ public class EquityRepositoryTest {
 
     @Test
     void saveAll() throws SQLException {
-        repo.saveAll(List.of(new Equity("Apple", "AAPL", "Technology")), List.of(new Etf("Apples", "AAPLS", "Apple but plural", "20-03-2026", List.of(new Constituents("AAPL", 0.5), new Constituents("BBPL", 0.5)))));
+        repo.saveAll(List.of(new Equity("Apple", "AAPL", "Technology")), List.of(new Etf("Apples", "AAPLS", "Apple but plural", "20-03-2026", List.of(new Constituent("AAPL", 0.5), new Constituent("BBPL", 0.5)))));
         verify(ps, times(1)).setString(1, "AAPL");
         verify(ps, times(1)).setString(2, "Apple");
         verify(ps, times(1)).setString(3, "Technology");
@@ -56,12 +56,12 @@ public class EquityRepositoryTest {
     @Test
     void saveAll_connectionFails() throws SQLException {
         when(ds.getConnection()).thenThrow(new SQLException("Connection Failed"));
-        assertThrows(SQLException.class, () -> repo.saveAll(List.of(new Equity("Apple", "AAPL", "Technology")), List.of(new Etf("Apples", "AAPLS", "Apple but plural", "20-03-2026", List.of(new Constituents("AAPL", 0.5), new Constituents("BBPL", 0.5))))));
+        assertThrows(SQLException.class, () -> repo.saveAll(List.of(new Equity("Apple", "AAPL", "Technology")), List.of(new Etf("Apples", "AAPLS", "Apple but plural", "20-03-2026", List.of(new Constituent("AAPL", 0.5), new Constituent("BBPL", 0.5))))));
     }
 
     @Test
     void saveAll_equitiesNull() throws SQLException {
-        repo.saveAll(null, List.of(new Etf("Apples", "AAPLS", "Apple but plural", "20-03-2026", List.of(new Constituents("AAPL", 0.5), new Constituents("BBPL", 0.5)))));
+        repo.saveAll(null, List.of(new Etf("Apples", "AAPLS", "Apple but plural", "20-03-2026", List.of(new Constituent("AAPL", 0.5), new Constituent("BBPL", 0.5)))));
 
         verify(ps, never()).setString(1, "AAPL");
         verify(ps, never()).setString(1, "BBPL");
