@@ -91,9 +91,8 @@ public class HomeController {
         }
 
         Investor investor = investorService.getInvestor(id);
-        authorisation = new Authorisation(investor);
 
-        if (!authorisation.isAuthorised()) {
+        if (!authorisation.isAuthorised(id)) {
             ctx.sendRedirect("/login");
             return null;
         }

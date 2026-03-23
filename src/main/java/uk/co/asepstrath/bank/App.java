@@ -92,7 +92,7 @@ public class App extends Jooby {
         });
 
         mvc(new HomeController_(investorService, ds, transactionService, authorisation));
-        mvc(new CashAccountController_(investorService, ds));
+        mvc(new CashAccountController_(investorService, ds, transactionService));
         mvc(new AnalyticsController_(analyticsService, authorisation, api, priceRepo));
         mvc(new LoginController_());
         mvc(new TransactionController_(transactionService, authorisation));
