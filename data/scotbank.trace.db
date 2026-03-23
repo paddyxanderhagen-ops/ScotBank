@@ -5454,3 +5454,6 @@ SELECT * FROM prices WHERE ticker = 'GMX150' ORDER BY timestamp DSC [42102-224]
 2026-03-20 17:37:25.706006Z jdbc[131]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM price WHERE ticker = 'GMX150' ORDER BY timestamp [*]DSC"; SQL statement:
 SELECT * FROM price WHERE ticker = 'GMX150' ORDER BY timestamp DSC [42000-224]
+2026-03-21 17:00:14.077292Z jdbc[67]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT UNIQUE [*]INVESTOR_ID FROM TRANSACTION WHERE TYPE = 'SELL'"; expected "NULLS, ("; SQL statement:
+SELECT UNIQUE INVESTOR_ID FROM TRANSACTION WHERE TYPE = 'SELL' [42001-224]

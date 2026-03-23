@@ -9,9 +9,8 @@ import io.jooby.annotation.QueryParam;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.service.TransactionService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Path("/transactions")
 public class TransactionController {
@@ -41,20 +40,43 @@ public class TransactionController {
 
 
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
+
+        List<Transaction> sorted = transactions.stream()
+                .sorted(Comparator.comparing(Transaction::getTimestamp))
+                .collect(Collectors.toList());
+
+        double runningBalance = 0;
+        double totalDeposits = 0;
+        double totalWithdrawals = 0;
+        List<Map<String, Object>> enriched = new ArrayList<>();
+
+        for (Transaction t : sorted) {
+            String balanceAfterStr = "—";
+
+            if (t.getType().equals("DEPOSIT")) {
+                runningBalance += t.getTotalCashAmount();
+                totalDeposits += t.getTotalCashAmount();
+                balanceAfterStr = String.valueOf(Math.round(runningBalance * 100.0) / 100.0);
+            } else if (t.getType().equals("WITHDRAWAL")) {
+                runningBalance -= t.getTotalCashAmount();
+                totalWithdrawals += t.getTotalCashAmount();
+                balanceAfterStr = String.valueOf(Math.round(runningBalance * 100.0) / 100.0);
+            }
+
+            Map<String, Object> row = new HashMap<>();
+            row.put("timestamp", t.getTimestamp());
+            row.put("type", t.getType());
+            row.put("ticker", t.getTicker() != null ? t.getTicker() : "");
+            row.put("amount", t.getTotalCashAmount());
+            row.put("balanceAfter", balanceAfterStr);
+            enriched.add(row);
+        }
+
         Map<String, Object> model = new HashMap<>();
-        model.put("transactions", transactions);
+        model.put("transactions", enriched);
+        model.put("totalDeposits", Math.round(totalDeposits * 100.0) / 100.0);
+        model.put("totalWithdrawals", Math.round(totalWithdrawals * 100.0) / 100.0);
         model.put("investorId", id);
         return new ModelAndView<>("transactions.hbs", model);
     }
-
-//    @GET("/Shares")
-//    public HashMap<String, BigDecimal> investor(@QueryParam String id){
-//        return (transactionService.getShares(id));
-//    }
-
-//    @GET("/Shares/Value")
-//    public BigDecimal value(@QueryParam String id){
-//
-//        return transactionService.getValueOfShares(investorId, transactionList);
-//    }
 }
