@@ -2,9 +2,7 @@ package uk.co.asepstrath.bank.unit.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.Constituent;
 import uk.co.asepstrath.bank.model.Equity;
-import uk.co.asepstrath.bank.model.Etf;
 import uk.co.asepstrath.bank.repository.EquityRepository;
 
 import javax.sql.DataSource;
@@ -66,7 +64,6 @@ public class EquityRepositoryTest {
 
         verify(ps, times(0)).addBatch();
     }
-
 
 
     @Test

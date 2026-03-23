@@ -1,11 +1,11 @@
 package uk.co.asepstrath.bank.model;
 
 public class TaxSaleLine {
-    private String ticker;
-    private String timestamp;
-    private double proceeds;
-    private double costBasis;
-    private double gainLoss;
+    private final String ticker;
+    private final String timestamp;
+    private final double proceeds;
+    private final double costBasis;
+    private final double gainLoss;
 
     public TaxSaleLine(String ticker, String timestamp, double proceeds, double costBasis) {
         this.ticker = ticker;
@@ -15,9 +15,23 @@ public class TaxSaleLine {
         this.gainLoss = Math.round((proceeds - costBasis) * 100.0) / 100.0;
     }
 
-    public String getTicker() { return ticker; }
-    public String getTimestamp() { return timestamp; }
-    public double getProceeds() { return proceeds; }
-    public double getCostBasis() { return costBasis; }
-    public double getGainLoss() { return gainLoss; }
+    public String getTicker() {
+        return ticker;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public double getProceeds() {
+        return proceeds;
+    }
+
+    public double getCostBasis() {
+        return costBasis;
+    }
+
+    public double getGainLoss() {
+        return gainLoss;
+    }
 }

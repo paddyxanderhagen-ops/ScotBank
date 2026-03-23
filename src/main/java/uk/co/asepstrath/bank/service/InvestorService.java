@@ -18,9 +18,6 @@ public class InvestorService {
     public Investor getInvestor(String id) {
         try {
             Investor investor = repo.getInvestor(id);
-            if (investor == null) {
-                return null;
-            }
             return investor;
         } catch (SQLException e) {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve investor: " + id);

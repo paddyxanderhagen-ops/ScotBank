@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PriceService {
 
-    private PriceRepository repo;
+    private final PriceRepository repo;
 
     public PriceService(PriceRepository repo) {
         this.repo = repo;

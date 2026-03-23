@@ -10,9 +10,9 @@ import java.util.List;
 
 public class EquityService {
 
-    private EquityRepository repo;
+    private final EquityRepository repo;
 
-    public EquityService (EquityRepository repo) {
+    public EquityService(EquityRepository repo) {
         this.repo = repo;
     }
 

@@ -7,10 +7,10 @@ import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
+import uk.co.asepstrath.bank.controller.*;
 import uk.co.asepstrath.bank.model.*;
 import uk.co.asepstrath.bank.repository.*;
 import uk.co.asepstrath.bank.service.*;
-import uk.co.asepstrath.bank.controller.*;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -20,29 +20,21 @@ import java.util.*;
 public class App extends Jooby {
 
     private final APIService api;
-    private Authorisation authorisation;
-
-    private InvestorRepository investorRepo;
-    private InvestorService investorService;
-
-    private TransactionRepository transactionRepo;
-    private TransactionService transactionService;
-
-    private AnalyticsService analyticsService;
-
-    private PriceRepository priceRepo;
-    private PriceService priceService;
-
-    private EquityRepository equitiesRepo;
-    private EquityService equityService;
-
-    private EtfService etfService;
-    private EtfRepository etfRepo;
-
-    private ConstituentRepository constituentRepository;
-
     private final DataSource ds;
-    private Logger log;
+    private final Authorisation authorisation;
+    private final InvestorRepository investorRepo;
+    private final InvestorService investorService;
+    private final TransactionRepository transactionRepo;
+    private final TransactionService transactionService;
+    private final AnalyticsService analyticsService;
+    private final PriceRepository priceRepo;
+    private final PriceService priceService;
+    private final EquityRepository equitiesRepo;
+    private final EquityService equityService;
+    private final EtfService etfService;
+    private final EtfRepository etfRepo;
+    private final ConstituentRepository constituentRepository;
+    private final Logger log;
 
     {
         /*
@@ -75,7 +67,7 @@ public class App extends Jooby {
         log = getLog();
 
         assets("/assets/**", "/assets");
-        assets("/service_worker.js","/service_worker.js");
+        assets("/service_worker.js", "/service_worker.js");
 
         error((ctx, cause, code) -> {
             ctx.setResponseCode(code);
@@ -112,7 +104,7 @@ public class App extends Jooby {
         }
 
         try {
-            List <Investor> investors = api.getAllInvestor().getInvestors();
+            List<Investor> investors = api.getAllInvestor().getInvestors();
 
             investorRepo.saveAll(investors);
         } catch (SQLException e) {
@@ -149,7 +141,6 @@ public class App extends Jooby {
             for (Etf etf : etfs) {
                 List<Price> prices = api.getAllPrices(etf.getTicker(), priceRepo, token).getPrices();
             }
-
 
 
         } catch (Exception e) {

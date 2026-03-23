@@ -6,18 +6,17 @@ import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.repository.TransactionRepository;
 
 import java.sql.SQLException;
-import java.sql.Time;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class TransactionService {
 
-    private TransactionRepository repo;
+    private final TransactionRepository repo;
 
 
     public TransactionService(TransactionRepository repo) {

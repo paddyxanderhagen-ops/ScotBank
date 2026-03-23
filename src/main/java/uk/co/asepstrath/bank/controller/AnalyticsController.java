@@ -11,7 +11,6 @@ import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 import uk.co.asepstrath.bank.service.APIService;
 import uk.co.asepstrath.bank.service.AnalyticsService;
-import uk.co.asepstrath.bank.service.PriceService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,10 +18,10 @@ import java.util.stream.Collectors;
 @Path("/analytics")
 public class AnalyticsController {
 
-    private AnalyticsService analyticsService;
-    private Authorisation authorisation;
-    private APIService apiService;
-    private PriceRepository priceRepository;
+    private final AnalyticsService analyticsService;
+    private final Authorisation authorisation;
+    private final APIService apiService;
+    private final PriceRepository priceRepository;
 
     public AnalyticsController(AnalyticsService analyticsService, Authorisation authorisation, APIService apiService, PriceRepository priceRepository) {
         this.analyticsService = analyticsService;
@@ -34,7 +33,7 @@ public class AnalyticsController {
 
 
     @GET
-    public ModelAndView<Map<String,Object>> positions(Context ctx) {
+    public ModelAndView<Map<String, Object>> positions(Context ctx) {
         String id = null;
         Session session = null;
         if (ctx != null) {
@@ -58,7 +57,7 @@ public class AnalyticsController {
         double totalRealisedPnl = positions.stream().mapToDouble(Position::getRealisedPnl).sum();
         double totalInvested = positions.stream().mapToDouble(Position::getTotalInvested).sum();
 
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("positions", positions);
         map.put("totalValue", Math.round(totalValue * 100.0) / 100.0);
         map.put("totalPnl", Math.round(totalPnl * 100.0) / 100.0);
@@ -67,8 +66,9 @@ public class AnalyticsController {
 
         return new ModelAndView<>("positions.hbs", map);
     }
+
     @GET("/{ticker}")
-    public ModelAndView<Map<String,Object>> position(Context ctx, @PathParam String ticker) {
+    public ModelAndView<Map<String, Object>> position(Context ctx, @PathParam String ticker) {
         String id = null;
         Session session = null;
         if (ctx != null) {
@@ -84,9 +84,9 @@ public class AnalyticsController {
 
         String investorId = ctx.session().get("id").value();
         Position position = analyticsService.getPosition(ticker, investorId);
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("position", position);
-        return new ModelAndView<>("position.hbs",map);
+        return new ModelAndView<>("position.hbs", map);
     }
 
     @POST("/refresh")

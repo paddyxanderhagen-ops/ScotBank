@@ -2,16 +2,14 @@ package uk.co.asepstrath.bank.service;
 
 import io.jooby.StatusCode;
 import io.jooby.exception.StatusCodeException;
-import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
-import uk.co.asepstrath.bank.repository.EquityRepository;
 import uk.co.asepstrath.bank.repository.EtfRepository;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class EtfService {
-    private EtfRepository repo;
+    private final EtfRepository repo;
 
     public EtfService(EtfRepository repo) {
         this.repo = repo;

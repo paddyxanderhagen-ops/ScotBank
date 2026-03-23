@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 
 public class AnalyticsService {
 
-    private TransactionService transactionService;
-    private PriceService priceService;
+    private final TransactionService transactionService;
+    private final PriceService priceService;
 
-    public AnalyticsService (TransactionService transactionService, PriceService priceService) {
+    public AnalyticsService(TransactionService transactionService, PriceService priceService) {
         this.transactionService = transactionService;
         this.priceService = priceService;
     }
@@ -49,7 +49,7 @@ public class AnalyticsService {
     }
 
     public Position getPosition(String ticker, String investorId) {
-        List <Position> positions = getPositions(investorId);
+        List<Position> positions = getPositions(investorId);
         for (Position p : positions) {
             if (p.getTicker().equals(ticker)) {
                 return p;
@@ -64,7 +64,6 @@ public class AnalyticsService {
         double buyShares = 0;
         double realisedPnl = 0;
         double avgBuyPrice = 0;
-
 
 
         for (Transaction t : transactions) {
@@ -91,7 +90,7 @@ public class AnalyticsService {
         double costBasis = avgBuyPrice * shares;
         double currentValue = currPrice * shares;
 
-        return new Position (
+        return new Position(
                 ticker,
                 shares,
                 currPrice,
@@ -102,6 +101,7 @@ public class AnalyticsService {
                 totalBuyValue
         );
     }
+
     public TaxReport getTaxReport(String investorId, int year) {
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(investorId);
 

@@ -5,7 +5,6 @@ import io.jooby.ModelAndView;
 import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
-import io.jooby.annotation.PathParam;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
@@ -22,9 +21,9 @@ import java.util.Map;
 public class HomeController {
 
     private final InvestorService investorService;
-    private Authorisation authorisation;
     private final DataSource ds;
     private final TransactionService transactionService;
+    private final Authorisation authorisation;
 
     public HomeController(InvestorService investorService, DataSource ds, TransactionService transactionService, Authorisation authorisation) {
         this.investorService = investorService;
@@ -34,7 +33,7 @@ public class HomeController {
     }
 
     @GET("/")
-    public ModelAndView<Map<String, Object>> landingPage (Context ctx) {
+    public ModelAndView<Map<String, Object>> landingPage(Context ctx) {
         if (ctx != null) {
             Session session = ctx.session();
             session.put("id", "");

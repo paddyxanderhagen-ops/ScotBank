@@ -18,7 +18,7 @@ public class Etf {
         this.constituents = constituents;
     }
 
-    public Etf(){
+    public Etf() {
         name = "";
         ticker = "";
         description = "";

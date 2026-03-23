@@ -6,7 +6,7 @@ import uk.co.asepstrath.bank.service.InvestorService;
 
 public class Authorisation {
 
-    private InvestorRepository repo;
+    private final InvestorRepository repo;
 
     public Authorisation(InvestorRepository repo) {
         this.repo = repo;

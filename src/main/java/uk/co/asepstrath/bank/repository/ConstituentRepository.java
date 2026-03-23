@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ConstituentRepository {
 
-    private DataSource ds;
+    private final DataSource ds;
 
 
     public ConstituentRepository(DataSource ds) {
@@ -59,7 +59,7 @@ public class ConstituentRepository {
         }
     }
 
-    public List<Constituent> getByEtf(String ticker) throws SQLException{
+    public List<Constituent> getByEtf(String ticker) throws SQLException {
         String sql = """
                 SELECT equity_ticker, weight FROM constituents
                 WHERE etf_ticker = ?

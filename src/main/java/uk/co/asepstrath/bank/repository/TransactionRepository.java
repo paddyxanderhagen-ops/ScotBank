@@ -16,7 +16,7 @@ public class TransactionRepository {
         this.ds = ds;
     }
 
-    public void setUp() throws SQLException{
+    public void setUp() throws SQLException {
         try (Connection conn = ds.getConnection();
              Statement stmt = conn.createStatement()) {
 
@@ -109,7 +109,7 @@ public class TransactionRepository {
         return transactions;
     }
 
-    public List<Transaction> getStockTransactionsByInvestor(String id) throws SQLException{
+    public List<Transaction> getStockTransactionsByInvestor(String id) throws SQLException {
         List<Transaction> transactions = new ArrayList<>();
         try (Connection conn = ds.getConnection()) {
             String sql = """

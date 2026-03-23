@@ -8,7 +8,7 @@ import java.util.List;
 public class EtfDTO {
     private List<Etf> etfs;
 
-    public List<Etf> getEtfs () {
+    public List<Etf> getEtfs() {
         return this.etfs;
     }
 }

@@ -10,8 +10,10 @@ import uk.co.asepstrath.bank.repository.InvestorRepository;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CashAccountImplementationTest {
 

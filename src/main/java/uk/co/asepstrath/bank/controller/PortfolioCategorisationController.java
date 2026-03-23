@@ -9,8 +9,8 @@ import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
-import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.service.AnalyticsService;
 import uk.co.asepstrath.bank.service.InvestorService;
 
@@ -23,9 +23,9 @@ import java.util.Map;
 @Path("/")
 public class PortfolioCategorisationController {
 
-    private InvestorService investorService;
-    private AnalyticsService analyticsService;
-    private DataSource ds;
+    private final InvestorService investorService;
+    private final AnalyticsService analyticsService;
+    private final DataSource ds;
 
 
     public PortfolioCategorisationController(InvestorService investorService, AnalyticsService analyticsService, DataSource ds) {

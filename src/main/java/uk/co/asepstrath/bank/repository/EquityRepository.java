@@ -1,7 +1,6 @@
 package uk.co.asepstrath.bank.repository;
 
 import uk.co.asepstrath.bank.model.Equity;
-import uk.co.asepstrath.bank.model.Etf;
 import uk.co.asepstrath.bank.model.dto.EquityDTO;
 
 import javax.sql.DataSource;
@@ -11,7 +10,7 @@ import java.util.List;
 
 public class EquityRepository {
 
-    private DataSource ds;
+    private final DataSource ds;
 
     public EquityRepository(DataSource ds) {
         this.ds = ds;
@@ -43,10 +42,10 @@ public class EquityRepository {
 
             if (equities != null) {
                 for (Equity equity : equities) {
-                        ps.setString(1, equity.getTicker());
-                        ps.setString(2, equity.getName());
-                        ps.setString(3, equity.getSector());
-                        ps.addBatch();
+                    ps.setString(1, equity.getTicker());
+                    ps.setString(2, equity.getName());
+                    ps.setString(3, equity.getSector());
+                    ps.addBatch();
                 }
             }
             ps.executeBatch();

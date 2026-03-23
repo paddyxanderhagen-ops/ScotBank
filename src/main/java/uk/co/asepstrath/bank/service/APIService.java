@@ -18,8 +18,8 @@ import java.util.List;
 
 public class APIService {
 
-    private StringBuilder url;
     private final Gson gson;
+    private StringBuilder url;
 
     public APIService() {
         url = new StringBuilder("https://api.asep-strath.co.uk/api/");
@@ -65,7 +65,7 @@ public class APIService {
         return transactionDTO;
     }
 
-    public PriceDTO getAllPrices (String ticker, PriceRepository repo, String nextToken) {
+    public PriceDTO getAllPrices(String ticker, PriceRepository repo, String nextToken) {
         List<Price> prices = new ArrayList<>();
         PriceDTO priceDTO = new PriceDTO();
         String prevTok = "";

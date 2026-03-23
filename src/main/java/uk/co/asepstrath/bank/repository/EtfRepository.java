@@ -11,8 +11,8 @@ import java.util.List;
 
 public class EtfRepository {
 
-    private DataSource ds;
-    private ConstituentRepository constituentRepository;
+    private final DataSource ds;
+    private final ConstituentRepository constituentRepository;
 
     public EtfRepository(DataSource ds) {
         this.ds = ds;

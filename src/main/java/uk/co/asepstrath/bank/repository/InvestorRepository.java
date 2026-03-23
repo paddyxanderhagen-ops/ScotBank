@@ -47,9 +47,9 @@ public class InvestorRepository {
                     stmt.setString(2, i.getName());
 
                     //round the balance to 2 decimal places
-                        double newBalance = i.getCashBalance();
-                        double roundedUp = BigDecimal.valueOf(newBalance).setScale(2, RoundingMode.FLOOR).doubleValue();
-                        stmt.setDouble(3, roundedUp);
+                    double newBalance = i.getCashBalance();
+                    double roundedUp = BigDecimal.valueOf(newBalance).setScale(2, RoundingMode.FLOOR).doubleValue();
+                    stmt.setDouble(3, roundedUp);
 
                     stmt.addBatch();
                 }

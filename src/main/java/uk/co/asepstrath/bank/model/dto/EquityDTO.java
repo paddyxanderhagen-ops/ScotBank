@@ -7,7 +7,7 @@ import java.util.List;
 public class EquityDTO {
     private List<Equity> assets;
 
-    public List<Equity> getEquities () {
+    public List<Equity> getEquities() {
         return this.assets;
     }
 }
