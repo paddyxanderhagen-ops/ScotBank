@@ -25,7 +25,8 @@ public class CashAccountController {
 
     @POST("/dashboard/transaction/deposit")
     public void deposit(@FormParam double amount, Context ctx) {
-        String id = transaction(ctx);
+        String id = getSession(ctx);
+
         if (account != null) {
             account.deposit(amount);
             transactionService.createTransaction(id, "DEPOSIT", amount);
@@ -34,25 +35,35 @@ public class CashAccountController {
 
     @POST("/dashboard/transaction/withdraw")
     public void withdraw(@FormParam double amount, Context ctx) {
-        String id = transaction(ctx);
+        String id = getSession(ctx);
+
         if (account != null) {
             account.withdraw(amount);
             transactionService.createTransaction(id, "WITHDRAWAL", amount);
         }
     }
 
-    private String transaction(Context ctx) {
-        Session session = null;
-        String id = null;
-        if (ctx != null) {
-            session = ctx.session();
+    private String getSession (Context ctx) {
+        if (ctx == null) {
+            return null;
         }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
-        }
-        Investor investor = investorService.getInvestor(id);
 
-        account = new CashAccountImplementation(investor, ds);
+        Session session = ctx.session();
+
+        String id = null;
+
+        Investor investor = null;
+
+        if (!session.get("id").isMissing()) {
+            id = session.get("id").value();
+            investor = investorService.getInvestor(id);
+            account = new CashAccountImplementation(investor, ds);
+        }
+
+        if (investor == null) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
         return id;
     }
 }

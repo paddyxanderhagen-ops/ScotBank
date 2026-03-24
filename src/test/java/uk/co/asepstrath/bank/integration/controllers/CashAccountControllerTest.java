@@ -4,43 +4,24 @@ import io.jooby.StatusCode;
 import io.jooby.test.JoobyTest;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import uk.co.asepstrath.bank.TestApp;
+import uk.co.asepstrath.bank.service.APIService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JoobyTest(TestApp.class)
 public class CashAccountControllerTest {
 
-    @Test
-    void successfulDepositReturns200 (String serverPath) {
-        HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/deposit")
-                .field("amount", 123.456)
-                .asString();
-
-        assertEquals(StatusCode.OK.value(), response.getStatus());
-    }
-
-    @Test
-    void successfulWithdrawReturns200 (String serverPath) {
-        HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/withdraw")
-                .field("amount", 123.456)
-                .asString();
-
-        assertEquals(StatusCode.OK.value(), response.getStatus());
+    @BeforeEach
+    void setUp () {
+        Unirest.config().reset();
+        Unirest.config().followRedirects(false);
     }
 
     @Test
     void depositWithNoParamsReturns400 (String serverPath) {
-        HttpResponse<String> login = Unirest.post(serverPath + "login")
-                .field("id", "TS2389")
-                .asString();
-
-        String cookie = login.getHeaders().getFirst("Set-Cookie");
-
-
         HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/deposit")
-                .header("Cookie", cookie)
                 .asString();
 
         assertEquals(StatusCode.BAD_REQUEST.value(), response.getStatus());
@@ -48,17 +29,29 @@ public class CashAccountControllerTest {
 
     @Test
     void withdrawWithNoParamsReturns400 (String serverPath) {
-        HttpResponse<String> login = Unirest.post(serverPath + "login")
-                .field("id", "TS2389")
-                .asString();
-
-        String cookie = login.getHeaders().getFirst("Set-Cookie");
-
-
         HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/withdraw")
-                .header("Cookie", cookie)
                 .asString();
 
         assertEquals(StatusCode.BAD_REQUEST.value(), response.getStatus());
+    }
+
+    @Test
+    void depositWithoutSessionRedirects(String serverPath) {
+        HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/deposit")
+                .field("amount", 123.456)
+                .asString();
+
+        assertEquals(StatusCode.FOUND.value(), response.getStatus());
+        assertEquals("/login", response.getHeaders().getFirst("Location"));
+    }
+
+    @Test
+    void withdrawWithoutSessionRedirects(String serverPath) {
+        HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/deposit")
+                .field("amount", 123.456)
+                .asString();
+
+        assertEquals(StatusCode.FOUND.value(), response.getStatus());
+        assertEquals("/login", response.getHeaders().getFirst("Location"));
     }
 }

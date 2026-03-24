@@ -35,8 +35,7 @@ class HomeControllerTest {
     void setup() {
         is = mock(InvestorService.class);
         ts = mock(TransactionService.class);
-        dsrc = mock(DataSource.class);
-        hc = new HomeController(is, dsrc, ts);
+        hc = new HomeController(is, ts);
         ctx = mock(Context.class);
         sess = mock(Session.class);
 

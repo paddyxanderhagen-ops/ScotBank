@@ -21,12 +21,10 @@ import java.util.Map;
 public class HomeController {
 
     private final InvestorService investorService;
-    private final DataSource ds;
     private final TransactionService transactionService;
 
-    public HomeController(InvestorService investorService, DataSource ds, TransactionService transactionService) {
+    public HomeController(InvestorService investorService, TransactionService transactionService) {
         this.investorService = investorService;
-        this.ds = ds;
         this.transactionService = transactionService;
     }
 
@@ -40,32 +38,20 @@ public class HomeController {
     }
 
     @GET("/contact")
-    public ModelAndView contact() {
+    public ModelAndView<Map<String, Object>> contact() {
         return new ModelAndView<>("contact.hbs", new HashMap<>());
     }
 
     @GET("/dashboard")
-    public ModelAndView<Map<String, Object>> dashboardPage(Context ctx) throws SQLException {
-        Session session = null;
-        String id = null;
-        if (ctx != null) {
-            session = ctx.session();
-        }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
-        }
-
-        Investor investor = investorService.getInvestor(id);
-
-
-        CashAccountImplementation account = new CashAccountImplementation(investor, ds);
+    public ModelAndView<Map<String, Object>> dashboardPage(Context ctx) {
+        Investor investor = getSession(ctx);
 
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(5).toList().reversed();
 
         Map<String, Object> map = new HashMap<>();
         map.put("id", investor.getId());
         map.put("name", investor.getName());
-        map.put("balance", Math.floor(account.getBalance() * 100.0) / 100.0);
+        map.put("balance", Math.floor(investor.getCashBalance() * 100.0) / 100.0);
         map.put("transactions", transactions);
 
         return new ModelAndView<>("index.hbs", map);
@@ -73,16 +59,7 @@ public class HomeController {
 
     @GET("/cash-management")
     public ModelAndView<Map<String, Object>> cashManagement(Context ctx) {
-        Session session = null;
-        String id = null;
-        if (ctx != null) {
-            session = ctx.session();
-        }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
-        }
-
-        Investor investor = investorService.getInvestor(id);
+        Investor investor = getSession(ctx);
 
         Map<String, Object> model = new HashMap<>();
 
@@ -90,5 +67,26 @@ public class HomeController {
         model.put("balance", investor.getCashBalance());
 
         return new ModelAndView<>("cash-management.hbs", model);
+    }
+
+    private Investor getSession (Context ctx) {
+        if (ctx == null) {
+            return null;
+        }
+
+        Session session = ctx.session();
+
+        Investor investor = null;
+
+        if (!session.get("id").isMissing()) {
+            String id = session.get("id").value();
+            investor = investorService.getInvestor(id);
+        }
+
+        if (investor == null) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
+        return investor;
     }
 }

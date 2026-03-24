@@ -16,6 +16,9 @@ public class InvestorService {
     }
 
     public Investor getInvestor(String id) {
+        if (id == null) {
+            return null;
+        }
         try {
             Investor investor = repo.getInvestor(id);
             return investor;
