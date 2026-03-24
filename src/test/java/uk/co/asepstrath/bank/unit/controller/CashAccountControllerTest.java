@@ -5,6 +5,8 @@ import io.jooby.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.controller.CashAccountController;
+import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
+import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
@@ -14,73 +16,34 @@ import static org.mockito.Mockito.*;
 
 class CashAccountControllerTest {
 
-    private CashAccountController cac;
-
     private InvestorService is;
-    private DataSource ds;
     private TransactionService ts;
-
+    private DataSource ds;
     private Context ctx;
     private Session sess;
+    private CashAccountController cac;
 
     @BeforeEach
     void setup() {
         is = mock(InvestorService.class);
         ts = mock(TransactionService.class);
         ds = mock(DataSource.class);
-        cac = new CashAccountController(is, ds, ts);
         ctx = mock(Context.class);
         sess = mock(Session.class);
         when(ctx.session()).thenReturn(sess);
     }
-    /*
-    @Test
-    void depositCallsInvestorService() {
-        double amount = 100.0;
-        String id = "JD435";
-
-        Investor investor = mock(Investor.class);
-
-        // mock session value
-        Value value = mock(Value.class);
-        when(sess.get("id")).thenReturn(value);
-        when(value.value()).thenReturn(id);
-
-        when(is.getInvestor(id)).thenReturn(investor);
-        cac.deposit(amount, ctx);
-        verify(is.getInvestor(id));
-    }
-    */
-    /*
-    @Test
-    void withdrawCallsInvestorService() {
-        double amount = 5.0;
-        String id = "JD123";
-
-        Investor investor = mock(Investor.class);
-
-        // mock session value
-        Value value = mock(Value.class);
-        when(sess.get("id")).thenReturn(value);
-        when(value.value()).thenReturn(id);
-
-        when(is.getInvestor(id)).thenReturn(investor);
-        cac.withdraw(amount, ctx);
-        verify(is).getInvestor(id);
-    }
-     */
 
     @Test
     void depositWithNullContextDoesNothing() {
+        cac = new CashAccountController(is, ds, ts);
         cac.deposit(100.0, null);
-
-        verifyNoInteractions(is);
+        verifyNoInteractions(is, ts);
     }
 
     @Test
     void withdrawWithNullContextDoesNothing() {
+        cac = new CashAccountController(is, ds, ts);
         cac.withdraw(50.0, null);
-
-        verifyNoInteractions(is);
+        verifyNoInteractions(is, ts);
     }
 }
