@@ -55,6 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentValue = holding.currentValue !== undefined ? holding.currentValue : (holding.shares * holding.currentPrice);
                 const meta = metaMap[holding.ticker] || {};
 
+            console.log(items);
+            console.log(meta);
+
                 return {
                     ticker: holding.ticker,
                     shares: holding.shares,
@@ -165,14 +168,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             selectedCategory = clickedCategory;
                         }
-                        renderTable(categories, totalInvested, totalInvested + cashBalance);
+                        renderTable(categories, totalInvested);
                     }
                 }
             }
         });
     }
 
-    function renderTable(categories, totalInvested, totalPortfolio) {
+    function renderTable(categories, totalInvested) {
         const tbody = document.getElementById('equitiesTableBody');
         const tableTitle = document.getElementById('tableTitle');
         tbody.innerHTML = '';
@@ -201,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const catVal = parentCatObj ? parentCatObj.value : item.currentValue;
 
             const percOfCat = ((item.currentValue / catVal) * 100).toFixed(1);
-            const percOfTotal = ((item.currentValue / totalPortfolio) * 100).toFixed(1);
+            const percOfTotal = ((item.currentValue / totalInvested) * 100).toFixed(1);
 
             tr.innerHTML = `
                 <td><strong>${item.ticker}</strong></td>
