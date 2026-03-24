@@ -63,16 +63,6 @@ public class AnalyticsController {
         map.put("totalRealisedPnl", Math.round(totalRealisedPnl * 100.0) / 100.0);
         map.put("totalInvested", Math.round(totalInvested * 100.0) / 100.0);
 
-//        for (Position position : positions) {
-//            if (position.getShares() == 0) {
-//                map.put("positions", "Prices Unavailable");
-//                map.put("totalValue", "Prices Unavailable");
-//                map.put("totalPnl", "Prices Unavailable");
-//                map.put("totalRealisedPnl", "Prices Unavailable");
-//                map.put("totalInvested", "Prices Unavailable");
-//            }
-//        }
-
         return new ModelAndView<>("positions.hbs", map);
     }
 
@@ -116,7 +106,7 @@ public class AnalyticsController {
             try {
                 apiService.getAllPrices(ticker, priceRepository, token);
             } catch (Exception e) {
-                System.err.println("Failed: " + ticker);
+                System.err.println("Failed: " + ticker + " " + e);
             }
         });
     }

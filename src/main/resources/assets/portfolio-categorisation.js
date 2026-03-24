@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderChart(finalCategories, totalInvested);
-        renderTable(finalCategories, totalInvested, totalPortfolio);
+        renderTable(finalCategories, totalInvested, totalInvested + cashBalance);
     }
 
     function renderChart(categories, totalInvested) {
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function renderTable(categories, totalInvested) {
+    function renderTable(categories, totalInvested, totalPortfolio) {
         const tbody = document.getElementById('equitiesTableBody');
         const tableTitle = document.getElementById('tableTitle');
         tbody.innerHTML = '';
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const catVal = parentCatObj ? parentCatObj.value : item.currentValue;
 
             const percOfCat = ((item.currentValue / catVal) * 100).toFixed(1);
-            const percOfTotal = ((item.currentValue / totalInvested) * 100).toFixed(1);
+            const percOfTotal = ((item.currentValue / totalPortfolio) * 100).toFixed(1);
 
             tr.innerHTML = `
                 <td><strong>${item.ticker}</strong></td>
