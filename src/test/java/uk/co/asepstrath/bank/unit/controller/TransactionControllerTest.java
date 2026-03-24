@@ -7,7 +7,6 @@ import io.jooby.value.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import uk.co.asepstrath.bank.controller.Authorisation;
 import uk.co.asepstrath.bank.controller.TransactionController;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.service.TransactionService;
@@ -18,21 +17,18 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 
 public class TransactionControllerTest {
 
     private TransactionService transactionService;
     private TransactionController transactionController;
-    private Authorisation authorisation;
     private Context context;
     private Session session;
 
     @BeforeEach
     void setUp() {
         transactionService = Mockito.mock(TransactionService.class);
-        authorisation = Mockito.mock(Authorisation.class);
         context = Mockito.mock(Context.class);
         session = Mockito.mock(Session.class);
 
@@ -41,9 +37,7 @@ public class TransactionControllerTest {
         when(idValue.value()).thenReturn("12345");
         when(session.get("id")).thenReturn(idValue);
         when(context.session()).thenReturn(session);
-        when(authorisation.isAuthorised(anyString())).thenReturn(true);
 
-        transactionController = new TransactionController(transactionService, authorisation);
     }
 
     @Test

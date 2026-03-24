@@ -17,16 +17,13 @@ import uk.co.asepstrath.bank.service.*;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class App extends Jooby {
 
     private final APIService api;
     private final DataSource ds;
-    private final Authorisation authorisation;
     private final InvestorRepository investorRepo;
     private final InvestorService investorService;
     private final TransactionRepository transactionRepo;
@@ -39,10 +36,11 @@ public class App extends Jooby {
     private final ConstituentRepository constituentRepository;
     private final Logger log;
 
-    {
-        /*
-        This section is used for setting up the Jooby Framework modules
-         */
+    public App() {
+        this(true);
+    }
+
+    public App(boolean read) {
         install(new UniRestExtension());
         install(new HandlebarsModule());
         install(new HikariModule());
@@ -63,7 +61,6 @@ public class App extends Jooby {
         transactionService = new TransactionService(transactionRepo);
         analyticsService = new AnalyticsService(transactionService, priceService);
         instrumentService = new InstrumentService(instrumentRepo);
-        authorisation = new Authorisation(investorRepo);
 
         log = getLog();
 
@@ -78,60 +75,63 @@ public class App extends Jooby {
             }
         });
 
-        mvc(new HomeController_(investorService, ds, transactionService, authorisation));
+        mvc(new HomeController_(investorService, ds, transactionService));
         mvc(new CashAccountController_(investorService, ds, transactionService));
-        mvc(new AnalyticsController_(analyticsService, authorisation, api, priceRepo));
+        mvc(new AnalyticsController_(analyticsService, api, priceRepo));
         mvc(new LoginController_());
-        mvc(new TransactionController_(transactionService, authorisation));
+        mvc(new TransactionController_(transactionService));
         mvc(new InstrumentController_(instrumentService, priceService));
         mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds, instrumentService));
         mvc(new TaxReportController_(analyticsService));
 
-        try {
-            investorRepo.setUp();
-            transactionRepo.setUp();
-            instrumentRepo.setUp();
-            priceRepo.setUp();
-            constituentRepository.setUp();
-        } catch (SQLException e) {
-            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Unable to access server. " + e);
-        }
-
-        try {
-            List<Investor> investors = api.getAllInvestor().getInvestors();
-
-            investorRepo.saveAll(investors);
-        } catch (SQLException e) {
-            log.warn("Failed to load investors from API", e);
-            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve transactions");
-        }
-
-        try {
-            List<Transaction> transactions = api.getAllTransaction().getTransactions();
-
-            transactionRepo.saveAll(transactions);
-
-            List<Equity> equities = api.getAllEquities().getEquities();
-            List<Etf> etfs = api.getAllEtf().getEtfs();
-
-            String token = api.loadToken();
-
-            instrumentRepo.saveAll(equities, etfs);
-
-            constituentRepository.saveAll(etfs);
-
-
-            for (Equity equity : equities) {
-                api.getAllPrices(equity.getTicker(), priceRepo, token);
+        if (read) {
+            try {
+                investorRepo.setUp();
+                transactionRepo.setUp();
+                instrumentRepo.setUp();
+                priceRepo.setUp();
+                constituentRepository.setUp();
+            } catch (SQLException e) {
+                throw new StatusCodeException(StatusCode.SERVER_ERROR, "Unable to access server. " + e);
             }
 
-            for (Etf etf : etfs) {
-                api.getAllPrices(etf.getTicker(), priceRepo, token);
+            try {
+                List<Investor> investors = api.getAllInvestor().getInvestors();
+
+                investorRepo.saveAll(investors);
+            } catch (SQLException e) {
+                log.warn("Failed to load investors from API", e);
             }
 
+            try {
+                List<Transaction> transactions = api.getAllTransaction().getTransactions();
+                transactionRepo.saveAll(transactions);
 
-        } catch (Exception e) {
-            log.warn("Issue loading assets" + e);
+            } catch (SQLException e) {
+                log.warn("Failed to load transaction from API", e);
+            }
+
+            try {
+                List<Equity> equities = api.getAllEquities().getEquities();
+                List<Etf> etfs = api.getAllEtf().getEtfs();
+
+                String token = api.loadToken();
+
+                instrumentRepo.saveAll(equities, etfs);
+
+                constituentRepository.saveAll(etfs);
+
+
+                for (Equity equity : equities) {
+                    api.getAllPrices(equity.getTicker(), priceRepo, token);
+                }
+
+                for (Etf etf : etfs) {
+                    api.getAllPrices(etf.getTicker(), priceRepo, token);
+                }
+            } catch (SQLException e) {
+                log.warn("Failed to load assets and prices from API", e);
+            }
         }
 
 
@@ -144,7 +144,7 @@ public class App extends Jooby {
     }
 
     public static void main(final String[] args) {
-        runApp(args, new NettyServer(new ServerOptions()), App::new);
+        runApp(args, new NettyServer(new ServerOptions()), () -> new App());
     }
 
     /*

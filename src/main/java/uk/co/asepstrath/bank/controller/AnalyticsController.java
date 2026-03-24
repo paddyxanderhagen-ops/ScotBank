@@ -19,13 +19,11 @@ import java.util.stream.Collectors;
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
-    private final Authorisation authorisation;
     private final APIService apiService;
     private final PriceRepository priceRepository;
 
-    public AnalyticsController(AnalyticsService analyticsService, Authorisation authorisation, APIService apiService, PriceRepository priceRepository) {
+    public AnalyticsController(AnalyticsService analyticsService, APIService apiService, PriceRepository priceRepository) {
         this.analyticsService = analyticsService;
-        this.authorisation = authorisation;
         this.apiService = apiService;
         this.priceRepository = priceRepository;
 
@@ -41,10 +39,6 @@ public class AnalyticsController {
         }
         if (session != null && !session.get("id").isMissing()) {
             id = session.get("id").value();
-        }
-        if (!authorisation.isAuthorised(id)) {
-            ctx.sendRedirect("/login");
-            return null;
         }
         Map<String, Object> map = new HashMap<>();
         List<Position> positions = analyticsService.getPositions(id);
@@ -75,10 +69,6 @@ public class AnalyticsController {
         }
         if (session != null && !session.get("id").isMissing()) {
             id = session.get("id").value();
-        }
-        if (!authorisation.isAuthorised(id)) {
-            ctx.sendRedirect("/login");
-            return null;
         }
 
         String investorId = ctx.session().get("id").value();

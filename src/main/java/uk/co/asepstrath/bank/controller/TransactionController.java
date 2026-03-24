@@ -15,11 +15,9 @@ import java.util.stream.Collectors;
 public class TransactionController {
 
     private final TransactionService transactionService;
-    private final Authorisation authorisation;
 
-    public TransactionController(TransactionService transactionService, Authorisation authorisation) {
+    public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
-        this.authorisation = authorisation;
     }
 
     @GET("/ViewAll")
@@ -31,10 +29,6 @@ public class TransactionController {
         }
         if (session != null && !session.get("id").isMissing()) {
             id = session.get("id").value();
-        }
-        if (!authorisation.isAuthorised(id)) {
-            ctx.sendRedirect("/login");
-            return null;
         }
 
 

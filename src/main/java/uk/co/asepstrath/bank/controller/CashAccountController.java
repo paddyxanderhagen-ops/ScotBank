@@ -1,6 +1,7 @@
 package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
+import io.jooby.Session;
 import io.jooby.annotation.FormParam;
 import io.jooby.annotation.POST;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
@@ -41,11 +42,16 @@ public class CashAccountController {
     }
 
     private String transaction(Context ctx) {
-        if (ctx == null) {
-            return null;
+        Session session = null;
+        String id = null;
+        if (ctx != null) {
+            session = ctx.session();
         }
-        String id = ctx.session().get("id").value();
+        if (session != null && !session.get("id").isMissing()) {
+            id = session.get("id").value();
+        }
         Investor investor = investorService.getInvestor(id);
+
         account = new CashAccountImplementation(investor, ds);
         return id;
     }

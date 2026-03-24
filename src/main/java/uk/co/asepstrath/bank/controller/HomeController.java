@@ -23,13 +23,11 @@ public class HomeController {
     private final InvestorService investorService;
     private final DataSource ds;
     private final TransactionService transactionService;
-    private final Authorisation authorisation;
 
-    public HomeController(InvestorService investorService, DataSource ds, TransactionService transactionService, Authorisation authorisation) {
+    public HomeController(InvestorService investorService, DataSource ds, TransactionService transactionService) {
         this.investorService = investorService;
         this.ds = ds;
         this.transactionService = transactionService;
-        this.authorisation = authorisation;
     }
 
     @GET("/")
@@ -55,11 +53,6 @@ public class HomeController {
         }
         if (session != null && !session.get("id").isMissing()) {
             id = session.get("id").value();
-        }
-
-        if (!authorisation.isAuthorised(id)) {
-            ctx.sendRedirect("/login");
-            return null;
         }
 
         Investor investor = investorService.getInvestor(id);
@@ -90,11 +83,6 @@ public class HomeController {
         }
 
         Investor investor = investorService.getInvestor(id);
-
-        if (!authorisation.isAuthorised(id)) {
-            ctx.sendRedirect("/login");
-            return null;
-        }
 
         Map<String, Object> model = new HashMap<>();
 
