@@ -29,12 +29,14 @@ public class PortfolioCategorisationController {
     private final InvestorService investorService;
     private final AnalyticsService analyticsService;
     private final DataSource ds;
+    private final InstrumentService instrumentService;
 
 
-    public PortfolioCategorisationController(InvestorService investorService, AnalyticsService analyticsService, DataSource ds) {
+    public PortfolioCategorisationController(InvestorService investorService, AnalyticsService analyticsService, DataSource ds, InstrumentService instrumentService) {
         this.investorService = investorService;
         this.analyticsService = analyticsService;
         this.ds = ds;
+        this.instrumentService = instrumentService;
     }
 
     @GET("/portfolio-categorisation")
@@ -55,7 +57,6 @@ public class PortfolioCategorisationController {
 
         Investor investor = investorService.getInvestor(id);
         CashAccountImplementation account = new CashAccountImplementation(investor, ds);
-        InstrumentService instrumentService = new InstrumentService(new InstrumentRepository(ds));
 
         double cash = account.getBalance();
         List<Position> positions = analyticsService.getPositions(id);

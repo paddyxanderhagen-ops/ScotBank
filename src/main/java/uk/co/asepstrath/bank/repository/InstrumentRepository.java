@@ -101,6 +101,8 @@ public class InstrumentRepository {
             while (rs.next()) {
                 String type = rs.getString("type");
 
+                System.out.println(type);
+
                 if (type.equalsIgnoreCase("equity")) {
                     instrument = new Equity(rs.getString("ticker"), rs.getString("name"), rs.getString("sector"));
                 } else if (type.equalsIgnoreCase("etf")) {
