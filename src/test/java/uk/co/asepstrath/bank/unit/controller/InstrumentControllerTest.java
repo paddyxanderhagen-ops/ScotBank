@@ -6,7 +6,6 @@ import io.jooby.Session;
 import io.jooby.value.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import uk.co.asepstrath.bank.controller.InstrumentController;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
@@ -16,7 +15,8 @@ import uk.co.asepstrath.bank.service.PriceService;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class InstrumentControllerTest {
 
@@ -46,7 +46,7 @@ class InstrumentControllerTest {
         ModelAndView mv = controller.investmentPage(ctx);
         assertEquals("instruments.hbs", mv.getView());
         assertNotNull(mv.getModel());
-        assertTrue(mv.getModel() instanceof Map);
+        assertInstanceOf(Map.class, mv.getModel());
     }
 
     @Test

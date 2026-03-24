@@ -160,8 +160,7 @@ public class App extends Jooby {
     This function will be called when the application starts up,
     it should be used to ensure that the DB is properly setup
      */
-    public void onStart() throws SQLException {
-        Logger log = getLog();
+    public void onStart() {
         log.info("Starting Up...");
     }
 

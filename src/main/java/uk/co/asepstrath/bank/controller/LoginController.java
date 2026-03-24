@@ -1,15 +1,12 @@
 package uk.co.asepstrath.bank.controller;
 
-import ch.qos.logback.core.model.Model;
 import io.jooby.Context;
 import io.jooby.ModelAndView;
 import io.jooby.Session;
-import io.jooby.StatusCode;
 import io.jooby.annotation.FormParam;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.POST;
 import io.jooby.annotation.Path;
-import io.jooby.exception.StatusCodeException;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
 
@@ -20,9 +17,9 @@ import java.util.Map;
 @Path("/login")
 public class LoginController {
 
-    private InvestorService investorService;
+    private final InvestorService investorService;
 
-    public LoginController (InvestorService investorService) {
+    public LoginController(InvestorService investorService) {
         this.investorService = investorService;
     }
 

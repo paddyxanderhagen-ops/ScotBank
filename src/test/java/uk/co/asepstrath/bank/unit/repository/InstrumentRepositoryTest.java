@@ -3,8 +3,8 @@ package uk.co.asepstrath.bank.unit.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.model.Constituent;
-import uk.co.asepstrath.bank.model.Etf;
 import uk.co.asepstrath.bank.model.Equity;
+import uk.co.asepstrath.bank.model.Etf;
 import uk.co.asepstrath.bank.model.Instrument;
 import uk.co.asepstrath.bank.repository.InstrumentRepository;
 
@@ -77,7 +77,7 @@ class InstrumentRepositoryTest {
         Instrument instrument = repo.getInstrument("AAPL");
 
         assertNotNull(instrument);
-        assertTrue(instrument instanceof Equity);
+        assertInstanceOf(Equity.class, instrument);
         assertEquals("AAPL", instrument.getTicker());
         assertEquals("Apple Inc.", instrument.getName());
         verify(ps).close();
@@ -101,7 +101,7 @@ class InstrumentRepositoryTest {
         Instrument instrument = repo.getInstrument("TECH");
 
         assertNotNull(instrument);
-        assertTrue(instrument instanceof Etf);
+        assertInstanceOf(Etf.class, instrument);
         Etf etf = (Etf) instrument;
         assertEquals("TECH", etf.getTicker());
         assertEquals(2, etf.getConstituents().size());
@@ -127,8 +127,8 @@ class InstrumentRepositoryTest {
         List<Instrument> instruments = repo.getAll();
 
         assertEquals(2, instruments.size());
-        assertTrue(instruments.get(0) instanceof Equity);
-        assertTrue(instruments.get(1) instanceof Etf);
+        assertInstanceOf(Equity.class, instruments.get(0));
+        assertInstanceOf(Etf.class, instruments.get(1));
         verify(ps).close();
         verify(conn).close();
     }

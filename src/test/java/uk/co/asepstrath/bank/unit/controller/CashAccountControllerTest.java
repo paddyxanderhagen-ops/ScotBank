@@ -5,8 +5,6 @@ import io.jooby.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.controller.CashAccountController;
-import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
-import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 

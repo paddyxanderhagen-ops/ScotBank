@@ -3,7 +3,6 @@ package uk.co.asepstrath.bank.unit.controller;
 import io.jooby.Context;
 import io.jooby.ModelAndView;
 import io.jooby.Session;
-import io.jooby.StatusCode;
 import io.jooby.value.Value;
 import kong.unirest.core.GetRequest;
 import kong.unirest.core.HttpResponse;

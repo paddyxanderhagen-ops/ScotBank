@@ -19,7 +19,7 @@ public class AnalyticsControllerTests {
     private String ticker;
 
     @BeforeEach
-    void setUp () {
+    void setUp() {
         APIService service = new APIService();
         id = service.getAllInvestor().getInvestors().getFirst().getId();
         ticker = service.getAllEquities().getEquities().getFirst().getTicker();
@@ -121,7 +121,7 @@ public class AnalyticsControllerTests {
         assertEquals(StatusCode.FOUND.value(), response.getStatus());
     }
 
-    private HttpResponse<String> login (String serverPath) {
+    private HttpResponse<String> login(String serverPath) {
         HttpResponse<String> login = Unirest.post(serverPath + "login")
                 .field("id", id)
                 .asString();

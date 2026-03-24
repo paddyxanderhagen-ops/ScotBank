@@ -4,9 +4,9 @@ import io.jooby.StatusCode;
 import io.jooby.test.JoobyTest;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.TestApp;
-import uk.co.asepstrath.bank.service.APIService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CashAccountControllerTest {
 
     @BeforeEach
-    void setUp () {
+    void setUp() {
         Unirest.config().reset();
         Unirest.config().followRedirects(false);
     }
 
     @Test
-    void depositWithNoParamsReturns400 (String serverPath) {
+    void depositWithNoParamsReturns400(String serverPath) {
         HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/deposit")
                 .asString();
 
@@ -28,7 +28,7 @@ public class CashAccountControllerTest {
     }
 
     @Test
-    void withdrawWithNoParamsReturns400 (String serverPath) {
+    void withdrawWithNoParamsReturns400(String serverPath) {
         HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/withdraw")
                 .asString();
 

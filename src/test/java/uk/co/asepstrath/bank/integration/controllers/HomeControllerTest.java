@@ -18,7 +18,7 @@ public class HomeControllerTest {
     private String id;
 
     @BeforeEach
-    void setUp () {
+    void setUp() {
         APIService service = new APIService();
         id = service.getAllInvestor().getInvestors().getFirst().getId();
         Unirest.config().reset();
@@ -26,7 +26,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    void landingReturns200 (String serverPath) {
+    void landingReturns200(String serverPath) {
         HttpResponse<String> response = Unirest.get(serverPath)
                 .asString();
 
@@ -34,7 +34,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    void contactReturns200 (String serverPath) {
+    void contactReturns200(String serverPath) {
         HttpResponse<String> response = Unirest.get(serverPath + "contact")
                 .asString();
 
@@ -42,7 +42,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    void dashboardValidSessionReturns200 (String serverPath) {
+    void dashboardValidSessionReturns200(String serverPath) {
         HttpResponse<String> login = login(serverPath);
 
         String cookie = login.getHeaders().getFirst("Set-Cookie");
@@ -56,7 +56,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    void cashManagementValidSessionReturns200 (String serverPath) {
+    void cashManagementValidSessionReturns200(String serverPath) {
         HttpResponse<String> login = login(serverPath);
 
         String cookie = login.getHeaders().getFirst("Set-Cookie");
@@ -69,7 +69,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    void dashboardInvalidSessionReturns302 (String serverPath) {
+    void dashboardInvalidSessionReturns302(String serverPath) {
         HttpResponse<String> response = Unirest.get(serverPath + "dashboard")
                 .asString();
 
@@ -77,7 +77,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    void cashManagementInvalidSessionReturns302 (String serverPath) {
+    void cashManagementInvalidSessionReturns302(String serverPath) {
         HttpResponse<String> response = Unirest.get(serverPath + "cash-management")
                 .asString();
 
@@ -104,7 +104,7 @@ public class HomeControllerTest {
         assertTrue(response.getHeaders().getFirst("Content-Type").contains("text/html"));
     }
 
-    private HttpResponse<String> login (String serverPath) {
+    private HttpResponse<String> login(String serverPath) {
         HttpResponse<String> login = Unirest.post(serverPath + "login")
                 .field("id", id)
                 .asString();

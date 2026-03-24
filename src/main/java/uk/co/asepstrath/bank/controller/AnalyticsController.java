@@ -7,7 +7,6 @@ import io.jooby.annotation.GET;
 import io.jooby.annotation.POST;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.PathParam;
-import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 import uk.co.asepstrath.bank.service.APIService;
@@ -94,7 +93,7 @@ public class AnalyticsController {
         });
     }
 
-    private List<Position> getSession (Context ctx) {
+    private List<Position> getSession(Context ctx) {
         if (ctx == null) {
             return null;
         }

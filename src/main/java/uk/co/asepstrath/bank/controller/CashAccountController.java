@@ -43,7 +43,7 @@ public class CashAccountController {
         }
     }
 
-    private String getSession (Context ctx) {
+    private String getSession(Context ctx) {
         if (ctx == null) {
             return null;
         }

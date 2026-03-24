@@ -2,19 +2,16 @@ package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
 import io.jooby.ModelAndView;
-import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.QueryParam;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Etf;
 import uk.co.asepstrath.bank.model.Instrument;
-import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.service.InstrumentService;
 import uk.co.asepstrath.bank.service.PriceService;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Path("/instruments")

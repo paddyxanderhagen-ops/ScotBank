@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.TestApp;
 import uk.co.asepstrath.bank.service.APIService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @JoobyTest(TestApp.class)
 public class PortfolioCategorisationControllerTest {

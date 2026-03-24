@@ -18,7 +18,7 @@ public class TaxReportControllerTests {
     private String id;
 
     @BeforeEach
-    void setUp () {
+    void setUp() {
         APIService service = new APIService();
         id = service.getAllInvestor().getInvestors().getFirst().getId();
         Unirest.config().reset();
@@ -63,7 +63,7 @@ public class TaxReportControllerTests {
         assertEquals("/login", response.getHeaders().getFirst("Location"));
     }
 
-    private HttpResponse<String> login (String serverPath) {
+    private HttpResponse<String> login(String serverPath) {
         HttpResponse<String> login = Unirest.post(serverPath + "login")
                 .field("id", id)
                 .asString();

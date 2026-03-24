@@ -5,14 +5,11 @@ import io.jooby.ModelAndView;
 import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
-import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
-import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +66,7 @@ public class HomeController {
         return new ModelAndView<>("cash-management.hbs", model);
     }
 
-    private Investor getSession (Context ctx) {
+    private Investor getSession(Context ctx) {
         if (ctx == null) {
             return null;
         }

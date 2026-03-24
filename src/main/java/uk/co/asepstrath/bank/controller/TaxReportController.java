@@ -2,7 +2,6 @@ package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
 import io.jooby.ModelAndView;
-import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.QueryParam;

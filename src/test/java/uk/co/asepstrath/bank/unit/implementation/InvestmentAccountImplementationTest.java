@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.implementation.InvestmentAccountImplementation;
 import uk.co.asepstrath.bank.model.Investor;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InvestmentAccountImplementationTest {
 

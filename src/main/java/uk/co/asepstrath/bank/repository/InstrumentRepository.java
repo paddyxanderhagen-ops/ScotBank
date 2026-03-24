@@ -14,7 +14,7 @@ import java.util.List;
 
 public class InstrumentRepository {
 
-    private DataSource ds;
+    private final DataSource ds;
 
     public InstrumentRepository(DataSource ds) {
         this.ds = ds;
