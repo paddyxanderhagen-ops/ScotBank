@@ -7,6 +7,7 @@ import io.jooby.annotation.GET;
 import io.jooby.annotation.POST;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.PathParam;
+import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 import uk.co.asepstrath.bank.service.APIService;
@@ -32,17 +33,11 @@ public class AnalyticsController {
 
     @GET
     public ModelAndView<Map<String, Object>> positions(Context ctx) {
-        String id = null;
-        Session session = null;
-        if (ctx != null) {
-            session = ctx.session();
-        }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
-        }
         Map<String, Object> map = new HashMap<>();
-        List<Position> positions = analyticsService.getPositions(id);
-
+        List<Position> positions = getSession(ctx);
+        if (positions == null) {
+            return null;
+        }
 
         positions.sort(Comparator.comparingDouble(Position::getPnl).reversed());
 
@@ -62,13 +57,9 @@ public class AnalyticsController {
 
     @GET("/{ticker}")
     public ModelAndView<Map<String, Object>> position(Context ctx, @PathParam String ticker) {
-        String id = null;
-        Session session = null;
-        if (ctx != null) {
-            session = ctx.session();
-        }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
+        List<Position> positions = getSession(ctx);
+        if (positions == null) {
+            return null;
         }
 
         String investorId = ctx.session().get("id").value();
@@ -83,9 +74,11 @@ public class AnalyticsController {
 
     @POST("/refresh")
     public void refreshPrices(Context ctx) {
-        String investorId = ctx.session().get("id").value();
+        List<Position> positions = getSession(ctx);
+        if (positions == null) {
+            return;
+        }
 
-        List<Position> positions = analyticsService.getPositions(investorId);
         Set<String> tickers = positions.stream()
                 .map(Position::getTicker)
                 .collect(Collectors.toSet());
@@ -101,5 +94,25 @@ public class AnalyticsController {
         });
     }
 
+    private List<Position> getSession (Context ctx) {
+        if (ctx == null) {
+            return null;
+        }
+
+        Session session = ctx.session();
+
+        List<Position> positions = null;
+
+        if (!session.get("id").isMissing()) {
+            String id = session.get("id").value();
+            positions = analyticsService.getPositions(id);
+        }
+
+        if (positions == null) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
+        return positions;
+    }
 }
 

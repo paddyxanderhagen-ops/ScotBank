@@ -42,7 +42,6 @@ public class TransactionService {
             Stream<Transaction> tStream = repo.getAll().getTransactions().stream();
             List<Transaction> tList = tStream.sorted(Comparator.comparing(Transaction::getTimestamp).thenComparing(Transaction::getId).reversed()).toList();
             UUID oldTID = UUID.fromString(tList.getFirst().getId());
-            System.out.println(oldTID);
             long newMSB = oldTID.getMostSignificantBits() + 1L;
             UUID newTID = new UUID(newMSB, UUID.randomUUID().getLeastSignificantBits());
             String dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);

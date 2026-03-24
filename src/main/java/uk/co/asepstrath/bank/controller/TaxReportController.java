@@ -24,14 +24,11 @@ public class TaxReportController {
 
     @GET
     public ModelAndView<Map<String, Object>> taxReport(Context ctx, @QueryParam Integer year) {
-        Session session = null;
-        String id = null;
-        if (ctx != null) {
-            session = ctx.session();
+        if (!isLoggedIn(ctx)) {
+            ctx.sendRedirect("/login");
+            return null;
         }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
-        }
+        String id = ctx.session().get("id").value();
 
         List<Integer> years = analyticsService.getAvailableYears(id);
 
@@ -45,5 +42,10 @@ public class TaxReportController {
         map.put("selectedYear", selectedYear);
 
         return new ModelAndView<>("taxreport.hbs", map);
+    }
+
+    private boolean isLoggedIn(Context ctx) {
+        if (ctx == null) return false;
+        return !ctx.session().get("id").isMissing();
     }
 }

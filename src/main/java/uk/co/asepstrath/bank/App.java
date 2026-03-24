@@ -78,7 +78,7 @@ public class App extends Jooby {
         mvc(new HomeController_(investorService, transactionService));
         mvc(new CashAccountController_(investorService, ds, transactionService));
         mvc(new AnalyticsController_(analyticsService, api, priceRepo));
-        mvc(new LoginController_());
+        mvc(new LoginController_(investorService));
         mvc(new TransactionController_(transactionService));
         mvc(new InstrumentController_(instrumentService, priceService));
         mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds, instrumentService));
@@ -132,6 +132,15 @@ public class App extends Jooby {
             } catch (SQLException e) {
                 log.warn("Failed to load assets and prices from API", e);
             }
+
+            //view db in
+            try {
+                org.h2.tools.Server
+                        .createWebServer("-web", "-webPort", "8082")
+                        .start();
+            } catch (SQLException e) {
+                log.warn("Error:", e);
+            }
         }
 
 
@@ -154,11 +163,6 @@ public class App extends Jooby {
     public void onStart() throws SQLException {
         Logger log = getLog();
         log.info("Starting Up...");
-
-        //view db in browser
-        org.h2.tools.Server
-                .createWebServer("-web", "-webPort", "8082")
-                .start();
     }
 
     /*

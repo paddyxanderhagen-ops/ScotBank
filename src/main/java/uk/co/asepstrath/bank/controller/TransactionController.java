@@ -9,7 +9,6 @@ import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.service.TransactionService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Path("/transactions")
 public class TransactionController {
@@ -20,23 +19,14 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @GET("/ViewAll")
-    public ModelAndView getTransactionsForInvestor(Context ctx) {
-        String id = null;
-        Session session = null;
-        if (ctx != null) {
-            session = ctx.session();
-        }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
-        }
-
-
-        List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
+    @GET("/view-all")
+    public ModelAndView<Map<String, Object>> getTransactionsForInvestor(Context ctx) {
+        List<Transaction> transactions = getSession(ctx);
+        String id = ctx.session().get("id").value();
 
         List<Transaction> sorted = transactions.stream()
                 .sorted(Comparator.comparing(Transaction::getTimestamp))
-                .collect(Collectors.toList());
+                .toList();
 
         double runningBalance = 0;
         double totalDeposits = 0;
@@ -71,5 +61,26 @@ public class TransactionController {
         model.put("totalWithdrawals", Math.round(totalWithdrawals * 100.0) / 100.0);
         model.put("id", id);
         return new ModelAndView<>("transactions.hbs", model);
+    }
+
+    private List<Transaction> getSession(Context ctx) {
+        if (ctx == null) {
+            return null;
+        }
+
+        Session session = ctx.session();
+
+        List<Transaction> transactions = null;
+
+        if (!session.get("id").isMissing()) {
+            String id = session.get("id").value();
+            transactions = transactionService.getTransactionsByInvestor(id);
+        }
+
+        if (transactions == null) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
+        return transactions;
     }
 }

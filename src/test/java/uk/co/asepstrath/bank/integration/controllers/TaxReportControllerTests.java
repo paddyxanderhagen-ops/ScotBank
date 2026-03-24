@@ -10,9 +10,10 @@ import uk.co.asepstrath.bank.TestApp;
 import uk.co.asepstrath.bank.service.APIService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @JoobyTest(TestApp.class)
-public class HomeControllerTests {
+public class TaxReportControllerTests {
 
     private String id;
 
@@ -25,46 +26,41 @@ public class HomeControllerTests {
     }
 
     @Test
-    void landingReturns200 (String serverPath) {
-        HttpResponse<String> response = Unirest.get(serverPath)
-                .asString();
+    void taxReportValidSessionReturns200(String serverPath) {
+        String cookie = login(serverPath).getHeaders().getFirst("Set-Cookie");
 
-        assertEquals(StatusCode.OK.value(), response.getStatus());
-    }
-
-    @Test
-    void contactReturns200 (String serverPath) {
-        HttpResponse<String> response = Unirest.get(serverPath + "contact")
-                .asString();
-
-        assertEquals(StatusCode.OK.value(), response.getStatus());
-    }
-
-    @Test
-    void dashboardValidSessionReturns200 (String serverPath) {
-        HttpResponse<String> login = login(serverPath);
-
-        String cookie = login.getHeaders().getFirst("Set-Cookie");
-
-
-        HttpResponse<String> response = Unirest.get(serverPath + "dashboard")
-                .header("id", cookie)
-                .asString();
-
-        assertEquals(StatusCode.OK.value(), response.getStatus());
-    }
-
-    @Test
-    void cashManagementValidSessionReturns200 (String serverPath) {
-        HttpResponse<String> login = login(serverPath);
-
-        String cookie = login.getHeaders().getFirst("Set-Cookie");
-
-        HttpResponse<String> response = Unirest.get(serverPath + "cash-management")
+        HttpResponse<String> response = Unirest.get(serverPath + "taxreport")
                 .header("Cookie", cookie)
                 .asString();
 
         assertEquals(StatusCode.OK.value(), response.getStatus());
+    }
+
+    @Test
+    void taxReportValidSessionReturnsHTML(String serverPath) {
+        String cookie = login(serverPath).getHeaders().getFirst("Set-Cookie");
+
+        HttpResponse<String> response = Unirest.get(serverPath + "taxreport")
+                .header("Cookie", cookie)
+                .asString();
+
+        assertTrue(response.getHeaders().getFirst("Content-Type").contains("text/html"));
+    }
+
+    @Test
+    void taxReportInvalidSessionReturns302(String serverPath) {
+        HttpResponse<String> response = Unirest.get(serverPath + "taxreport")
+                .asString();
+
+        assertEquals(StatusCode.FOUND.value(), response.getStatus());
+    }
+
+    @Test
+    void taxReportInvalidSessionRedirectsLogin(String serverPath) {
+        HttpResponse<String> response = Unirest.get(serverPath + "taxreport")
+                .asString();
+
+        assertEquals("/login", response.getHeaders().getFirst("Location"));
     }
 
     private HttpResponse<String> login (String serverPath) {

@@ -32,6 +32,8 @@ public class TransactionControllerTest {
         context = Mockito.mock(Context.class);
         session = Mockito.mock(Session.class);
 
+        transactionController = new TransactionController(transactionService);
+
         Value idValue = Mockito.mock(Value.class);
         when(idValue.isMissing()).thenReturn(false);
         when(idValue.value()).thenReturn("12345");

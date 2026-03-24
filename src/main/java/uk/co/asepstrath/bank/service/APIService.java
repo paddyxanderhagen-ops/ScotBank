@@ -72,11 +72,11 @@ public class APIService {
 
         while (nextToken != null) {
             prevTok = nextToken;
-            url.append("prices/").append(ticker).append("?nextToken=").append(nextToken);
-            String response = Unirest.get(url.toString()).accept("application/json").asString().getBody();
+            String url = "https://api.asep-strath.co.uk/api/prices/" + ticker + "?nextToken=" + nextToken;
+            String response = Unirest.get(url).accept("application/json").asString().getBody();
             priceDTO = gson.fromJson(response, PriceDTO.class);
 
-            if (priceDTO == null || priceDTO.getPrices().isEmpty()) {
+            if (priceDTO == null || priceDTO.getPrices() == null || priceDTO.getPrices().isEmpty()) {
                 throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve prices");
             }
 
@@ -89,8 +89,6 @@ public class APIService {
             }
 
             nextToken = priceDTO.getPages().getNextToken();
-
-            url = new StringBuilder("https://api.asep-strath.co.uk/api/");
         }
 
 
