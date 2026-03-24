@@ -12,8 +12,7 @@ import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class CashAccountControllerTest {
 
