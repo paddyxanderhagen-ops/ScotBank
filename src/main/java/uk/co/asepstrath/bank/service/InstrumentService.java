@@ -21,7 +21,7 @@ public class InstrumentService {
             Instrument instrument = repo.getInstrument(ticker);
 
             if (instrument == null) {
-                throw new StatusCodeException(StatusCode.NOT_FOUND, "Instrument " + ticker + " not found");
+                return null;
             }
 
             return instrument;

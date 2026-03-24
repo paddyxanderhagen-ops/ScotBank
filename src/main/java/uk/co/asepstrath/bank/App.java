@@ -75,12 +75,6 @@ public class App extends Jooby {
             if (ctx.header("Accept").value("").contains("application/json")) {
                 ctx.setResponseType(MediaType.json);
                 ctx.render("{\"error\": " + code.value() + ", \"message\": \"" + cause.getMessage() + "\"}");
-            } else {
-                Map<String, Object> model = new HashMap<>();
-                model.put("code", code.value());
-                model.put("message", cause.getMessage());
-                ctx.render(new ModelAndView("error.hbs", model)
-                );
             }
         });
 
