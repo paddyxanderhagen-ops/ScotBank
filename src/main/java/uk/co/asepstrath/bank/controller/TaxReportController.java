@@ -16,7 +16,7 @@ import java.util.Map;
 @Path("/taxreport")
 public class TaxReportController {
 
-    private AnalyticsService analyticsService;
+    private final AnalyticsService analyticsService;
 
     public TaxReportController(AnalyticsService analyticsService) {
         this.analyticsService = analyticsService;

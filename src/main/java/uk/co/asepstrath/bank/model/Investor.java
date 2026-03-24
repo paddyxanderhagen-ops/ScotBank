@@ -3,10 +3,10 @@ package uk.co.asepstrath.bank.model;
 import java.util.ArrayList;
 
 public class Investor {
+    private final ArrayList<Stock> stocks;
     private String id;
     private String name;
     private double cashBalance;
-    private final ArrayList<Stock> stocks;
 
     public Investor(String id, String name, double cashBalance) {
         this.id = id;

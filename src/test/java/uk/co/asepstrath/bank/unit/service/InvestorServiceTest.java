@@ -19,13 +19,13 @@ class InvestorServiceTest {
     private InvestorService service;
 
     @BeforeEach
-    void setUp () {
+    void setUp() {
         repository = mock(InvestorRepository.class);
         service = new InvestorService(repository);
     }
 
     @Test
-    void getInvestor () throws SQLException {
+    void getInvestor() throws SQLException {
         when(repository.getInvestor(anyString())).thenReturn(new Investor("1", "John Doe", 100.0));
         Investor i = service.getInvestor("1");
         verify(repository).getInvestor("1");
@@ -35,13 +35,13 @@ class InvestorServiceTest {
     }
 
     @Test
-    void getInvestor_throws404 () throws SQLException {
+    void getInvestor_throws404() throws SQLException {
         when(repository.getInvestor(anyString())).thenReturn(null);
         assertNull(service.getInvestor("x"));
     }
 
     @Test
-    void getInvestor_throws500 () throws SQLException {
+    void getInvestor_throws500() throws SQLException {
         when(repository.getInvestor(anyString())).thenThrow(new SQLException());
         StatusCodeException ex = assertThrows(StatusCodeException.class, () -> service.getInvestor("x"));
         assertEquals(StatusCode.SERVER_ERROR, ex.getStatusCode());

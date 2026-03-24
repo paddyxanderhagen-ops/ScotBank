@@ -7,31 +7,32 @@ import uk.co.asepstrath.bank.model.dto.PriceDTO;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class PriceDTOTest {
 
     PriceDTO pDTO;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         pDTO = new PriceDTO();
     }
 
     @Test
     void getPrices() {
-        assertEquals(null,pDTO.getPrices());
+        assertNull(pDTO.getPrices());
     }
 
     @Test
     void setPrices() {
         ArrayList<Price> a = new ArrayList<>();
-        a.add(new Price("14:30",2.30));
+        a.add(new Price("14:30", 2.30));
         a.add(new Price());
         pDTO.setPrices(a);
         assertEquals(2, pDTO.getPrices().size());
-        assertEquals("14:30",pDTO.getPrices().get(0).getTimeStamp());
-        assertEquals(2.30,pDTO.getPrices().get(0).getPrice());
+        assertEquals("14:30", pDTO.getPrices().get(0).getTimeStamp());
+        assertEquals(2.30, pDTO.getPrices().get(0).getPrice());
 
     }
 

@@ -3,17 +3,17 @@ package uk.co.asepstrath.bank.model;
 import java.util.List;
 
 public class TaxReport {
-    private int year;
-    private List<TaxSaleLine> sales;
-    private double totalGains;
-    private double totalLosses;
-    private double netGains;
-    private double allowance;
-    private double taxableGains;
-    private double taxRate;
-    private double taxOwed;
-    private double allowanceUsed;
-    private double allowanceRemaining;
+    private final int year;
+    private final List<TaxSaleLine> sales;
+    private final double totalGains;
+    private final double totalLosses;
+    private final double netGains;
+    private final double allowance;
+    private final double taxableGains;
+    private final double taxRate;
+    private final double taxOwed;
+    private final double allowanceUsed;
+    private final double allowanceRemaining;
 
     public TaxReport(int year, List<TaxSaleLine> sales) {
         this.year = year;
@@ -42,15 +42,47 @@ public class TaxReport {
         return Math.round(v * 100.0) / 100.0;
     }
 
-    public int getYear() { return year; }
-    public List<TaxSaleLine> getSales() { return sales; }
-    public double getTotalGains() { return totalGains; }
-    public double getTotalLosses() { return totalLosses; }
-    public double getNetGains() { return netGains; }
-    public double getAllowance() { return allowance; }
-    public double getTaxableGains() { return taxableGains; }
-    public double getTaxRate() { return taxRate; }
-    public double getTaxOwed() { return taxOwed; }
-    public double getAllowanceUsed() { return allowanceUsed; }
-    public double getAllowanceRemaining() { return allowanceRemaining; }
+    public int getYear() {
+        return year;
+    }
+
+    public List<TaxSaleLine> getSales() {
+        return sales;
+    }
+
+    public double getTotalGains() {
+        return totalGains;
+    }
+
+    public double getTotalLosses() {
+        return totalLosses;
+    }
+
+    public double getNetGains() {
+        return netGains;
+    }
+
+    public double getAllowance() {
+        return allowance;
+    }
+
+    public double getTaxableGains() {
+        return taxableGains;
+    }
+
+    public double getTaxRate() {
+        return taxRate;
+    }
+
+    public double getTaxOwed() {
+        return taxOwed;
+    }
+
+    public double getAllowanceUsed() {
+        return allowanceUsed;
+    }
+
+    public double getAllowanceRemaining() {
+        return allowanceRemaining;
+    }
 }

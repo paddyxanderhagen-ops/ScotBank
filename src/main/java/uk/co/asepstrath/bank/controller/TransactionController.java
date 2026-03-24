@@ -5,7 +5,6 @@ import io.jooby.ModelAndView;
 import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
-import io.jooby.annotation.QueryParam;
 import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.service.TransactionService;
 
@@ -15,8 +14,8 @@ import java.util.stream.Collectors;
 @Path("/transactions")
 public class TransactionController {
 
-    private TransactionService transactionService;
-    private Authorisation authorisation;
+    private final TransactionService transactionService;
+    private final Authorisation authorisation;
 
     public TransactionController(TransactionService transactionService, Authorisation authorisation) {
         this.transactionService = transactionService;
@@ -76,7 +75,7 @@ public class TransactionController {
         model.put("transactions", enriched);
         model.put("totalDeposits", Math.round(totalDeposits * 100.0) / 100.0);
         model.put("totalWithdrawals", Math.round(totalWithdrawals * 100.0) / 100.0);
-        model.put("investorId", id);
+        model.put("id", id);
         return new ModelAndView<>("transactions.hbs", model);
     }
 }

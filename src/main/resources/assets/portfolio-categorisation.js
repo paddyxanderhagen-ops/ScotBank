@@ -55,6 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentValue = holding.currentValue !== undefined ? holding.currentValue : (holding.shares * holding.currentPrice);
                 const meta = metaMap[holding.ticker] || {};
 
+            console.log(items);
+            console.log(meta);
+
                 return {
                     ticker: holding.ticker,
                     shares: holding.shares,
@@ -119,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderChart(finalCategories, totalInvested);
-        renderTable(finalCategories, totalInvested, totalPortfolio);
+        renderTable(finalCategories, totalInvested, totalInvested + cashBalance);
     }
 
     function renderChart(categories, totalInvested) {
@@ -165,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             selectedCategory = clickedCategory;
                         }
-                        renderTable(categories, totalInvested, totalInvested + cashBalance);
+                        renderTable(categories, totalInvested);
                     }
                 }
             }

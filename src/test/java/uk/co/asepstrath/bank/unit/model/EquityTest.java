@@ -4,62 +4,62 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.model.Equity;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EquityTest {
 
     Equity e;
 
     @BeforeEach
-    void setup(){
-        e = new Equity("Mocha Joes","MCJO","COFFEE");
+    void setup() {
+        e = new Equity("MCJO", "Mocha Joes", "COFFEE");
     }
 
     @Test
-    void constructorParamless(){
+    void constructorParamless() {
         e = new Equity();
-        assertEquals("",e.getName());
-        assertEquals("",e.getTicker());
-        assertEquals("",e.getSector());
+        assertEquals("", e.getName());
+        assertEquals("", e.getTicker());
+        assertEquals("", e.getSector());
     }
 
     @Test
-    void constructorParams(){
-        assertEquals("Mocha Joes",e.getName());
-        assertEquals("MCJO",e.getTicker());
-        assertEquals("COFFEE",e.getSector());
+    void constructorParams() {
+        assertEquals("Mocha Joes", e.getName());
+        assertEquals("MCJO", e.getTicker());
+        assertEquals("COFFEE", e.getSector());
     }
 
     @Test
     void getName() {
-        assertEquals("Mocha Joes",e.getName());
+        assertEquals("Mocha Joes", e.getName());
     }
 
     @Test
     void setName() {
         e.setName("Latte Larrys");
-        assertEquals("Latte Larrys",e.getName());
+        assertEquals("Latte Larrys", e.getName());
     }
 
     @Test
     void getTicker() {
-        assertEquals("MCJO",e.getTicker());
+        assertEquals("MCJO", e.getTicker());
     }
 
     @Test
     void setTicker() {
         e.setTicker("LALA");
-        assertEquals("LALA",e.getTicker());
+        assertEquals("LALA", e.getTicker());
     }
 
     @Test
     void getSector() {
-        assertEquals("COFFEE",e.getSector());
+        assertEquals("COFFEE", e.getSector());
     }
 
     @Test
     void setSector() {
         e.setSector("Scones");
-        assertEquals("Scones",e.getSector());
+        assertEquals("Scones", e.getSector());
     }
 }

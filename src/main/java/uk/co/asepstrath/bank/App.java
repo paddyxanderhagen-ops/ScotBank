@@ -7,44 +7,37 @@ import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
 import io.jooby.netty.NettyServer;
 import org.slf4j.Logger;
-import uk.co.asepstrath.bank.model.*;
+import uk.co.asepstrath.bank.controller.*;
+import uk.co.asepstrath.bank.model.Equity;
+import uk.co.asepstrath.bank.model.Etf;
+import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.Transaction;
 import uk.co.asepstrath.bank.repository.*;
 import uk.co.asepstrath.bank.service.*;
-import uk.co.asepstrath.bank.controller.*;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 
 public class App extends Jooby {
 
     private final APIService api;
-    private Authorisation authorisation;
-
-    private InvestorRepository investorRepo;
-    private InvestorService investorService;
-
-    private TransactionRepository transactionRepo;
-    private TransactionService transactionService;
-
-    private AnalyticsService analyticsService;
-
-    private PriceRepository priceRepo;
-    private PriceService priceService;
-
-    private EquityRepository equitiesRepo;
-    private EquityService equityService;
-
-    private EtfService etfService;
-    private EtfRepository etfRepo;
-
-    private ConstituentRepository constituentRepository;
-
     private final DataSource ds;
-    private Logger log;
+    private final Authorisation authorisation;
+    private final InvestorRepository investorRepo;
+    private final InvestorService investorService;
+    private final TransactionRepository transactionRepo;
+    private final TransactionService transactionService;
+    private final AnalyticsService analyticsService;
+    private final PriceRepository priceRepo;
+    private final PriceService priceService;
+    private final InstrumentService instrumentService;
+    private final InstrumentRepository instrumentRepo;
+    private final ConstituentRepository constituentRepository;
+    private final Logger log;
 
     {
         /*
@@ -60,52 +53,52 @@ public class App extends Jooby {
         api = new APIService();
 
         investorRepo = new InvestorRepository(ds);
-        equitiesRepo = new EquityRepository(ds);
         transactionRepo = new TransactionRepository(ds);
-        etfRepo = new EtfRepository(ds);
         constituentRepository = new ConstituentRepository(ds);
         priceRepo = new PriceRepository(ds);
+        instrumentRepo = new InstrumentRepository(ds);
 
         investorService = new InvestorService(investorRepo);
         priceService = new PriceService(priceRepo);
         transactionService = new TransactionService(transactionRepo);
         analyticsService = new AnalyticsService(transactionService, priceService);
-        equityService = new EquityService(equitiesRepo);
-        etfService = new EtfService(etfRepo);
+        instrumentService = new InstrumentService(instrumentRepo);
         authorisation = new Authorisation(investorRepo);
 
         log = getLog();
 
         assets("/assets/**", "/assets");
-        assets("/service_worker.js","/service_worker.js");
+        assets("/service_worker.js", "/service_worker.js");
 
         error((ctx, cause, code) -> {
             ctx.setResponseCode(code);
-            ctx.render("Error" + code.value() + cause.getMessage());
+            if (ctx.header("Accept").value("").contains("application/json")) {
+                ctx.setResponseType(MediaType.json);
+                ctx.render("{\"error\": " + code.value() + ", \"message\": \"" + cause.getMessage() + "\"}");
+            }
         });
 
         mvc(new HomeController_(investorService, ds, transactionService, authorisation));
-        mvc(new CashAccountController_(investorService, ds));
+        mvc(new CashAccountController_(investorService, ds, transactionService));
         mvc(new AnalyticsController_(analyticsService, authorisation, api, priceRepo));
         mvc(new LoginController_());
         mvc(new TransactionController_(transactionService, authorisation));
-        mvc(new InvestmentController_(equityService, priceService, etfService));
-        mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds));
+        mvc(new InstrumentController_(instrumentService, priceService));
+        mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds, instrumentService));
         mvc(new TaxReportController_(analyticsService));
 
         try {
             investorRepo.setUp();
             transactionRepo.setUp();
-            equitiesRepo.setUp();
+            instrumentRepo.setUp();
             priceRepo.setUp();
-            etfRepo.setUp();
             constituentRepository.setUp();
         } catch (SQLException e) {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Unable to access server. " + e);
         }
 
         try {
-            List <Investor> investors = api.getAllInvestor().getInvestors();
+            List<Investor> investors = api.getAllInvestor().getInvestors();
 
             investorRepo.saveAll(investors);
         } catch (SQLException e) {
@@ -118,31 +111,23 @@ public class App extends Jooby {
 
             transactionRepo.saveAll(transactions);
 
-            Set<String> tickers = new HashSet<>();
-            for (Transaction t : transactions) {
-                if (t.getTicker() != null && !t.getTicker().isBlank()) {
-                    tickers.add(t.getTicker());
-                }
-            }
-
             List<Equity> equities = api.getAllEquities().getEquities();
             List<Etf> etfs = api.getAllEtf().getEtfs();
 
             String token = api.loadToken();
 
-            equitiesRepo.saveAll(equities);
-            etfRepo.saveAll(etfs);
+            instrumentRepo.saveAll(equities, etfs);
+
             constituentRepository.saveAll(etfs);
 
 
             for (Equity equity : equities) {
-                List<Price> prices = api.getAllPrices(equity.getTicker(), priceRepo, token).getPrices();
+                api.getAllPrices(equity.getTicker(), priceRepo, token);
             }
 
             for (Etf etf : etfs) {
-                List<Price> prices = api.getAllPrices(etf.getTicker(), priceRepo, token).getPrices();
+                api.getAllPrices(etf.getTicker(), priceRepo, token);
             }
-
 
 
         } catch (Exception e) {

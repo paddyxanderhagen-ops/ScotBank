@@ -18,11 +18,13 @@ public class TransactionDTO {
         return this.transactions;
     }
 
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
     public Pagination getPages() {
         return this.pagination;
     }
-
-    public void setTransactions (List<Transaction> transactions) {this.transactions = transactions;}
 
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);

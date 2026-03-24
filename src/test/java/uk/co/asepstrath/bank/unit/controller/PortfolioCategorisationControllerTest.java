@@ -12,13 +12,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import uk.co.asepstrath.bank.controller.PortfolioCategorisationController;
+import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.service.AnalyticsService;
+import uk.co.asepstrath.bank.service.InstrumentService;
 import uk.co.asepstrath.bank.service.InvestorService;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -35,13 +38,15 @@ class PortfolioCategorisationControllerTest {
     private PortfolioCategorisationController controller;
     private Context ctx;
     private Session session;
+    private InstrumentService instrumentService;
 
     @BeforeEach
     void setUp() {
         investorService = mock(InvestorService.class);
         analyticsService = mock(AnalyticsService.class);
         ds = mock(DataSource.class);
-        controller = new PortfolioCategorisationController(investorService, analyticsService, ds);
+        instrumentService = mock(InstrumentService.class);
+        controller = new PortfolioCategorisationController(investorService, analyticsService, ds, instrumentService);
         ctx = mock(Context.class);
         session = mock(Session.class);
     }
@@ -94,7 +99,20 @@ class PortfolioCategorisationControllerTest {
 
         when(analyticsService.getPositions("inv-123")).thenReturn(positions);
 
+        PreparedStatement ps = mock(PreparedStatement.class);
+
+        when(ds.getConnection()).thenReturn(mockConn);
+        when(mockConn.prepareStatement(anyString())).thenReturn(ps);
+        when(ps.executeQuery()).thenReturn(mockRs);
+        when(mockRs.next()).thenReturn(true, false);
+        when(mockRs.getString("type")).thenReturn("equity");
+
+        when(instrumentService.getInstrument(anyString())).thenReturn(new Equity(), new Equity());
+
+
         String result = controller.getPortfolio(ctx);
+
+        System.out.println(result);
 
         verify(ctx).setResponseType("application/json");
         assertTrue(result.contains("\"cash\":1000.0")); // 1000 starting + 500 db

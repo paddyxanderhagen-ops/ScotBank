@@ -21,49 +21,41 @@ public class PriceServiceTest {
     private PriceService service;
 
     @BeforeEach
-    void setUp () {
+    void setUp() {
         repo = mock(PriceRepository.class);
         service = new PriceService(repo);
     }
 
     @Test
-    void getLastPrice () throws SQLException {
+    void getLastPrice() throws SQLException {
         when(repo.getLatestPrice("AAPL")).thenReturn(100.0);
         double latest = service.getLatestPrice("AAPL");
         assertEquals(100.0, latest);
     }
 
     @Test
-    void getLastPriceNoShare_throws404 () throws SQLException {
+    void getLastPriceNoShare_throws404() throws SQLException {
         when(repo.getLatestPrice(anyString())).thenReturn(Double.MAX_VALUE);
         StatusCodeException ex = assertThrows(StatusCodeException.class, () -> service.getLatestPrice("AAPL"));
         assertEquals(StatusCode.NOT_FOUND, ex.getStatusCode());
     }
 
     @Test
-    void getLastPrice_throws500 () throws SQLException {
+    void getLastPrice_throws500() throws SQLException {
         when(repo.getLatestPrice(anyString())).thenThrow(SQLException.class);
         StatusCodeException ex = assertThrows(StatusCodeException.class, () -> service.getLatestPrice("AAPLE"));
         assertEquals(StatusCode.SERVER_ERROR, ex.getStatusCode());
     }
 
     @Test
-    void getPriceAtTimestamp () throws SQLException {
+    void getPriceAtTimestamp() throws SQLException {
         when(repo.getPriceAtTime("10.00", "AAPL")).thenReturn(100.0);
         double priceAtTime = service.getPriceAtTimestamp("10.00", "AAPL");
         assertEquals(100.0, priceAtTime);
     }
 
-
     @Test
-    void getPriceAtTimeNoPrice_throws404 () throws SQLException {
-        when(repo.getPriceAtTime(anyString(), anyString())).thenReturn(Double.MAX_VALUE);
-        StatusCodeException ex = assertThrows(StatusCodeException.class, () -> service.getPriceAtTimestamp("9.40", "AAPL"));
-        assertEquals(StatusCode.NOT_FOUND, ex.getStatusCode());
-    }
-
-    @Test
-    void getPriceAtTimeNoPrice_throws500 () throws SQLException {
+    void getPriceAtTimeNoPrice_throws500() throws SQLException {
         when(repo.getPriceAtTime(anyString(), anyString())).thenThrow(SQLException.class);
         StatusCodeException ex = assertThrows(StatusCodeException.class, () -> service.getPriceAtTimestamp("9.40", "AAPL"));
         assertEquals(StatusCode.SERVER_ERROR, ex.getStatusCode());

@@ -1,4 +1,4 @@
-package uk.co.asepstrath.bank.controller;
+package uk.co.asepstrath.bank.unit.controller;
 
 import io.jooby.Context;
 import io.jooby.ModelAndView;
@@ -7,13 +7,18 @@ import io.jooby.value.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import uk.co.asepstrath.bank.controller.TaxReportController;
 import uk.co.asepstrath.bank.model.TaxReport;
 import uk.co.asepstrath.bank.service.AnalyticsService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
 public class TaxReportControllerTest {
 
@@ -39,7 +44,7 @@ public class TaxReportControllerTest {
     void testTaxReportWithYearProvided() {
         String investorId = "12345";
         Integer year = 2023;
-        TaxReport taxReport = new TaxReport(2018,new ArrayList<>());
+        TaxReport taxReport = new TaxReport(2018, new ArrayList<>());
         List<Integer> years = Arrays.asList(2021, 2022, 2023);
 
         when(analyticsService.getAvailableYears(investorId)).thenReturn(years);
@@ -57,7 +62,7 @@ public class TaxReportControllerTest {
     @Test
     void testTaxReportWithDefaultYear() {
         String investorId = "12345";
-        TaxReport taxReport = new TaxReport(2018,new ArrayList<>());
+        TaxReport taxReport = new TaxReport(2018, new ArrayList<>());
         List<Integer> years = Arrays.asList(2021, 2022);
 
         when(analyticsService.getAvailableYears(investorId)).thenReturn(years);
@@ -75,8 +80,8 @@ public class TaxReportControllerTest {
     @Test
     void testTaxReportWithNoAvailableYears() {
         String investorId = "12345";
-        TaxReport taxReport = new TaxReport(2018,new ArrayList<>());
-        List<Integer> years = Arrays.asList();
+        TaxReport taxReport = new TaxReport(2018, new ArrayList<>());
+        List<Integer> years = List.of();
 
         when(analyticsService.getAvailableYears(investorId)).thenReturn(years);
         when(analyticsService.getTaxReport(investorId, 2025)).thenReturn(taxReport);

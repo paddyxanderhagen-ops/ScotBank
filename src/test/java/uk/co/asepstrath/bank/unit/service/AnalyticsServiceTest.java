@@ -1,7 +1,6 @@
 package uk.co.asepstrath.bank.unit.service;
 
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.model.Transaction;

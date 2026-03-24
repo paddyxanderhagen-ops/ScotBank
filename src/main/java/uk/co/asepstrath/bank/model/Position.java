@@ -1,16 +1,16 @@
 package uk.co.asepstrath.bank.model;
 
 public class Position {
-    private String ticker;
-    private double shares;
-    private double currPrice;
-    private double costBasis;
-    private double currentValue;
-    private double pnl;
-    private double pnlPercentage;
-    private double realisedPnl;
-    private double avgBuy;
-    private double totalInvested;
+    private final String ticker;
+    private final double shares;
+    private final double currPrice;
+    private final double costBasis;
+    private final double currentValue;
+    private final double pnl;
+    private final double pnlPercentage;
+    private final double realisedPnl;
+    private final double avgBuy;
+    private final double totalInvested;
 
     public Position(String ticker,
                     double shares,
@@ -20,8 +20,7 @@ public class Position {
                     double realisedPnl,
                     double avgBuy,
                     double totalInvested
-    )
-    {
+    ) {
         this.ticker = ticker;
         this.shares = Math.round(shares * 100.0) / 100.0;
         this.currPrice = currPrice;
@@ -38,7 +37,9 @@ public class Position {
         this.totalInvested = totalInvested;
     }
 
-    public double getRealisedPnl() { return realisedPnl; }
+    public double getRealisedPnl() {
+        return realisedPnl;
+    }
 
     public double getCurrentValue() {
         return currentValue;
@@ -59,15 +60,20 @@ public class Position {
     public double getPnlPercentage() {
         return pnlPercentage;
     }
+
     public String getTicker() {
         return ticker;
     }
+
     public double getShares() {
         return shares;
     }
 
-    public double getAvgBuy () {
+    public double getAvgBuy() {
         return avgBuy;
     }
-    public double getTotalInvested () {return totalInvested;}
+
+    public double getTotalInvested() {
+        return totalInvested;
+    }
 }

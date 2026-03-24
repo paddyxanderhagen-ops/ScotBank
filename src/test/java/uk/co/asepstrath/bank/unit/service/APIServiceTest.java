@@ -54,7 +54,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllInvestors_whenEmptyResponse () {
+    void getAllInvestors_whenEmptyResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -78,7 +78,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllInvestors_whenNoResponse () {
+    void getAllInvestors_whenNoResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -144,7 +144,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllTransactions_whenEmptyResponse () {
+    void getAllTransactions_whenEmptyResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -171,7 +171,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllTransactions_whenNoResponse () {
+    void getAllTransactions_whenNoResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -191,12 +191,14 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllPrices () {
+    void getAllPrices() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
             PriceRepository repo = mock(PriceRepository.class);
+            APIService service = new APIService();
 
+            String token = service.loadToken();
 
             String page1 = """
                     {
@@ -209,10 +211,10 @@ public class APIServiceTest {
                         "pagination": {
                             "pageSize": 1,
                             "returnedCount": 1,
-                            "nextToken": "1"
+                            "nextToken": "%s"
                         }
                     }
-                    """;
+                    """.formatted(token);
 
             String page2 = """
                     {
@@ -235,7 +237,6 @@ public class APIServiceTest {
             when(request.asString()).thenReturn(response);
             when(response.getBody()).thenReturn(page1, page2);
 
-            APIService service = new APIService();
             PriceDTO results = service.getAllPrices("AAPL", repo, "0");
 
 
@@ -251,7 +252,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllPrices_whenEmptyResponse () {
+    void getAllPrices_whenEmptyResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -282,7 +283,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllPrices_whenNoResponse () {
+    void getAllPrices_whenNoResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -306,11 +307,15 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllPrices_databaseErr () {
+    void getAllPrices_databaseErr() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
             PriceRepository repo = mock(PriceRepository.class);
+
+            APIService service = new APIService();
+
+            String token = service.loadToken();
 
 
             String json = """
@@ -324,10 +329,10 @@ public class APIServiceTest {
                         "pagination": {
                             "pageSize": 1,
                             "returnedCount": 1,
-                            "nextToken": "1"
+                            "nextToken": "%s"
                         }
                     }
-                    """;
+                    """.formatted(token);
 
             unirest.when(() -> Unirest.get(anyString())).thenReturn(request);
             when(request.accept("application/json")).thenReturn(request);
@@ -335,7 +340,6 @@ public class APIServiceTest {
             when(response.getBody()).thenReturn(json);
             doThrow(new SQLException()).when(repo).saveAll(anyString(), anyList());
 
-            APIService service = new APIService();
 
             StatusCodeException ex = assertThrows(StatusCodeException.class, () -> service.getAllPrices("x", repo, "1"));
 
@@ -346,7 +350,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllEquities () {
+    void getAllEquities() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -379,7 +383,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllEquities_whenEmptyResponse () {
+    void getAllEquities_whenEmptyResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -404,7 +408,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllEquities_whenNoResponse () {
+    void getAllEquities_whenNoResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -425,7 +429,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllEtfs () {
+    void getAllEtfs() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -468,7 +472,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllEts_whenEmptyResponse () {
+    void getAllEts_whenEmptyResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);
@@ -493,7 +497,7 @@ public class APIServiceTest {
     }
 
     @Test
-    void getAllEts_whenNoResponse () {
+    void getAllEts_whenNoResponse() {
         try (MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             GetRequest request = mock(GetRequest.class);
             HttpResponse<String> response = mock(HttpResponse.class);

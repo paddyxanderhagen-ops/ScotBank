@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PriceService {
 
-    private PriceRepository repo;
+    private final PriceRepository repo;
 
     public PriceService(PriceRepository repo) {
         this.repo = repo;
@@ -32,10 +32,6 @@ public class PriceService {
     public double getPriceAtTimestamp(String timestamp, String ticker) {
         try {
             double price = repo.getPriceAtTime(timestamp, ticker);
-
-            if (price == Double.MAX_VALUE) {
-                throw new StatusCodeException(StatusCode.NOT_FOUND, "Price not found");
-            }
 
             return price;
 

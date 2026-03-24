@@ -7,9 +7,9 @@ import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.repository.InvestorRepository;
 import uk.co.asepstrath.bank.service.InvestorService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

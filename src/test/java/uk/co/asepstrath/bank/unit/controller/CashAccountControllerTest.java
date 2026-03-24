@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.controller.CashAccountController;
 import uk.co.asepstrath.bank.service.InvestorService;
+import uk.co.asepstrath.bank.service.TransactionService;
 
 import javax.sql.DataSource;
 
@@ -17,6 +18,7 @@ class CashAccountControllerTest {
 
     private InvestorService is;
     private DataSource ds;
+    private TransactionService ts;
 
     private Context ctx;
     private Session sess;
@@ -24,8 +26,9 @@ class CashAccountControllerTest {
     @BeforeEach
     void setup() {
         is = mock(InvestorService.class);
+        ts = mock(TransactionService.class);
         ds = mock(DataSource.class);
-        cac = new CashAccountController(is, ds);
+        cac = new CashAccountController(is, ds, ts);
         ctx = mock(Context.class);
         sess = mock(Session.class);
         when(ctx.session()).thenReturn(sess);

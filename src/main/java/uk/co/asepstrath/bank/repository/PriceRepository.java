@@ -1,6 +1,5 @@
 package uk.co.asepstrath.bank.repository;
 
-import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Price;
 
 import javax.sql.DataSource;
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class PriceRepository {
 
-    private DataSource ds;
+    private final DataSource ds;
 
     public PriceRepository(DataSource ds) {
         this.ds = ds;
@@ -20,14 +19,14 @@ public class PriceRepository {
         try (Connection conn = ds.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute("""
-                CREATE TABLE IF NOT EXISTS price (
-                    ticker VARCHAR(20),
-                    timestamp VARCHAR(30),
-                    price DOUBLE,
-                    PRIMARY KEY (ticker, timestamp),
-                    FOREIGN KEY (ticker) REFERENCES equity(ticker)
-                )
-                """);
+                    CREATE TABLE IF NOT EXISTS price (
+                        ticker VARCHAR(20),
+                        timestamp VARCHAR(30),
+                        price DOUBLE,
+                        PRIMARY KEY (ticker, timestamp),
+                        FOREIGN KEY (ticker) REFERENCES instrument(ticker)
+                    )
+                    """);
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_price_ticker ON price(ticker)");
         }
     }
@@ -53,7 +52,7 @@ public class PriceRepository {
         }
     }
 
-    public List<Double> getPricesForStock (String ticker) throws SQLException {
+    public List<Double> getPricesForStock(String ticker) throws SQLException {
         String sql = """
                 SELECT price FROM price WHERE ticker = ?
                 """;
@@ -72,7 +71,7 @@ public class PriceRepository {
         }
     }
 
-    public double getPriceAtTime (String timestamp, String ticker) throws SQLException{
+    public double getPriceAtTime(String timestamp, String ticker) throws SQLException {
         String sql = """
                 SELECT price FROM price WHERE timestamp = ? AND ticker = ?
                 """;
@@ -86,6 +85,7 @@ public class PriceRepository {
 
             ResultSet rs = ps.executeQuery();
 
+
             while (rs.next()) {
                 price = rs.getDouble("price");
             }
@@ -94,7 +94,7 @@ public class PriceRepository {
         }
     }
 
-    public double getLatestPrice (String ticker) throws SQLException {
+    public double getLatestPrice(String ticker) throws SQLException {
         String sql = """
                 SELECT price FROM price WHERE ticker = ? ORDER BY timestamp DESC LIMIT 1
                 """;

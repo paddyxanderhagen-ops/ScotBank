@@ -9,9 +9,12 @@ import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import kong.unirest.core.Unirest;
 import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
-import uk.co.asepstrath.bank.model.Position;
+import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Investor;
+import uk.co.asepstrath.bank.model.Position;
+import uk.co.asepstrath.bank.repository.InstrumentRepository;
 import uk.co.asepstrath.bank.service.AnalyticsService;
+import uk.co.asepstrath.bank.service.InstrumentService;
 import uk.co.asepstrath.bank.service.InvestorService;
 
 import javax.sql.DataSource;
@@ -23,15 +26,17 @@ import java.util.Map;
 @Path("/")
 public class PortfolioCategorisationController {
 
-    private InvestorService investorService;
-    private AnalyticsService analyticsService;
-    private DataSource ds;
+    private final InvestorService investorService;
+    private final AnalyticsService analyticsService;
+    private final DataSource ds;
+    private final InstrumentService instrumentService;
 
 
-    public PortfolioCategorisationController(InvestorService investorService, AnalyticsService analyticsService, DataSource ds) {
+    public PortfolioCategorisationController(InvestorService investorService, AnalyticsService analyticsService, DataSource ds, InstrumentService instrumentService) {
         this.investorService = investorService;
         this.analyticsService = analyticsService;
         this.ds = ds;
+        this.instrumentService = instrumentService;
     }
 
     @GET("/portfolio-categorisation")
@@ -62,12 +67,14 @@ public class PortfolioCategorisationController {
         List<Map<String, Object>> holdings = new ArrayList<>();
         if (positions != null) {
             for (Position p : positions) {
-                Map<String, Object> h = new HashMap<>();
-                h.put("ticker", p.getTicker());
-                h.put("shares", p.getShares());
-                h.put("currentPrice", p.getCurrPrice());
-                h.put("currentValue", p.getCurrentValue());
-                holdings.add(h);
+                if (instrumentService.getInstrument(p.getTicker()) instanceof Equity) {
+                    Map<String, Object> h = new HashMap<>();
+                    h.put("ticker", p.getTicker());
+                    h.put("shares", p.getShares());
+                    h.put("currentPrice", p.getCurrPrice());
+                    h.put("currentValue", p.getCurrentValue());
+                    holdings.add(h);
+                }
             }
         }
 

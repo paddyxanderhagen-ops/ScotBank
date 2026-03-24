@@ -1,36 +1,16 @@
 package uk.co.asepstrath.bank.model;
 
-public class Equity {
-    private String name;
-    private String ticker;
+public class Equity extends Instrument {
     private String sector;
 
-    public Equity(String name, String ticker, String sector) {
-        this.name = name;
-        this.ticker = ticker;
+    public Equity(String ticker, String name, String sector) {
+        super(ticker, name);
         this.sector = sector;
     }
 
     public Equity() {
-        this.name = "";
-        this.ticker = "";
+        super("", "");
         this.sector = "";
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTicker() {
-        return ticker;
-    }
-
-    public void setTicker(String ticker) {
-        this.ticker = ticker;
     }
 
     public String getSector() {

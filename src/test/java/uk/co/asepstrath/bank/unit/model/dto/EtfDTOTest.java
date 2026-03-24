@@ -4,19 +4,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.co.asepstrath.bank.model.dto.EtfDTO;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class EtfDTOTest {
 
     EtfDTO eDTO;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         eDTO = new EtfDTO();
     }
 
     @Test
     void getEtfs() {
-        assertEquals(null,eDTO.getEtfs());
+        assertNull(eDTO.getEtfs());
     }
 }

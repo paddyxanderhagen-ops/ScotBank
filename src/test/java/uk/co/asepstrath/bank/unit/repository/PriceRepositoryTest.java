@@ -2,7 +2,6 @@ package uk.co.asepstrath.bank.unit.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Price;
 import uk.co.asepstrath.bank.repository.PriceRepository;
 
@@ -39,7 +38,7 @@ public class PriceRepositoryTest {
     }
 
     @Test
-    void saveAll () throws SQLException{
+    void saveAll() throws SQLException {
         repository.saveAll("AAPL", List.of(new Price("10.00", 150.0), new Price("10.15", 100.0)));
         verify(ps, times(2)).setString(1, "AAPL");
         verify(ps, times(1)).setString(2, "10.00");
@@ -50,7 +49,7 @@ public class PriceRepositoryTest {
     }
 
     @Test
-    void getPricesForStock () throws SQLException {
+    void getPricesForStock() throws SQLException {
         when(rs.next()).thenReturn(true, false);
         when(rs.getDouble("price")).thenReturn(150.0);
         List<Double> prices = repository.getPricesForStock("AAPL");
@@ -59,7 +58,7 @@ public class PriceRepositoryTest {
     }
 
     @Test
-    void getPriceAtTime () throws SQLException {
+    void getPriceAtTime() throws SQLException {
         when(rs.next()).thenReturn(true, false);
         when(rs.getDouble("price")).thenReturn(150.0);
         double price = repository.getPriceAtTime("10.00", "AAPL");
@@ -69,7 +68,7 @@ public class PriceRepositoryTest {
     }
 
     @Test
-    void getLatestPrice () throws SQLException {
+    void getLatestPrice() throws SQLException {
         when(rs.next()).thenReturn(true, false);
         when(rs.getDouble("price")).thenReturn(150.0);
         double price = repository.getLatestPrice("AAPL");

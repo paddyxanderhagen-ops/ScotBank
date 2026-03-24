@@ -36,19 +36,21 @@ public class InvestorRepository {
 
             try (var stmt = conn.prepareStatement("""
                         MERGE INTO investor (id, name, cash_balance)
-                        VALUES (?, ?, ?);
+                        KEY(id)
+                        SELECT ?, ?, ?
+                        WHERE NOT EXISTS (SELECT 1 FROM investor WHERE id=?);
                     """)) {
 
                 for (Investor i : investors) {
                     stmt.setString(1, i.getId());
+                    stmt.setString(4, i.getId());
                     stmt.setString(2, i.getName());
 
                     //round the balance to 2 decimal places
                     double newBalance = i.getCashBalance();
                     double roundedUp = BigDecimal.valueOf(newBalance).setScale(2, RoundingMode.FLOOR).doubleValue();
-
-
                     stmt.setDouble(3, roundedUp);
+
                     stmt.addBatch();
                 }
 

@@ -140,15 +140,15 @@
 
 <script>
     const raw = [
-        {{#each transactions}}
-            {
-                type: "{{type}}",
+    {{#each transactions}}
+        {
+            type: "{{type}}",
                 ticker: "{{ticker}}",
                 timestamp: "{{timestamp}}",
                 amount: {{amount}},
                 balanceAfter: "{{balanceAfter}}"
             }{{#unless @last}},{{/unless}}
-        {{/each}}
+    {{/each}}
     ];
 
     let currentFilter = 'ALL';
