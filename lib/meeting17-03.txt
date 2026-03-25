@@ -1,0 +1,27 @@
+Meeting Retrospective (17/03)
+
+Stop
+- Letting branch management get out of control, consistently remove unnecessary branches
+
+Start
+- Defining clearer decisions and action points during discussions
+- Documenting implementation requirements for complex areas such as capital gains
+- Focusing on front-end implementation in advance of due date
+
+Continue
+- Regularly reviewing progress from the previous week to maintain momentum
+- Collaborating effectively by dividing responsibilities efficiently
+- Providing feedback on in-progress work
+- Supporting each other with technical queries
+- Preparing consistently for presentations and upcoming deadlines
+- Improving test coverage proactively throughout development rather than leaving it late
+
+Action Items
+- Finlay to complete portfolio categorization for MVP
+- Alireza to refine CapitalGainCal implementation based on feedback
+- Jack to improve test coverage before next lab session
+- Team to agree on a clear branch management policy
+- Team to finalise and document capital gains requirements
+- Team to clarify deposit/withdrawal functionality changes
+- Address outstanding transaction table query raised by Mykhailo
+- Ensure all remaining MVP tasks are clearly defined and assigned
