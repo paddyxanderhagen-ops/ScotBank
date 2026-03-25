@@ -22,12 +22,6 @@ public class TransactionUtility {
                         }))
                 .toList();
 
-        System.out.println(sorted.size());
-
-        for(Transaction t : sorted) {
-            System.out.println(t.getId());
-        }
-
         double startingBalance = currentBalance;
         for (Transaction t : sorted) {
             if (t.getType().equals("DEPOSIT") || t.getType().equals("SELL")) {

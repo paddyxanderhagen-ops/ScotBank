@@ -77,18 +77,18 @@ public class TransactionControllerTest {
         assertEquals(2, enriched.size());
 
         Map<String, Object> first = enriched.get(0);
-        assertEquals("WITHDRAWAL", first.get("type"));
-        assertEquals(9.30, first.get("amount"));
-        assertEquals("10000.0", first.get("balanceAfter"));
-        assertEquals("12:30:00", first.get("timestamp"));
-        assertEquals("SHUP", first.get("ticker"));
+        assertEquals("DEPOSIT", first.get("type"));
+        assertEquals(50.0, first.get("amount"));
+        assertEquals("10009.3", first.get("balanceAfter"));
+        assertEquals("10:27:00", first.get("timestamp"));
+        assertEquals("ROCK", first.get("ticker"));
 
         Map<String, Object> second = enriched.get(1);
-        assertEquals("DEPOSIT", second.get("type"));
-        assertEquals(50.0, second.get("amount"));
-        assertEquals("10009.3", second.get("balanceAfter"));
-        assertEquals("10:27:00", second.get("timestamp"));
-        assertEquals("ROCK", second.get("ticker"));
+        assertEquals("WITHDRAWAL", second.get("type"));
+        assertEquals(9.30, second.get("amount"));
+        assertEquals("10000.0", second.get("balanceAfter"));
+        assertEquals("12:30:00", second.get("timestamp"));
+        assertEquals("SHUP", second.get("ticker"));
 
         assertEquals(50.0, model.get("totalDeposits"));
         assertEquals(9.3, model.get("totalWithdrawals"));
