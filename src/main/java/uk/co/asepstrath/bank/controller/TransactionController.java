@@ -5,7 +5,10 @@ import io.jooby.ModelAndView;
 import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
+import uk.co.asepstrath.bank.TransactionUtility;
+import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Transaction;
+import uk.co.asepstrath.bank.service.InvestorService;
 import uk.co.asepstrath.bank.service.TransactionService;
 
 import java.util.*;
@@ -14,9 +17,11 @@ import java.util.*;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final InvestorService investorService;
 
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, InvestorService investorService) {
         this.transactionService = transactionService;
+        this.investorService = investorService;
     }
 
     @GET("/view-all")
@@ -24,26 +29,40 @@ public class TransactionController {
         List<Transaction> transactions = getSession(ctx);
         String id = ctx.session().get("id").value();
 
-        List<Transaction> sorted = transactions.stream()
-                .sorted(Comparator.comparing(Transaction::getTimestamp))
-                .toList();
+        double currentBalance = investorService.getInvestor(id).getCashBalance();
+
+        List<Transaction> executed = TransactionUtility.getExecuted(transactions, currentBalance);
 
         double runningBalance = 0;
+        // work backwards to find starting balance
+        for (Transaction t : executed) {
+            if (t.getType().equals("DEPOSIT") || t.getType().equals("SELL")) {
+                runningBalance -= t.getTotalCashAmount();
+            } else if (t.getType().equals("WITHDRAWAL") || t.getType().equals("BUY")) {
+                runningBalance += t.getTotalCashAmount();
+            }
+        }
+        runningBalance += currentBalance;
+
         double totalDeposits = 0;
         double totalWithdrawals = 0;
         List<Map<String, Object>> enriched = new ArrayList<>();
 
-        for (Transaction t : sorted) {
+        for (Transaction t : executed) {
             String balanceAfterStr = "—";
 
-            if (t.getType().equals("DEPOSIT")) {
+            if (t.getType().equals("DEPOSIT") || t.getType().equals("SELL")) {
                 runningBalance += t.getTotalCashAmount();
-                totalDeposits += t.getTotalCashAmount();
-                balanceAfterStr = String.valueOf(Math.round(runningBalance * 100.0) / 100.0);
-            } else if (t.getType().equals("WITHDRAWAL")) {
+                if (t.getType().equals("DEPOSIT")) {
+                    totalDeposits += t.getTotalCashAmount();
+                }
+                balanceAfterStr = String.valueOf((Math.round((runningBalance)* 100.0) / 100.0));
+            } else if (t.getType().equals("WITHDRAWAL") || t.getType().equals("BUY")) {
                 runningBalance -= t.getTotalCashAmount();
-                totalWithdrawals += t.getTotalCashAmount();
-                balanceAfterStr = String.valueOf(Math.round(runningBalance * 100.0) / 100.0);
+                if (t.getType().equals("WITHDRAWAL")) {
+                    totalWithdrawals += t.getTotalCashAmount();
+                }
+                balanceAfterStr = String.valueOf(Math.round((runningBalance) * 100.0) / 100.0);
             }
 
             Map<String, Object> row = new HashMap<>();
@@ -54,6 +73,22 @@ public class TransactionController {
             row.put("balanceAfter", balanceAfterStr);
             enriched.add(row);
         }
+
+        // also add skipped transactions
+        List<Transaction> allSorted = TransactionUtility.getExecuted(transactions, currentBalance);
+        for (Transaction t : transactions) {
+            if (!executed.contains(t) && (t.getType().equals("BUY") || t.getType().equals("WITHDRAWAL"))) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("timestamp", t.getTimestamp());
+                row.put("type", t.getType());
+                row.put("ticker", t.getTicker() != null ? t.getTicker() : "");
+                row.put("amount", t.getTotalCashAmount());
+                row.put("balanceAfter", "insufficient funds");
+                enriched.add(row);
+            }
+        }
+
+        enriched = enriched.reversed();
 
         Map<String, Object> model = new HashMap<>();
         model.put("transactions", enriched);

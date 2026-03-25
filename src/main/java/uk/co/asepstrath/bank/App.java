@@ -59,7 +59,7 @@ public class App extends Jooby {
         investorService = new InvestorService(investorRepo);
         priceService = new PriceService(priceRepo);
         transactionService = new TransactionService(transactionRepo);
-        analyticsService = new AnalyticsService(transactionService, priceService);
+        analyticsService = new AnalyticsService(transactionService, priceService, investorService);
         instrumentService = new InstrumentService(instrumentRepo);
 
         log = getLog();
@@ -79,7 +79,7 @@ public class App extends Jooby {
         mvc(new CashAccountController_(investorService, ds, transactionService));
         mvc(new AnalyticsController_(analyticsService, api, priceRepo));
         mvc(new LoginController_(investorService));
-        mvc(new TransactionController_(transactionService));
+        mvc(new TransactionController_(transactionService, investorService));
         mvc(new InstrumentController_(instrumentService, priceService));
         mvc(new PortfolioCategorisationController_(investorService, analyticsService, ds, instrumentService));
         mvc(new TaxReportController_(analyticsService));

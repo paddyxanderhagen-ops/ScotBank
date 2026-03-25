@@ -24,8 +24,8 @@ public class ConstituentRepository {
              Statement stmt = conn.createStatement()) {
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS constituents (
-                            equity_ticker VARCHAR(20) REFERENCES equity(ticker),
-                            etf_ticker VARCHAR(20) REFERENCES etf(ticker),
+                            ticker VARCHAR(20) REFERENCES instrument(ticker),
+                            etf_ticker VARCHAR(20) REFERENCES instrument(ticker),
                             weight DOUBLE,
                             PRIMARY KEY (equity_ticker, etf_ticker)
                         )
