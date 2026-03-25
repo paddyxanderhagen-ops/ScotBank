@@ -87,8 +87,6 @@ public class TransactionController {
             }
         }
 
-        enriched = enriched.reversed();
-
         Map<String, Object> model = new HashMap<>();
         model.put("transactions", enriched);
         model.put("totalDeposits", Math.round(totalDeposits * 100.0) / 100.0);

@@ -46,7 +46,7 @@ public class HomeController {
             return null;
         }
 
-        List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(5).toList().reversed();
+        List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).reversed().stream().limit(5).toList();
 
         Map<String, Object> map = new HashMap<>();
         map.put("id", investor.getId());

@@ -205,8 +205,8 @@
             } else {
                 va = a[sortKey] || ''; vb = b[sortKey] || '';
             }
-            if (va < vb) return -1 * sortDir;
-            if (va > vb) return 1 * sortDir;
+            if (va > vb) return -1 * sortDir;
+            if (va < vb) return 1 * sortDir;
             return 0;
         });
 
