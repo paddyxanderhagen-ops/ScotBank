@@ -26,7 +26,6 @@ class HomeControllerTest {
 
     private InvestorService is;
     private TransactionService ts;
-    private DataSource dsrc;
 
     private Context ctx;
     private Session sess;
@@ -50,13 +49,13 @@ class HomeControllerTest {
     }
 
     @Test
-    void dashboardPageAuthorisedReturnsView() throws SQLException {
+    void dashboardPageAuthorisedReturnsView() {
         String id = "TS1505";
         Investor i = mock(Investor.class);
 
         Value mockValue = mock(Value.class);
         when(sess.get("id")).thenReturn(mockValue);
-        when(mockValue.isMissing()).thenReturn(false); // or true if testing missing
+        when(mockValue.isMissing()).thenReturn(false);
         when(mockValue.value()).thenReturn(id);
         when(is.getInvestor(id)).thenReturn(i);
         when(i.getName()).thenReturn("Tupac");

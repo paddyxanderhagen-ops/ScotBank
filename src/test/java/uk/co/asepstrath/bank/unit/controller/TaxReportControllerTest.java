@@ -94,16 +94,4 @@ public class TaxReportControllerTest {
         assertEquals(years, model.get("years"));
         assertEquals(2025, model.get("selectedYear"));
     }
-
-//    @Test
-//    void testTaxReportWithInvalidSession() {
-//        when(mockContext.session().get("id").value()).thenReturn(null);
-//
-//        ModelAndView<Map<String, Object>> result = taxReportController.taxReport(mockContext, 2023);
-//
-//        Map<String, Object> model = result.getModel();
-//        assertNull(model.get("report"));
-//        assertNull(model.get("years"));
-//        assertNull(model.get("selectedYear"));
-//    }
 }

@@ -38,7 +38,7 @@ public class PortfolioCategorisationController {
     }
 
     @GET("/portfolio-categorisation")
-    public ModelAndView getPortfolioBreakdown(Context ctx) {
+    public ModelAndView<Map<String, Object>> getPortfolioBreakdown(Context ctx) {
         if (!isLoggedIn(ctx)) {
             ctx.sendRedirect("/login");
             return null;
@@ -46,7 +46,7 @@ public class PortfolioCategorisationController {
 
         Map<String, Object> model = new HashMap<>();
 
-        return new ModelAndView("portfolio-categorisation.hbs", model);
+        return new ModelAndView<>("portfolio-categorisation.hbs", model);
     }
 
     @GET("/api/portfolio")

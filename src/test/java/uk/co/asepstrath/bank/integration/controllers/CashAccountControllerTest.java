@@ -11,7 +11,7 @@ import uk.co.asepstrath.bank.TestApp;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JoobyTest(TestApp.class)
-public class CashAccountControllerTest {
+class CashAccountControllerTest {
 
     @BeforeEach
     void setUp() {
@@ -47,7 +47,7 @@ public class CashAccountControllerTest {
 
     @Test
     void withdrawWithoutSessionRedirects(String serverPath) {
-        HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/deposit")
+        HttpResponse<String> response = Unirest.post(serverPath + "dashboard/transaction/withdraw")
                 .field("amount", 123.456)
                 .asString();
 

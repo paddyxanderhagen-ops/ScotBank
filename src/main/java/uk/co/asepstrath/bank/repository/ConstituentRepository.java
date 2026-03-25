@@ -45,8 +45,8 @@ public class ConstituentRepository {
             conn.setAutoCommit(false);
 
             for (Etf etf : etfs) {
-                String etf_ticker = etf.getTicker();
-                ps.setString(2, etf_ticker);
+                String etfTicker = etf.getTicker();
+                ps.setString(2, etfTicker);
                 List<Constituent> constituents = etf.getConstituents();
 
                 for (Constituent constituent : constituents) {

@@ -19,7 +19,7 @@ public class Etf extends Instrument {
         super("", "");
         description = "";
         inceptionDate = "";
-        constituents = new ArrayList<Constituent>();
+        constituents = new ArrayList<>();
     }
 
     public String getDescription() {

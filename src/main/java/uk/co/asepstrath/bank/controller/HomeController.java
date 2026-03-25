@@ -42,6 +42,9 @@ public class HomeController {
     @GET("/dashboard")
     public ModelAndView<Map<String, Object>> dashboardPage(Context ctx) {
         Investor investor = getSession(ctx);
+        if (investor == null) {
+            return null;
+        }
 
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(investor.getId()).stream().limit(5).toList().reversed();
 
@@ -57,6 +60,9 @@ public class HomeController {
     @GET("/cash-management")
     public ModelAndView<Map<String, Object>> cashManagement(Context ctx) {
         Investor investor = getSession(ctx);
+        if (investor == null) {
+            return null;
+        }
 
         Map<String, Object> model = new HashMap<>();
 

@@ -4,9 +4,9 @@ public class Price {
     private String timestamp;
     private double price;
 
-    public Price(String timestamp, double price) {
+    public Price(String timestamp, double instrumentPrice) {
         this.timestamp = timestamp;
-        this.price = price;
+        this.price = instrumentPrice;
     }
 
     public Price() {

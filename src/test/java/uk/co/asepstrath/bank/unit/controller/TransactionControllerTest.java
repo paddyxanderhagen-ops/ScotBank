@@ -86,21 +86,4 @@ public class TransactionControllerTest {
         assertEquals(0.0, model.get("totalDeposits"));
         assertEquals(0.0, model.get("totalWithdrawals"));
     }
-
-    @Test
-    void testInvalidInvestorId() {
-        when(transactionService.getTransactionsByInvestor("12345")).thenReturn(Collections.emptyList());
-
-        ModelAndView<Map<String, Object>> result = transactionController.getTransactionsForInvestor(context);
-
-        Map<String, Object> model = result.getModel();
-        List<Map<String, Object>> enrichedTransactions = (List<Map<String, Object>>) model.get("transactions");
-
-        assertNotNull(enrichedTransactions);
-        assertTrue(enrichedTransactions.isEmpty());
-        assertEquals(0.0, model.get("totalDeposits"));
-        assertEquals(0.0, model.get("totalWithdrawals"));
-    }
-
-
 }

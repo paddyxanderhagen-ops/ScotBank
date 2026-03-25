@@ -50,7 +50,7 @@ class InstrumentControllerTest {
     }
 
     @Test
-    void investmentPage_searchEquity_returnsEquityView() throws Exception {
+    void investmentPage_searchEquity_returnsEquityView() {
         Value val = mock(Value.class);
         when(val.isMissing()).thenReturn(false);
         when(val.value()).thenReturn("12345");
@@ -71,7 +71,7 @@ class InstrumentControllerTest {
     }
 
     @Test
-    void investmentPage_searchEtf_returnsEtfView() throws Exception {
+    void investmentPage_searchEtf_returnsEtfView() {
         Value val = mock(Value.class);
         when(val.isMissing()).thenReturn(false);
         when(val.value()).thenReturn("12345");
@@ -108,7 +108,7 @@ class InstrumentControllerTest {
     }
 
     @Test
-    void investmentPage_searchPriceServiceThrows_setsPriceNotAvailable() throws Exception {
+    void investmentPage_searchPriceServiceThrows_setsPriceNotAvailable() {
         Value val = mock(Value.class);
         when(val.isMissing()).thenReturn(false);
         when(val.value()).thenReturn("12345");

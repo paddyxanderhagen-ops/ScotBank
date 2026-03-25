@@ -18,11 +18,6 @@ public class AnalyticsService {
         this.priceService = priceService;
     }
 
-    private double round(double value) {
-        return Math.round(value * 100.0) / 100.0;
-    }
-
-
     public List<Position> getPositions(String id) {
         List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
         Map<String, List<Transaction>> transactionsByTicker = new HashMap<>();
@@ -150,7 +145,7 @@ public class AnalyticsService {
                 .map(t -> Integer.parseInt(t.getTimestamp().substring(0, 4)))
                 .distinct()
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

@@ -31,7 +31,15 @@ public class TaxReportController {
 
         List<Integer> years = analyticsService.getAvailableYears(id);
 
-        int selectedYear = (year != null) ? year : (years.isEmpty() ? 2025 : years.get(years.size() - 1));
+        int selectedYear = 0;
+
+        if (year != null) {
+            selectedYear = year;
+        } else if (years.isEmpty()) {
+            selectedYear = 2025;
+        } else {
+            selectedYear = years.get(years.size() - 1);
+        }
 
         TaxReport report = analyticsService.getTaxReport(id, selectedYear);
 

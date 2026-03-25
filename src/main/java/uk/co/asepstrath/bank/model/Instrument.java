@@ -4,7 +4,7 @@ public abstract class Instrument {
     private String ticker;
     private String name;
 
-    public Instrument(String ticker, String name) {
+    protected Instrument(String ticker, String name) {
         this.ticker = ticker;
         this.name = name;
     }

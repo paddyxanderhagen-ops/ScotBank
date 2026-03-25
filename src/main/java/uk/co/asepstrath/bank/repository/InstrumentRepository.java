@@ -135,8 +135,6 @@ public class InstrumentRepository {
                 if (type.equalsIgnoreCase("equity")) {
                     instrument = new Equity(rs.getString("ticker"), rs.getString("name"), rs.getString("sector"));
                 } else if (type.equalsIgnoreCase("etf")) {
-                    List<Constituent> constituents = new ArrayList<>();
-                    constituents.add(new Constituent(rs.getString("constituent_ticker"), rs.getDouble("weight")));
                     instrument = new Etf(rs.getString("ticker"), rs.getString("name"), rs.getString("description"), rs.getString("inception_date"), null);
                 } else {
                     throw new StatusCodeException(StatusCode.NOT_FOUND, "Error: Could not find type " + type);

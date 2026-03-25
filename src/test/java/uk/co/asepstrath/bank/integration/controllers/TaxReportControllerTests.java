@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @JoobyTest(TestApp.class)
-public class TaxReportControllerTests {
+class TaxReportControllerTests {
 
     private String id;
 

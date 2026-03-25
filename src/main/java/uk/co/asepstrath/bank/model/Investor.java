@@ -1,6 +1,7 @@
 package uk.co.asepstrath.bank.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Investor {
     private final ArrayList<Stock> stocks;
@@ -46,7 +47,7 @@ public class Investor {
         this.cashBalance = cashBalance;
     }
 
-    public ArrayList<Stock> getStocks() {
+    public List<Stock> getStocks() {
         return stocks;
     }
 

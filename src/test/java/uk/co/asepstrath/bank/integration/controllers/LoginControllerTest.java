@@ -12,7 +12,7 @@ import uk.co.asepstrath.bank.service.APIService;
 import static org.junit.jupiter.api.Assertions.*;
 
 @JoobyTest(TestApp.class)
-public class LoginControllerTest {
+class LoginControllerTest {
 
     private String id;
 
