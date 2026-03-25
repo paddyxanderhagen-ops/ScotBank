@@ -52,4 +52,17 @@ public class PriceService {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve prices");
         }
     }
+
+    public String getUpdatedTime() {
+        try {
+            String timestamp = repo.getLastTime();
+
+            if (timestamp == null || timestamp.isBlank()) {
+                throw new StatusCodeException(StatusCode.NOT_FOUND, "Prices not found");
+            }
+            return timestamp;
+        } catch (SQLException e) {
+            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve prices");
+        }
+    }
 }
