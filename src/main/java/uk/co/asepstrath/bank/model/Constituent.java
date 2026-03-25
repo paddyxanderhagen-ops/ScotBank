@@ -6,7 +6,8 @@ public class Constituent {
 
     public Constituent(String ticker, double weight) {
         this.ticker = ticker;
-        this.weight = weight;
+        double unroundedWeight = weight*100;
+        this.weight = Math.round(unroundedWeight * 100.0) / 100.0;
     }
 
     public Constituent() {

@@ -2,7 +2,6 @@ package uk.co.asepstrath.bank.controller;
 
 import io.jooby.Context;
 import io.jooby.ModelAndView;
-import io.jooby.Session;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import io.jooby.annotation.QueryParam;
@@ -24,18 +23,23 @@ public class TaxReportController {
 
     @GET
     public ModelAndView<Map<String, Object>> taxReport(Context ctx, @QueryParam Integer year) {
-        Session session = null;
-        String id = null;
-        if (ctx != null) {
-            session = ctx.session();
+        if (!isLoggedIn(ctx)) {
+            ctx.sendRedirect("/login");
+            return null;
         }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
-        }
+        String id = ctx.session().get("id").value();
 
         List<Integer> years = analyticsService.getAvailableYears(id);
 
-        int selectedYear = (year != null) ? year : (years.isEmpty() ? 2025 : years.get(years.size() - 1));
+        int selectedYear = 0;
+
+        if (year != null) {
+            selectedYear = year;
+        } else if (years.isEmpty()) {
+            selectedYear = 2025;
+        } else {
+            selectedYear = years.get(years.size() - 1);
+        }
 
         TaxReport report = analyticsService.getTaxReport(id, selectedYear);
 
@@ -45,5 +49,10 @@ public class TaxReportController {
         map.put("selectedYear", selectedYear);
 
         return new ModelAndView<>("taxreport.hbs", map);
+    }
+
+    private boolean isLoggedIn(Context ctx) {
+        if (ctx == null) return false;
+        return !ctx.session().get("id").isMissing();
     }
 }

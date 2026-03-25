@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import io.jooby.Context;
 import io.jooby.ModelAndView;
 import io.jooby.Session;
-import io.jooby.StatusCode;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.Path;
 import kong.unirest.core.Unirest;
@@ -12,7 +11,6 @@ import uk.co.asepstrath.bank.implementation.CashAccountImplementation;
 import uk.co.asepstrath.bank.model.Equity;
 import uk.co.asepstrath.bank.model.Investor;
 import uk.co.asepstrath.bank.model.Position;
-import uk.co.asepstrath.bank.repository.InstrumentRepository;
 import uk.co.asepstrath.bank.service.AnalyticsService;
 import uk.co.asepstrath.bank.service.InstrumentService;
 import uk.co.asepstrath.bank.service.InvestorService;
@@ -40,18 +38,29 @@ public class PortfolioCategorisationController {
     }
 
     @GET("/portfolio-categorisation")
-    public ModelAndView getPortfolioBreakdown() {
+    public ModelAndView<Map<String, Object>> getPortfolioBreakdown(Context ctx) {
+        if (!isLoggedIn(ctx)) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
+
         Map<String, Object> model = new HashMap<>();
 
-        return new ModelAndView("portfolio-categorisation.hbs", model);
+        return new ModelAndView<>("portfolio-categorisation.hbs", model);
     }
 
     @GET("/api/portfolio")
-    public String getPortfolio(Context ctx) throws Exception {
+    public String getPortfolio(Context ctx) {
+        if (!isLoggedIn(ctx)) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
+
         Session session = ctx.session();
         if (session.get("id").isMissing()) {
-            ctx.setResponseCode(StatusCode.UNAUTHORIZED);
-            return "{}";
+            ctx.setResponseType("application/json");
+            ctx.send("{}");
+            return null;
         }
         String id = session.get("id").value();
 
@@ -96,5 +105,10 @@ public class PortfolioCategorisationController {
 
         ctx.setResponseType("application/json");
         return response;
+    }
+
+    private boolean isLoggedIn(Context ctx) {
+        if (ctx == null) return false;
+        return !ctx.session().get("id").isMissing();
     }
 }

@@ -1,48 +1,42 @@
 package uk.co.asepstrath.bank.service;
 
+import uk.co.asepstrath.bank.TransactionUtility;
 import uk.co.asepstrath.bank.model.Position;
 import uk.co.asepstrath.bank.model.TaxReport;
 import uk.co.asepstrath.bank.model.TaxSaleLine;
 import uk.co.asepstrath.bank.model.Transaction;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AnalyticsService {
 
     private final TransactionService transactionService;
     private final PriceService priceService;
+    private final InvestorService investorService;
 
-    public AnalyticsService(TransactionService transactionService, PriceService priceService) {
+    public AnalyticsService(TransactionService transactionService, PriceService priceService, InvestorService investorService) {
         this.transactionService = transactionService;
         this.priceService = priceService;
+        this.investorService = investorService;
     }
-
-    private double round(double value) {
-        return Math.round(value * 100.0) / 100.0;
-    }
-
 
     public List<Position> getPositions(String id) {
-        List<Transaction> transactions = transactionService.getTransactionsByInvestor(id);
-        Map<String, List<Transaction>> transactionsByTicker = new HashMap<>();
+        List<Transaction> all = transactionService.getTransactionsByInvestor(id);
+        double currentBalance = investorService.getInvestor(id).getCashBalance();
+        List<Transaction> executed = TransactionUtility.getExecuted(all, currentBalance);
 
-        for (Transaction t : transactions) {
+        Map<String, List<Transaction>> transactionsByTicker = new HashMap<>();
+        for (Transaction t : executed) {
             if (t == null || t.getTicker() == null || t.getTicker().isBlank()) {
                 continue;
             }
-
             transactionsByTicker.computeIfAbsent(t.getTicker(), k -> new ArrayList<>()).add(t);
         }
 
         List<Position> positions = new ArrayList<>();
-
         for (String ticker : transactionsByTicker.keySet()) {
             Position position = calculatePosition(ticker, transactionsByTicker.get(ticker));
-
-            if (position != null) {
-                positions.add(position);
-            }
+            if (position != null) positions.add(position);
         }
 
         return positions;
@@ -51,9 +45,7 @@ public class AnalyticsService {
     public Position getPosition(String ticker, String investorId) {
         List<Position> positions = getPositions(investorId);
         for (Position p : positions) {
-            if (p.getTicker().equals(ticker)) {
-                return p;
-            }
+            if (p.getTicker().equals(ticker)) return p;
         }
         return null;
     }
@@ -65,9 +57,10 @@ public class AnalyticsService {
         double realisedPnl = 0;
         double avgBuyPrice = 0;
 
-
         for (Transaction t : transactions) {
-            if (t == null || t.getTicker() == null) continue;
+            if (t == null || t.getTicker() == null) {
+                continue;
+            }
 
             double price = priceService.getPriceAtTimestamp(t.getTimestamp(), t.getTicker());
             double numberOfShares = t.getTotalCashAmount() / price;
@@ -80,41 +73,41 @@ public class AnalyticsService {
             } else if (t.getType().equals("SELL")) {
                 realisedPnl += (price - avgBuyPrice) * numberOfShares;
                 shares -= numberOfShares;
-                buyShares -= numberOfShares;
             }
         }
 
-        if (shares <= 0 && realisedPnl == 0) return null;
+        if (Math.abs(shares) < 0.0001) {
+            return null;
+        }
 
         double currPrice = priceService.getLatestPrice(ticker);
+
+
         double costBasis = avgBuyPrice * shares;
         double currentValue = currPrice * shares;
 
-        return new Position(
-                ticker,
-                shares,
-                currPrice,
-                costBasis,
-                currentValue,
-                realisedPnl,
-                avgBuyPrice,
-                totalBuyValue
-        );
+        shares = Math.round(shares * 100.0) / 100.0;
+        costBasis = Math.round(costBasis * 100.0) / 100.0;
+        currentValue = Math.round(currentValue * 100.0) / 100.0;
+        realisedPnl = Math.round(realisedPnl * 100.0) / 100.0;
+
+        return new Position(ticker, shares, currPrice, costBasis, currentValue, realisedPnl, avgBuyPrice, totalBuyValue);
     }
 
     public TaxReport getTaxReport(String investorId, int year) {
-        List<Transaction> transactions = transactionService.getTransactionsByInvestor(investorId);
+        List<Transaction> all = transactionService.getTransactionsByInvestor(investorId);
+        double currentBalance = investorService.getInvestor(investorId).getCashBalance();
+        List<Transaction> executed = TransactionUtility.getExecuted(all, currentBalance);
 
         Map<String, Double> avgBuyPrices = new HashMap<>();
         Map<String, Double> totalShares = new HashMap<>();
         Map<String, Double> totalCash = new HashMap<>();
-
         List<TaxSaleLine> sales = new ArrayList<>();
 
-        transactions.sort(Comparator.comparing(Transaction::getTimestamp));
-
-        for (Transaction t : transactions) {
-            if (t.getTicker() == null || t.getTicker().isBlank()) continue;
+        for (Transaction t : executed) {
+            if (t.getTicker() == null || t.getTicker().isBlank()) {
+                continue;
+            }
 
             int txYear = Integer.parseInt(t.getTimestamp().substring(0, 4));
             String ticker = t.getTicker();
@@ -127,14 +120,11 @@ public class AnalyticsService {
                 totalShares.put(ticker, prevShares + numberOfShares);
                 totalCash.put(ticker, prevCash + t.getTotalCashAmount());
                 avgBuyPrices.put(ticker, totalCash.get(ticker) / totalShares.get(ticker));
-
             } else if (t.getType().equals("SELL") && txYear == year) {
                 double avgBuy = avgBuyPrices.getOrDefault(ticker, price);
                 double costBasis = avgBuy * numberOfShares;
                 double proceeds = t.getTotalCashAmount();
-
                 sales.add(new TaxSaleLine(ticker, t.getTimestamp(), proceeds, costBasis));
-
                 double prevShares = totalShares.getOrDefault(ticker, 0.0);
                 totalShares.put(ticker, prevShares - numberOfShares);
             }
@@ -144,13 +134,15 @@ public class AnalyticsService {
     }
 
     public List<Integer> getAvailableYears(String investorId) {
-        List<Transaction> transactions = transactionService.getTransactionsByInvestor(investorId);
-        return transactions.stream()
+        List<Transaction> all = transactionService.getTransactionsByInvestor(investorId);
+        double currentBalance = investorService.getInvestor(investorId).getCashBalance();
+        List<Transaction> executed = TransactionUtility.getExecuted(all, currentBalance);
+
+        return executed.stream()
                 .filter(t -> "SELL".equals(t.getType()))
                 .map(t -> Integer.parseInt(t.getTimestamp().substring(0, 4)))
                 .distinct()
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
     }
-
 }

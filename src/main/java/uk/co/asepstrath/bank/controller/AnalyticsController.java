@@ -19,13 +19,11 @@ import java.util.stream.Collectors;
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
-    private final Authorisation authorisation;
     private final APIService apiService;
     private final PriceRepository priceRepository;
 
-    public AnalyticsController(AnalyticsService analyticsService, Authorisation authorisation, APIService apiService, PriceRepository priceRepository) {
+    public AnalyticsController(AnalyticsService analyticsService, APIService apiService, PriceRepository priceRepository) {
         this.analyticsService = analyticsService;
-        this.authorisation = authorisation;
         this.apiService = apiService;
         this.priceRepository = priceRepository;
 
@@ -34,21 +32,11 @@ public class AnalyticsController {
 
     @GET
     public ModelAndView<Map<String, Object>> positions(Context ctx) {
-        String id = null;
-        Session session = null;
-        if (ctx != null) {
-            session = ctx.session();
-        }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
-        }
-        if (!authorisation.isAuthorised(id)) {
-            ctx.sendRedirect("/login");
+        Map<String, Object> map = new HashMap<>();
+        List<Position> positions = getSession(ctx);
+        if (positions == null) {
             return null;
         }
-        Map<String, Object> map = new HashMap<>();
-        List<Position> positions = analyticsService.getPositions(id);
-
 
         positions.sort(Comparator.comparingDouble(Position::getPnl).reversed());
 
@@ -68,16 +56,8 @@ public class AnalyticsController {
 
     @GET("/{ticker}")
     public ModelAndView<Map<String, Object>> position(Context ctx, @PathParam String ticker) {
-        String id = null;
-        Session session = null;
-        if (ctx != null) {
-            session = ctx.session();
-        }
-        if (session != null && !session.get("id").isMissing()) {
-            id = session.get("id").value();
-        }
-        if (!authorisation.isAuthorised(id)) {
-            ctx.sendRedirect("/login");
+        List<Position> positions = getSession(ctx);
+        if (positions == null) {
             return null;
         }
 
@@ -93,9 +73,11 @@ public class AnalyticsController {
 
     @POST("/refresh")
     public void refreshPrices(Context ctx) {
-        String investorId = ctx.session().get("id").value();
+        List<Position> positions = getSession(ctx);
+        if (positions == null) {
+            return;
+        }
 
-        List<Position> positions = analyticsService.getPositions(investorId);
         Set<String> tickers = positions.stream()
                 .map(Position::getTicker)
                 .collect(Collectors.toSet());
@@ -111,5 +93,25 @@ public class AnalyticsController {
         });
     }
 
+    private List<Position> getSession(Context ctx) {
+        if (ctx == null) {
+            return null;
+        }
+
+        Session session = ctx.session();
+
+        List<Position> positions = null;
+
+        if (!session.get("id").isMissing()) {
+            String id = session.get("id").value();
+            positions = analyticsService.getPositions(id);
+        }
+
+        if (positions == null) {
+            ctx.sendRedirect("/login");
+            return null;
+        }
+        return positions;
+    }
 }
 

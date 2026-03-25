@@ -91,14 +91,6 @@
 <body>
 
 {{>partials/navbar.hbs}}
-<div class="button-wrapper">
-    <button
-            type="button"
-            class="btn login-btn w-100" onclick="window.location.href = '/instruments'">
-
-        Return
-    </button>
-</div>
 <main class="page-wrapper">
 
     <div class="bg-white border rounded-4 p-4">
@@ -115,7 +107,7 @@
             <h5>Constituents: </h5>
             <ul style="list-style: none; padding: 0">
                 {{#each constituents}}
-                    <li class="list">{{ticker}} - {{weight}}</li>
+                    <li class="list">Ticker: {{ticker}} - Weight: {{weight}}</li>
                 {{/each}}
             </ul>
         {{/with}}

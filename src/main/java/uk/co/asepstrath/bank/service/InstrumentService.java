@@ -20,10 +20,6 @@ public class InstrumentService {
         try {
             Instrument instrument = repo.getInstrument(ticker);
 
-            if (instrument == null) {
-                return null;
-            }
-
             return instrument;
         } catch (SQLException e) {
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Failed to retrieve instrument " + ticker + " " + e);

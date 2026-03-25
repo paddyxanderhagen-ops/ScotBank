@@ -28,7 +28,7 @@ class InstrumentServiceTest {
 
     @Test
     void getInstrument_returnsInstrument_whenFound() throws SQLException {
-        Instrument mockInstrument = new Equity("AAPL", "Apple Inc.","Public");
+        Instrument mockInstrument = new Equity("AAPL", "Apple Inc.", "Public");
         when(repo.getInstrument("AAPL")).thenReturn(mockInstrument);
 
         Instrument result = service.getInstrument("AAPL");
@@ -64,7 +64,7 @@ class InstrumentServiceTest {
     void getAll_returnsList_whenNotEmpty() throws SQLException {
         List<Instrument> mockList = List.of(
                 new Equity("AAPL", "Apple Inc.", "Public"),
-                new Equity("GOOG", "Google","Private")
+                new Equity("GOOG", "Google", "Private")
         );
 
         when(repo.getAll()).thenReturn(mockList);

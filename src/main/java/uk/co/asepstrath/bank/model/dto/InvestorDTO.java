@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InvestorDTO {
-    private List<Investor> investors;
+    private final List<Investor> investors;
 
     public InvestorDTO() {
         investors = new ArrayList<>();

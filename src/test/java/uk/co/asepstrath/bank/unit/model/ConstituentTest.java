@@ -35,7 +35,7 @@ class ConstituentTest {
 
     @Test
     void getWeight() {
-        assertEquals(2.35, c.getWeight());
+        assertEquals(235, c.getWeight());
     }
 
     @Test

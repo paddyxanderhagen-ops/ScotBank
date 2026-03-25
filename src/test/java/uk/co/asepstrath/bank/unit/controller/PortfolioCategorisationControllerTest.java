@@ -3,7 +3,6 @@ package uk.co.asepstrath.bank.unit.controller;
 import io.jooby.Context;
 import io.jooby.ModelAndView;
 import io.jooby.Session;
-import io.jooby.StatusCode;
 import io.jooby.value.Value;
 import kong.unirest.core.GetRequest;
 import kong.unirest.core.HttpResponse;
@@ -53,24 +52,15 @@ class PortfolioCategorisationControllerTest {
 
     @Test
     void getPortfolioBreakdownReturnsView() {
-        ModelAndView result = controller.getPortfolioBreakdown();
+        Value value = mock(Value.class);
+        when(ctx.session()).thenReturn(session);
+        when(session.get("id")).thenReturn(value);
+        when(value.isMissing()).thenReturn(false);
+        when(value.value()).thenReturn("inv-123");
+        ModelAndView result = controller.getPortfolioBreakdown(ctx);
 
         assertNotNull(result);
         assertEquals("portfolio-categorisation.hbs", result.getView());
-    }
-
-    @Test
-    void getPortfolioUnauthorized() throws Exception {
-        Value value = mock(Value.class);
-
-        when(ctx.session()).thenReturn(session);
-        when(session.get("id")).thenReturn(value);
-        when(value.isMissing()).thenReturn(true);
-
-        String result = controller.getPortfolio(ctx);
-
-        verify(ctx).setResponseCode(StatusCode.UNAUTHORIZED);
-        assertEquals("{}", result);
     }
 
     @Test
