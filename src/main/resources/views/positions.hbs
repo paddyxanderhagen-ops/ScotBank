@@ -79,6 +79,7 @@
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
         <h3 class="fw-bold m-0">Your Positions</h3>
+        <p class="fw-bold m-0">Last Updated: {{lastUpdated}}</p>
         <form method="post" action="/analytics/refresh">
             <button class="btn-refresh" id="refresh-btn" onclick="refreshPrices()">
                 Refresh Prices

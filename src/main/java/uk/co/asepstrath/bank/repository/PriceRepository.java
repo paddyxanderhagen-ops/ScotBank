@@ -113,4 +113,23 @@ public class PriceRepository {
             return price;
         }
     }
+
+    public String getLastTime() throws SQLException {
+        String sql = """
+                SELECT timestamp FROM price ORDER BY timestamp DESC LIMIT 1
+                """;
+
+        String timestamp = "";
+
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+
+            timestamp = rs.getString("timestamp");
+
+            return timestamp;
+        }
+    }
 }
