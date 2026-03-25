@@ -1,0 +1,19 @@
+Meeting Retrospective 23/3/26 (final meeting)
+
+This meeting retrospective will not follow our usual format due to the proximity to the launch date.
+
+- Merged remaining branches
+- Planned presentation structure
+ - Cloud Computing (Jack)
+ - Landing Page (Jack)
+ - Login Page (Jack)
+ - Home Page (Boyd)
+ - Manage Cash (Boyd)
+ - Transactions - sort, filter (buy/sell/deposit) (Mykhailo)
+ - Contact Page (Mykhailo)
+ - Positions Page (Finlay)
+ - Tax Report (Patrick)
+- Presentation run through
+- Created cloud computing strategy
+- Celebratory champagne luncheon
+ 
