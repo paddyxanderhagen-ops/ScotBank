@@ -27,7 +27,9 @@ public class AnalyticsService {
 
         Map<String, List<Transaction>> transactionsByTicker = new HashMap<>();
         for (Transaction t : executed) {
-            if (t == null || t.getTicker() == null || t.getTicker().isBlank()) continue;
+            if (t == null || t.getTicker() == null || t.getTicker().isBlank()) {
+                continue;
+            }
             transactionsByTicker.computeIfAbsent(t.getTicker(), k -> new ArrayList<>()).add(t);
         }
 
@@ -56,7 +58,9 @@ public class AnalyticsService {
         double avgBuyPrice = 0;
 
         for (Transaction t : transactions) {
-            if (t == null || t.getTicker() == null) continue;
+            if (t == null || t.getTicker() == null) {
+                continue;
+            }
 
             double price = priceService.getPriceAtTimestamp(t.getTimestamp(), t.getTicker());
             double numberOfShares = t.getTotalCashAmount() / price;
@@ -75,6 +79,7 @@ public class AnalyticsService {
         if (Math.abs(shares) < 0.0001) {
             return null;
         }
+
         double currPrice = priceService.getLatestPrice(ticker);
 
 
@@ -85,8 +90,6 @@ public class AnalyticsService {
         costBasis = Math.round(costBasis * 100.0) / 100.0;
         currentValue = Math.round(currentValue * 100.0) / 100.0;
         realisedPnl = Math.round(realisedPnl * 100.0) / 100.0;
-
-
 
         return new Position(ticker, shares, currPrice, costBasis, currentValue, realisedPnl, avgBuyPrice, totalBuyValue);
     }
@@ -102,7 +105,9 @@ public class AnalyticsService {
         List<TaxSaleLine> sales = new ArrayList<>();
 
         for (Transaction t : executed) {
-            if (t.getTicker() == null || t.getTicker().isBlank()) continue;
+            if (t.getTicker() == null || t.getTicker().isBlank()) {
+                continue;
+            }
 
             int txYear = Integer.parseInt(t.getTimestamp().substring(0, 4));
             String ticker = t.getTicker();

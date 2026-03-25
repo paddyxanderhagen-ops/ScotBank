@@ -22,7 +22,12 @@ public class TransactionUtility {
                         }))
                 .toList();
 
-        // work backwards to find starting balance
+        System.out.println(sorted.size());
+
+        for(Transaction t : sorted) {
+            System.out.println(t.getId());
+        }
+
         double startingBalance = currentBalance;
         for (Transaction t : sorted) {
             if (t.getType().equals("DEPOSIT") || t.getType().equals("SELL")) {
@@ -34,7 +39,6 @@ public class TransactionUtility {
             }
         }
 
-        // forward pass keeping only executable transactions
         double balance = startingBalance;
         List<Transaction> executed = new ArrayList<>();
 

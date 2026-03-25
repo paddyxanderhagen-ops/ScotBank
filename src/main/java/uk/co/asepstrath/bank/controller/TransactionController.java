@@ -34,7 +34,7 @@ public class TransactionController {
         List<Transaction> executed = TransactionUtility.getExecuted(transactions, currentBalance);
 
         double runningBalance = 0;
-        // work backwards to find starting balance
+
         for (Transaction t : executed) {
             if (t.getType().equals("DEPOSIT") || t.getType().equals("SELL")) {
                 runningBalance -= t.getTotalCashAmount();
@@ -74,9 +74,8 @@ public class TransactionController {
             enriched.add(row);
         }
 
-        // also add skipped transactions
         List<Transaction> allSorted = TransactionUtility.getExecuted(transactions, currentBalance);
-        for (Transaction t : transactions) {
+        for (Transaction t : allSorted) {
             if (!executed.contains(t) && (t.getType().equals("BUY") || t.getType().equals("WITHDRAWAL"))) {
                 Map<String, Object> row = new HashMap<>();
                 row.put("timestamp", t.getTimestamp());
