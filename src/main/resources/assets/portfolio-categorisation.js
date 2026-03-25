@@ -121,11 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
             finalCategories.push({ label: 'Other', value: otherValue, items: otherItems });
         }
 
-        renderChart(finalCategories, totalInvested);
+        renderChart(finalCategories, totalInvested, totalPortfolio);
         renderTable(finalCategories, totalInvested, totalInvested + cashBalance);
     }
 
-    function renderChart(categories, totalInvested) {
+    function renderChart(categories, totalInvested, totalPortfolio) {
         const ctx = document.getElementById('portfolioPieChart').getContext('2d');
         const labels = categories.map(c => c.label);
         const dataValues = categories.map(c => c.value);
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             selectedCategory = clickedCategory;
                         }
-                        renderTable(categories, totalInvested);
+                        renderTable(categories, totalInvested, totalPortfolio);
                     }
                 }
             }
